@@ -1,0 +1,188 @@
+<div class="w-full p-4 sm:px-8 sm:pt-4" *ngIf="inProgress && user?.enrolls?.length > 0">
+    <h1 class="font-semibold text-2xl text-titleColor">Continuer à apprendre</h1>
+</div>
+
+<div class="relative w-full" [ngClass]="{'px-4': style}">
+    <div class="w-full overflow-hidden">
+        <div class="flex flex-col md:flex-row transition-transform duration-300"
+            [ngStyle]="{'transform': 'translateX(-' + (currentIndex * (100 / cardsToShow)) + '%)'}">
+            <ng-container *ngIf="!inProgress">
+                <ng-container *ngIf="cards.length > 0 else noCourses">
+                    <div *ngFor="let card of cards; let i = index" class="w-full md:w-1/3 min-w-[calc(100%/3)] py-2"
+                        [ngClass]="{'px-2': style,'sm:pr-4': !style && i < 2}">
+                        <div class="cursor-pointer" (click)="goToCourse(card.id)">
+                            <div class="custom-bg-card h-44 bg-[#DCECEC] p-4 rounded-t-3xl"
+                                [ngStyle]="{ 'background-image': 'url(' + card.preview?.secure_url + ')' }">
+                                <div class="flex justify-between items-center">
+                                    <div class="flex items-center">
+                                        <!-- <img src="assets/images/logoipsum.png" alt="Logo" class="max-w-full h-auto" /> -->
+                                        <img [src]="card.provider?.logo?.secure_url" alt="Logo"
+                                            class="max-w-full h-7" />
+                                    </div>
+
+                                    <!-- <button class="p-3 bg-[#A4CECE] rounded-full">
+                                        <img src="assets/images/heart.svg" class="w-5 h-5" alt="heart">
+                                    </button> -->
+                                </div>
+                            </div>
+
+                            <div
+                                class="flex flex-col justify-between bg-[#EDF6F6] p-4 rounded-b-3xl min-h-36 2xl:min-h-40 text-wrap">
+                                <div class="mt-4">
+                                    <p class="text-xs 2xl:text-sm font-semibold text-[#476F77]">{{ card.category.name }}
+                                    </p>
+                                    <h2 class="text-sm 2xl:text-lg font-semibold text-[#19272A]">{{ card.title }}</h2>
+                                </div>
+                                <div class="mt-4 flex justify-between text-sm font-normal text-[#294045]">
+                                    <span class="flex items-center">
+                                        <img src="assets/images/list-play.png" class="mr-2" alt="play"> {{
+                                        formatDuration(card.duration) }}
+                                    </span>
+                                    <span class="flex items-center">
+                                        <img src="assets/images/list-check.png" class="mr-2" alt="check"> {{
+                                        card.sections?.length}} Quiz
+                                    </span>
+                                    <span class="flex items-center">
+                                        <img src="assets/images/list-check.png" class="mr-2" alt="check"> Certificate
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-template #noCourses>
+                    <p class="text-secondaryfontColor pl-8 text-xl">Des formations seront bientôt disponibles dans cette catégorie.</p>
+                </ng-template>
+            </ng-container>
+        </div>
+    </div>
+
+    <div class="w-full overflow-hidden">
+        <div class="flex flex-col md:flex-row transition-transform duration-300"
+            [ngStyle]="{'transform': 'translateX(-' + (currentIndexEnrolls * (100 / cardsToShow)) + '%)'}">
+            <ng-container *ngIf="inProgress">
+                <div *ngFor="let course of user?.enrolls; let i = index"
+                    class="w-full md:w-1/3 min-w-[calc(100%/3)] py-2"
+                    [ngClass]="{'px-2': style,'sm:pr-4': !style && i < 2}">
+                    <div class="cursor-pointer" (click)="goToCourse(course.course.id)">
+                        <div class="custom-bg-card h-44 bg-[#DCECEC] p-4 rounded-t-3xl"
+                        [ngStyle]="{ 'background-image': 'url(' + courses[i]?.preview?.secure_url + ')' }"
+                        >
+                            <div class="flex justify-between items-center">
+                                 <div class="flex items-center" *ngIf="courses[i]?.provider?.logo?.secure_url">
+                                    <img [src]="courses[i]?.provider?.logo?.secure_url" alt="Logo"
+                                        class="max-w-full h-7" />
+                                </div>
+
+                                <!-- <button class="p-3 bg-[#A4CECE] rounded-full">
+                                    <img src="assets/images/heart.svg" class="w-5 h-5" alt="heart">
+                                </button> -->
+                            </div>
+                        </div>
+
+                        <div
+                            class="flex flex-col justify-between bg-[#EDF6F6] p-4 rounded-b-3xl min-h-36 2xl:min-h-40 text-wrap">
+                            <div class="mt-4">
+                                <p class="text-xs 2xl:text-sm font-semibold text-[#476F77]">{{
+                                    courses[i]?.category?.name }}
+                                </p>
+                                <h2 class="text-sm 2xl:text-lg font-semibold text-[#19272A]">{{ course.course?.title
+                                    }}
+                                </h2>
+                            </div>
+                            <div *ngIf="courseProgressions[course.id]">
+                                <div class="!text-[#1B9198] text-left text-xs">
+                                    {{ getRoundedScore(courseProgressions[course.id].progression) }}% terminé
+                                </div>
+                                <div class="w-full bg-[#B0EDF1] rounded-full h-1.5 mb-4 mt-2">
+                                    <div class="bg-[#1B9198] h-1.5 rounded-full"
+                                        [style.width]="getRoundedScore(courseProgressions[course.id].progression) + '%'">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+
+
+
+
+<div *ngIf="cards.length > 3 && !inProgress">
+    <button *ngIf="style && prevStatus" (mouseover)="isHoveringPrev = true" (mouseleave)="isHoveringPrev = false"
+        (click)="prevCard()"
+        class="h-[95%] hidden md:block absolute left-6 rounded-tl-3xl rounded-bl-3xl w-1/12 top-2 bg-transparent border-none "
+        [ngClass]="{'custom-bg' : prevStatus}" [disabled]="currentIndex === 0">
+        <svg class="ml-4 " width="40" height="40" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.5 23.3334L8.16667 14.0001L17.5 4.66675"
+                [attr.stroke]="isHoveringPrev && currentIndex > 0 ? '#ffffff' : '#A4CECE'" stroke-width="1.75"
+                stroke-linecap="round" stroke-linejoin="round" class="transition-colors duration-300" />
+        </svg>
+    </button>
+    <button *ngIf="style && nextStatus" (mouseover)="isHoveringNext = true" (mouseleave)="isHoveringNext = false"
+        (click)="nextCard()"
+        class="h-[95%] hidden md:block absolute right-6 rounded-tl-3xl rounded-bl-3xl w-1/12 top-2 bg-transparent border-none"
+        [ngClass]="{'custom-bg-rev' : nextStatus}" [disabled]="currentIndex >= cards.length - cardsToShow">
+        <svg class="ml-4 hidden md:block" width="40" height="40" viewBox="0 0 28 28" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.5 23.3334L8.16667 14.0001L17.5 4.66675"
+                [attr.stroke]="isHoveringNext && currentIndex < cards.length - cardsToShow ? '#ffffff' : '#A4CECE'"
+                stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"
+                class="transition-colors duration-300" />
+        </svg>
+    </button>
+</div>
+<div *ngIf="user?.enrolls?.length > 3 && inProgress">
+    <button *ngIf="style && prevStatusEnrolls" (mouseover)="isHoveringPrev = true" (mouseleave)="isHoveringPrev = false"
+        (click)="prevEnroll()"
+        class="h-[95%] hidden md:block absolute left-6 rounded-tl-3xl rounded-bl-3xl w-1/12 top-2 bg-transparent border-none "
+        [ngClass]="{'custom-bg' : prevStatusEnrolls}" [disabled]="currentIndexEnrolls === 0">
+        <svg class="ml-4 " width="40" height="40" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.5 23.3334L8.16667 14.0001L17.5 4.66675"
+                [attr.stroke]="isHoveringPrev && currentIndexEnrolls > 0 ? '#ffffff' : '#A4CECE'" stroke-width="1.75"
+                stroke-linecap="round" stroke-linejoin="round" class="transition-colors duration-300" />
+        </svg>
+    </button>
+    <button *ngIf="style && nextStatusEnrolls" (mouseover)="isHoveringNext = true" (mouseleave)="isHoveringNext = false"
+        (click)="nextEnroll()"
+        class="h-[95%] hidden md:block absolute right-6 rounded-tl-3xl rounded-bl-3xl w-1/12 top-2 bg-transparent border-none"
+        [ngClass]="{'custom-bg-rev' : nextStatusEnrolls}"
+        [disabled]="currentIndexEnrolls >= user.enrolls.length - cardsToShow">
+        <svg class="ml-4 hidden md:block" width="40" height="40" viewBox="0 0 28 28" fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.5 23.3334L8.16667 14.0001L17.5 4.66675"
+                [attr.stroke]="isHoveringNext && currentIndexEnrolls < user.enrolls.length - cardsToShow ? '#ffffff' : '#A4CECE'"
+                stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"
+                class="transition-colors duration-300" />
+        </svg>
+    </button>
+</div>
+
+<app-loader-main *ngIf="isLoading && inProgress"></app-loader-main>
+
+
+<!-- <button *ngIf="style" (mouseover)="isHoveringPrev = true" (mouseleave)="isHoveringPrev = false"
+            (click)="prevCard()"
+            class="hidden md:block absolute top-1/2 left-0 transform -translate-y-1/2 bg-[#A4CECE] text-white p-4 rounded-full transition-colors duration-300 hover:bg-[#23BAC4] hover:text-white"
+            [ngClass]="{'!bg-[#A4CECE]': currentIndex === 0}" [disabled]="currentIndex === 0">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.5 23.3334L8.16667 14.0001L17.5 4.66675"
+                    [attr.stroke]="isHoveringPrev &&  currentIndex > 0 ? '#EDF6F6' : '#366464'" stroke-width="1.75"
+                    stroke-linecap="round" stroke-linejoin="round" class="transition-colors duration-300" />
+            </svg>
+        </button> -->
+<!-- <button *ngIf="style" (mouseover)="isHoveringNext = true" (mouseleave)="isHoveringNext = false"
+            (click)="nextCard()"
+            class="hidden md:block absolute top-1/2 right-0 transform -translate-y-1/2 bg-[#A4CECE] text-white p-4 rounded-full transition-colors duration-300 hover:bg-[#23BAC4] hover:text-white"
+            [ngClass]="{'!bg-[#A4CECE]': currentIndex >= cards.length - cardsToShow}"
+            [disabled]="currentIndex >= cards.length - cardsToShow">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10.5 23.3334L19.8333 14.0001L10.5 4.66675"
+                    [attr.stroke]="isHoveringNext && currentIndex < cards.length - cardsToShow ? '#EDF6F6' : '#366464'"
+                    stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"
+                    class="transition-colors duration-300" />
+            </svg>
+        </button> -->
+

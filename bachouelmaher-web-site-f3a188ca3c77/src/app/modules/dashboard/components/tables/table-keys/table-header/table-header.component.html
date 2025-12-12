@@ -1,0 +1,26 @@
+<ng-container>
+  <th class="min-w-[50px]">Clé</th>
+  <th class="min-w-[200px]">
+    <p
+      class="flex items-center justify-between gap-2 leading-none">
+      Utilisateur
+      <!-- <app-sortable name="user" [sortConfig]="sortConfig"></app-sortable> -->
+    </p>
+  </th>
+  <th class="min-w-[50px]">Statut</th>
+  <th class="min-w-[150px] cursor-pointer hover:bg-card" (click)="setSortColumn('createdAt')">
+    <p
+      class="flex items-center justify-between gap-2 leading-none">
+      Créé à
+      <app-sortable name="createdAt" [sortConfig]="sortConfig"></app-sortable>
+    </p>
+  </th>
+  <th class="min-w-[150px] cursor-pointer hover:bg-card" (click)="setSortColumn('updatedAt')">
+    <p
+      class="flex items-center justify-between gap-2 leading-none">
+      Mis à jour à
+      <app-sortable name="updatedAt" [sortConfig]="sortConfig"></app-sortable>
+    </p>
+  </th>
+
+</ng-container>

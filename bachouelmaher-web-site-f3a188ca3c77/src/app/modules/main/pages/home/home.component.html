@@ -1,0 +1,109 @@
+<section class="bg-[#0D1B2A]">
+    <div class="bg-[#0D1B2A] relative top-20 w-full">
+        <div class="h-screen custom-screen-bg">
+            <div class="md:w-[70%] p-4 lg:pl-16 pt-14 space-y-5">
+                <h1 class="text-5xl sm:text-6xl md:text-8xl font-bold text-[#F8F9FA]">VOTRE <span
+                        class="text-secondaryfontColor">
+                        FORMATION</span>
+                    EN UN CLIC</h1>
+                <p class="text-[#F8F9FA] text-xl sm:text-2xl text-justify font-thin">Où que vous soyez, formez-vous sans
+                    contraintes grâce a des modules accessibles en tout temps, conçu pour s’adapter a votre emploi du
+                    temps chargé.
+                    Votre partenaire pour une formation continue flexible, qui accompagne votre ambition de fournir les
+                    meilleurs soins a vos patients.</p>
+            </div>
+        </div>
+
+        <div class="custom-background-img-1 pt-10 pb-32">
+           <!-- Affichage des partenaires -->
+           <div id="partners" class="swiper-container px-2">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide" *ngFor="let item of listPartners">
+                    <img [src]="item?.logo?.secure_url" [alt]="item.public_id" />
+                </div>
+            </div>
+        </div>
+        <div *ngIf="listTrends.length > 0" class="pl-8 sm:pl-16 pt-20">
+          <h1 class="text-3xl text-white font-bold"><span class="text-secondaryfontColor">Tendances </span>du
+              moment</h1>
+          <div class="swiper mySwiper mt-10">
+              <div class="swiper-wrapper">
+                  <div *ngFor="let item of listTrends; let i = index" class="swiper-slide !justify-start">
+                      <div class="relative rounded-lg overflow-hidden shadow-lg cursor-pointer" [routerLink]="isLogged ? '/notre-plateforme' : '/connexion'">
+                          <img [src]="item?.image?.secure_url" [alt]="item?.image?.public_id"
+                              class="w-full h-64 object-cover" />
+                          <!-- Numérotation -->
+                            <div class="absolute bottom-4 left-0">
+                              <span class="text-[#414141] custom-shadow text-6xl sha font-bold">{{ i + 1 }}</span>
+                            </div>
+                          <!-- <div class="absolute bottom-2 left-2 flex items-center justify-center bg-black bg-opacity-90 rounded-full shadow-md w-10 h-10 border-2 border-white">
+                              <span class="text-white text-lg font-bold drop-shadow-[2px_2px_2px_rgba(0,0,0,0.6)]">{{ i + 1 }}</span>
+                            </div> -->
+                          <!-- <div class="absolute bottom-0 bg-black bg-opacity-50 text-lime-200 p-4 w-full">
+                              <p class="font-bold text-lg">{{ item?.title }}</p>
+                          </div> -->
+                      </div>
+                  </div>
+              </div>
+              <!-- Boutons de navigation -->
+              <!-- <div class="absolute top-1/2 left-0 transform -translate-y-1/2 -translate-x-1/2">
+                  <button class="swiper-button-prev bg-lime-400 text-black font-bold p-2 rounded-full shadow-lg hover:bg-lime-300">
+                    Prev
+                  </button>
+                </div>
+                <div class="absolute top-1/2 right-0 transform -translate-y-1/2 translate-x-1/2">
+                  <button class="swiper-button-next bg-lime-400 text-black font-bold p-2 rounded-full shadow-lg hover:bg-lime-300">
+                    Next
+                  </button>
+                </div> -->
+          </div>
+      </div>
+        </div>
+        <div class="background-section h-[39rem]">
+            <div class="relative p-5">
+                <div class="absolute top-32 bottom-0 right-7 sm:right-14 w-4/5 md:w-2/5">
+                    <div
+                        class="flex flex-col gap-y-8 justify-start bg-secondaryfontColor rounded-[40px] py-10 sm:py-20 px-10">
+                        <div class="w-full lg:w-3/4">
+                            <h1 class="text-2xl font-semibold text-[#0D1B2A] mb-5">Formations animées par des experts
+                            </h1>
+                            <p class="text-sm font-normal text-[#0D1B2A]">Explorez des contenus exclusifs conçus pour
+                                répondre aux besoins des professionnels de santé.</p>
+                        </div>
+                        <div class="w-full lg:w-1/2">
+                            <a [routerLink]="isLogged ? '/notre-plateforme' : '/connexion'">
+                                <button type="button"
+                                    class="border-2 w-full hover:bg-[#0D1B2A] bg-transparent hover:text-secondaryfontColor border-[#0D1B2A] rounded-[40px] text-sm text-center px-4 xs:px-5 lg:px-8 py-3 text-[#0D1B2A] transition duration-300 ease-in-out cursor-pointer">
+                                    COMMENCEZ
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-[#0D1B2A] w-full py-20">
+            <div class="md:w-[90%] mx-auto text-center">
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl text-white font-bold text-center mb-8">GRÂCE À DES
+                    OUTILS<span class="text-secondaryfontColor"> MODERNES ET INTERACTIFS,</span> NOUS NOUS ENGAGEONS À
+                    RENDRE
+                    <span class="text-secondaryfontColor">LA FORMATION CONTINUE ACCESSIBLE, FLEXIBLE </span> ET
+                    PARFAITEMENT ADAPTÉE AUX BESOINS DU PERSONNEL DE LA <span class="text-secondaryfontColor"> PHARMACIE
+                    </span>
+                </h1>
+
+                <a [routerLink]="isLogged ? '/notre-plateforme' : '/connexion'">
+                    <button type="button"
+                        class="border-2 mr-3 xs:mr-6 hover:bg-secondaryfontColor bg-transparent hover:text-[#192729] border-secondaryfontColor rounded-[40px] text-sm text-center px-8 xs:px-14 py-3 text-secondaryfontColor transition duration-300 ease-in-out cursor-pointer">
+                        COMMENCEZ
+                    </button>
+                </a>
+            </div>
+        </div>
+
+        <app-slider></app-slider>
+    </div>
+
+    <app-advertisement *ngIf="selectedAd" [ad]="selectedAd" (closeModal)="closeModal()"></app-advertisement>
+</section>

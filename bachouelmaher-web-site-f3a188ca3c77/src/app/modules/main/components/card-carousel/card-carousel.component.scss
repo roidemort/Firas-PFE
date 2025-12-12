@@ -1,0 +1,19 @@
+.custom-bg-card, .custom-bg, .custom-bg-rev{
+    background-position-x: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.custom-bg, .custom-bg-rev{
+    background-position-x: -65px;
+}
+
+.custom-bg-rev{
+    transform: scaleX(-1);
+}
+
+@media only screen and (min-width: 768px) {
+    .custom-bg, .custom-bg-rev{
+        background-image: url(../../../../../assets/images/bg.png);
+    }
+}

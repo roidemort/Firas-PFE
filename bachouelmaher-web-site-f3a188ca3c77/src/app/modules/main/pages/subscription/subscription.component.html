@@ -1,0 +1,183 @@
+<section>
+    <div class="relative top-[4.5rem] md:top-20 w-full">
+        <div class="bg-[#0D1B2A] custom-background-img">
+            <div class="w-full p-5 pt-40">
+                <h1 class="text-secondaryfontColor text-4xl md:text-6xl md:leading-[67px] font-bold text-center">
+                    CHOISISSEZ
+                    L’ABONNEMENT QUI VOUS CONVIENT</h1>
+                <div class="w-full lg:w-3/4 mx-auto text-center mt-10">
+                    <a [routerLink]="'/contactez-nous'">
+                        <button type="button"
+                            class="border-2 hover:bg-secondaryfontColor bg-transparent hover:text-[#0D1B2A] border-secondaryfontColor rounded-[40px] text-sm text-center px-14 md:px-20 py-3 text-secondaryfontColor transition duration-300 ease-in-out cursor-pointer">
+                            Contactez-nous
+                        </button>
+                    </a>
+                </div>
+            </div>
+
+            <div class="p-5 mb-10">
+                <div class="container mx-auto px-0 py-8">
+                    <!-- <div class="grid items-stretch grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 xl:gap-8 2xl-gap-14"> -->
+                    <div class="grid items-stretch grid-cols-1 sm:grid-cols-2 gap-5 xl:gap-8 2xl:gap-14"
+                        [ngClass]="getGridCols()">
+                        <div *ngFor="let plan of pricingPlans"
+                            class="flex flex-col justify-between rounded-2xl text-center border border-[#EAECF0]">
+                            <div class="bg-transparent px-3 py-6 rounded-t-lg text-center">
+                                <div class="mb-4">
+                                    <span class="inline-block p-2 rounded-full">
+                                        <img [src]="'assets/images/' + (plan.duration == 0 ? 'Featured_icon' : plan.duration <=  2 ? 'Featured_icon-1' : plan.duration <= 6 ? 'Featured_icon-2' : plan.duration <= 12 ? 'Featured_icon-3' : 'Featured_icon-3') + '.svg'"
+                                            alt="Featured" />
+                                    </span>
+                                </div>
+
+                                <h2 class="text-3xl font-bold text-secondaryfontColor">{{ plan.name }}</h2>
+                                <p
+                                    class="text-5xl lg:text-[32px] xl:text-[40px] 2xl:text-5xl text-balance font-bold text-secondaryfontColor mt-4 mb-2">
+                                    {{ plan.price == '0.00' ? 'Gratuit' : plan.price + ' ' + plan.type }}
+                                </p>
+                                <p class="text-white font-normal text-base mt-4 mb-8">
+                                    {{ plan.duration === 0 ? 'Gratuit pour toujours' : plan.duration === 1 ? 'Facturé mensuellement' : ('Facturé tous les ' + plan.duration + ' mois') }}
+                                    </p>
+
+                                <ul class="mt-4 grid gap-y-4 w-11/12 mx-auto">
+                                    <li *ngFor="let feature of features[plan.id]"
+                                        class="grid grid-cols-[auto,1fr] items-center">
+                                        <img src="assets/images/Check_icon.svg" alt="Check_icon" class="h-6 w-6" />
+                                        <span class="pl-4 text-left font-normal text-sm text-white">{{ feature }}</span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div
+                                class="bg-[#EDF6F6] p-5 w-full flex justify-center border-t border-[#EAECF0] rounded-b-2xl">
+                                <a class="w-full"
+                                    [routerLink]="!isLogged ? '/inscription' : plan.position === 1  ? '/profil/gestion-abonnements' : '/contactez-nous' ">
+                                    <button type="button"
+                                        class="border-2 w-5/6 hover:bg-transparent bg-[#0D1B2A] hover:text-[#0D1B2A] border-[#0D1B2A] rounded-[40px] text-sm text-center px-10 py-3 text-white transition duration-300 ease-in-out cursor-pointer">
+                                        {{ (plan.position === 1 ? 'S\'inscrire' : 'Contactez-nous')}}
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-full" *ngIf="pricingPlans.length == 0">
+                        <p class="text-center text-secondaryfontColor font-medium text-xl">Des abonnements seront bientôt ajoutés.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="listPartners.length > 0" class="pt-24 pb-8">
+                <div id="partners" class="swiper-container">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide" *ngFor="let item of listPartners">
+                            <img [src]="item.logo.secure_url" [alt]="item.public_id" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-[#0D1B2A] w-full py-20 custom-background-img-1">
+                <div class="md:w-1/2 mx-auto text-center">
+                    <h1 class="text-4xl sm:text-6xl text-white font-bold text-center mb-8">Pourquoi choisir <span
+                            class="text-secondaryfontColor">GALIOCARE ?</span></h1>
+                </div>
+                <div class="w-[90%] mx-auto pt-20 pb-6">
+                    <div class="md:w-1/2 pt-10">
+                        <div class="w-full">
+                            <div class="flex items-center gap-x-2">
+                                <img src="assets/images/Subtract.png" alt="Subtract">
+                                <h1 class="text-secondaryfontColor text-2xl text-justify">Accessibilité totale </h1>
+                            </div>
+                            <p class="text-[#F8F9FA] text-xl text-justify pl-6 font-thin">Une plateforme 100% en ligne
+                                pour apprendre
+                                où et quand vous le voulez.</p>
+                        </div>
+
+                        <div class="w-full">
+                            <div class="flex items-center gap-x-2">
+                                <img src="assets/images/Subtract.png" alt="Subtract">
+                                <h1 class="text-secondaryfontColor text-2xl text-justify">Flexibilité garantie </h1>
+                            </div>
+                            <p class="text-[#F8F9FA] text-xl text-justify pl-6 font-thin">Formez-vous à votre rythme,
+                                sans contraintes
+                                d’horaires.</p>
+                        </div>
+
+                        <div class="w-full">
+                            <div class="flex items-center gap-x-2">
+                                <img src="assets/images/Subtract.png" alt="Subtract">
+                                <h1 class="text-secondaryfontColor text-2xl text-justify">Contenus diversifiés</h1>
+                            </div>
+                            <p class="text-[#F8F9FA] text-xl text-justify pl-6 font-thin">Des modules couvrant
+                                pathologies,
+                                cosmétologie, nutrition et gestion d’officine.</p>
+                        </div>
+
+                        <div class="w-full">
+                            <div class="flex items-center gap-x-2">
+                                <img src="assets/images/Subtract.png" alt="Subtract">
+                                <h1 class="text-secondaryfontColor text-2xl text-justify">Qualité certifiée </h1>
+                            </div>
+                            <p class="text-[#F8F9FA] text-xl text-justify pl-6 font-thin">Des formations élaborées avec
+                                des experts du
+                                secteur pharmaceutique.</p>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="w-[90%] mx-auto pt-20 pb-6">
+                    <div class="md:w-1/2 relative md:left-[50%]">
+                        <div class="w-full">
+                            <div class="flex items-center gap-x-2">
+                                <img src="assets/images/Subtract.png" alt="Subtract">
+                                <h1 class="text-secondaryfontColor text-2xl text-justify">Économie de temps</h1>
+                            </div>
+                            <p class="text-[#F8F9FA] text-xl text-justify pl-6 font-thin">Optimisez votre apprentissage grâce à des modules accessibles à tout moment.</p>
+                        </div>
+
+                        <div class="w-full">
+                            <div class="flex items-center gap-x-2">
+                                <img src="assets/images/Subtract.png" alt="Subtract">
+                                <h1 class="text-secondaryfontColor text-2xl text-justify">Apprentissage interactif</h1>
+                            </div>
+                            <p class="text-[#F8F9FA] text-xl text-justify pl-6 font-thin">Transformez votre formation en une expérience engageante avec des quiz, des badges, et des classements.</p>
+                        </div>
+
+                        <div class="w-full">
+                            <div class="flex items-center gap-x-2">
+                                <img src="assets/images/Subtract.png" alt="Subtract">
+                                <h1 class="text-secondaryfontColor text-2xl text-justify">Partenariats stratégiques</h1>
+                            </div>
+                            <p class="text-[#F8F9FA] text-xl text-justify pl-6 font-thin">Collaborations avec des laboratoires pour un contenu pertinent et actualisé.</p>
+                        </div>
+
+                        <div class="w-full">
+                            <div class="flex items-center gap-x-2">
+                                <img src="assets/images/Subtract.png" alt="Subtract">
+                                <h1 class="text-secondaryfontColor text-2xl text-justify">Mise à jour continue</h1>
+                            </div>
+                            <p class="text-[#F8F9FA] text-xl text-justify pl-6 font-thin">Accédez à des contenus régulièrement actualisés pour rester à la pointe de votre pratique.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="md:w-3/4 mx-auto text-center pt-20">
+                    <h1 class="text-4xl sm:text-6xl text-white font-bold text-center mb-8">COMMENCEZ VOTRE PARCOURS VERS
+                        UNE <span class="text-secondaryfontColor"> FORMATION CONTINUE,
+                            100% EN LIGNE </span> ET ADAPTÉE À VOS BESOINS</h1>
+
+                    <a [routerLink]="isLogged ? '/notre-plateforme' : '/connexion'">
+                        <button type="button"
+                            class="border-2 mr-3 xs:mr-6 hover:bg-secondaryfontColor bg-transparent hover:text-[#192729] border-secondaryfontColor rounded-[40px] text-sm text-center px-8 xs:px-14 py-3 text-secondaryfontColor transition duration-300 ease-in-out cursor-pointer">
+                            COMMENCEZ
+                        </button>
+                    </a>
+                </div>
+            </div>
+
+            <app-slider></app-slider>
+        </div>
+    </div>
+
+
+</section>

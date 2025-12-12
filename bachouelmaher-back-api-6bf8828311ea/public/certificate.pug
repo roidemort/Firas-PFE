@@ -1,0 +1,86 @@
+doctype html
+head
+    style.
+        .certifcate {
+            margin: auto;
+            width: #{backgroundWidth};
+            height: #{backgroundHeight};
+            max-width: 100%;
+            border: dotted #ccc 2px;
+            position: relative
+        }
+        .certificate-img {
+            position: absolute
+        }
+        .title {
+            transform: translate3d(#{titleTranslateX}, #{titleTranslateY}, 0px);
+            height: 50px;
+            color: rgba(0, 0, 0, 0.87);
+            cursor: move;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border-radius: 4px;
+            margin-right: 25px;
+            position: relative;
+            z-index: 1;
+            box-sizing: border-box;
+            padding: 10px;
+        }
+        .subTitle {
+            transform: translate3d(#{subTitleTranslateX}, #{subTitleTranslateY}, 0px);
+            height: 50px;
+            color: rgba(0, 0, 0, 0.87);
+            cursor: move;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border-radius: 4px;
+            margin-right: 25px;
+            position: relative;
+            z-index: 1;
+            box-sizing: border-box;
+            padding: 10px;
+        }
+        .description {
+            transform: translate3d(#{descriptionTranslateX}, #{descriptionTranslateY}, 0px);
+            color: rgba(0, 0, 0, 0.87);
+            cursor: move;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border-radius: 4px;
+            margin-right: 25px;
+            position: relative;
+            z-index: 1;
+            box-sizing: border-box;
+            padding: 10px;
+        }
+        .signature-img {
+            transform: translate3d(#{signatureTranslateX}, #{signatureTranslateY}, 0px);
+            height: 40px;
+            width: 120px;
+            color: rgba(0, 0, 0, 0.87);
+            cursor: move;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border-radius: 4px;
+            margin-right: 25px;
+            z-index: 1;
+            box-sizing: border-box;
+            padding: 10px;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: 100% 100%;
+        }
+.certifcate
+    img.certificate-img(src=background)
+    .title #{title}
+    .subTitle #{subTitle}
+    .description #{description}
+    img.signature-img(src=signature)

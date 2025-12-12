@@ -1,0 +1,49 @@
+<div class="flex flex-wrap items-center justify-between gap-2 py-3">
+  <div class="flex flex-wrap gap-6">
+    <div class="flex">
+      <label class="relative text-muted-foreground">
+        <div class="absolute left-2.5 top-3.5">
+          <svg-icon src="./assets/icons/heroicons/outline/magnifying-glass.svg" [svgClass]="'h-4 w-4'"> </svg-icon>
+        </div>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+          <input class="pl-8 pr-2 w-[300px]" placeholder="Rechercher..." type="text" value="" formControlName="text"/>
+        </form>
+      </label>
+    </div>
+
+    <div class="flex flex-wrap gap-2.5" *ngIf="selectedPrice">
+      <select class="w-40 text-muted-foreground" (change)="onChangeStatus($event)">
+        <option disabled selected>-- Statut --</option>
+        <option value="">Tous</option>
+        <option value="0">Incomplète</option>
+        <option value="2">Inactif</option>
+        <option value="1">Actif</option>
+      </select>
+    </div>
+    <div class="flex flex-wrap gap-2.5" *ngIf="!selectedPrice">
+      <select class="w-40 text-muted-foreground" (change)="onChangeStatus($event)">
+        <option disabled selected>-- Statut --</option>
+        <option value="">Tous</option>
+        <option value="0">Inactif</option>
+        <option value="1">Actif</option>
+      </select>
+    </div>
+
+    <div class="flex flex-wrap gap-2.5" *ngIf="selectedPrice">
+      <select class="w-40 text-muted-foreground" (change)="onChangePrice($event)">
+        <option disabled selected>-- Prix --</option>
+        <option value="">Tous</option>
+        <option value="0">Gratuit</option>
+        <option value="1">Payant</option>
+      </select>
+    </div>
+    <div class="flex flex-wrap gap-2.5" *ngIf="selectedCS">
+      <select class="w-40 text-muted-foreground" (change)="onChangeCS($event)">
+        <option disabled selected>-- Prochainement --</option>
+        <option value="">Tous</option>
+        <option value="0">En cours</option>
+        <option value="1">Coming Soon</option>
+      </select>
+    </div>
+  </div>
+</div>

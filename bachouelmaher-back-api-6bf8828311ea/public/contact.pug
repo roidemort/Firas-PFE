@@ -1,0 +1,36 @@
+doctype html
+html
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Nouveau message reçu - Galiocare
+    style.
+      body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; }
+      .container { max-width: 600px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); }
+      h2 { color: #333; }
+      p { font-size: 14px; line-height: 1.6; color: #555; }
+      .info { background: #f9f9f9; padding: 10px; border-left: 4px solid #007bff; margin-bottom: 15px; }
+      .footer { font-size: 12px; text-align: left; margin-top: 20px; color: #888; }
+
+  body
+    .container
+      p Bonjour,
+      h4 Nouveau message reçu !
+      
+      .info
+        p 
+          strong De : 
+          | #{firstName} #{lastName}
+        p 
+          strong Email : 
+          a(href="mailto:#{email}") #{email}
+        p 
+          strong Téléphone : 
+          | #{phoneNumber}
+
+      h4 Contenu du message :
+      p #{message}
+
+      .footer
+        p L'équipe Galiocare
+        p Ce message est généré automatiquement, merci de ne pas y répondre.

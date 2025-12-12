@@ -1,0 +1,27 @@
+doctype html
+html
+  head
+    title Attestation de Formation - Galiocare
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    style.
+      body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; }
+      .container { max-width: 600px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); }
+      h2 { color: #333; }
+      h4 { color: #555; margin-top: 10px; }
+      p { font-size: 14px; line-height: 1.6; color: #555; }
+      .footer { font-size: 12px; text-align: left; margin-top: 20px; color: #888; }
+      .highlight { color: #007bff; font-weight: bold; }
+
+  body
+    .container
+      h2 Bonjour #{username},
+
+      h4 Vous trouverez ci-joint un PDF contenant votre attestation de formation pour le cours 
+      .highlight #{title}.
+
+      p Si vous avez des questions, n'hésitez pas à nous contacter. Nous vous félicitons pour votre réussite !
+
+      .footer
+        p L'équipe Galiocare
+        p Ce message est généré automatiquement, merci de ne pas y répondre.

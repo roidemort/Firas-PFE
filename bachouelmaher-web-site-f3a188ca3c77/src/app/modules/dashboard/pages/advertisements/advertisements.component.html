@@ -1,0 +1,44 @@
+<div class="mx-auto px-4 py-4 sm:px-8" #actions>
+  <div class="mb-4 flex justify-between">
+    <div class="inline-block">
+      <h3 class="font-semibold text-foreground">Liste des publicités</h3>
+      <div class="space-x-1 text-xs font-medium text-muted-foreground">
+        <a href="" class="hover:text-primary">Tous les publicités:</a>
+        <span class="text-foreground">{{allAdvertisementsCount}}</span>
+      </div>
+    </div>
+    <div class="inline-block space-x-4">
+      <button (click)="manageAdvertisement('add')"
+              class="flex items-center justify-center bg-primary text-white p-2 rounded-md border-b-[3px] border-primary-dark" type="button">
+        <svg-icon src="assets/icons/heroicons/outline/plus.svg" [svgClass]="'h-5 w-5'"> </svg-icon>
+        Ajouter une publicité</button>
+    </div>
+  </div>
+
+  <div class="flex min-w-full flex-col rounded-xl border border-muted/20 bg-background p-2">
+    <app-loader *ngIf="isLoading"></app-loader>
+    <app-table-advertisements-action class="mb-10" (changeStatus)="onChangeStatus($event)" (changeText)="onChangeText($event)" (changeType)="onChangeType($event)"></app-table-advertisements-action>
+    <div class="overflow-x-auto">
+      <table
+        class="table w-full table-auto border-collapse border-0 text-left align-middle leading-5 text-muted-foreground">
+        <thead class="border border-muted/20 text-xs text-muted-foreground">
+        <tr app-table-advertisements-header class="h-20" (onSort)="sortAdvertisements($event)"></tr>
+        </thead>
+        <tbody>
+          @for (advertisement of advertisements(); track $index) {
+            <tr class="hover:bg-card/50" app-table-advertisements-row (updateAdvertisement)="manageAdvertisement('edit', $event)" [advertisement]="advertisement"></tr>
+          } @empty {
+            <tr>
+              <td class="py-4 text-center text-sm" colspan="7">Aucune publicité trouvé</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <app-table-advertisements-footer class="mt-10" (changeItemsPerPage)="onChangeItemsPerPage($event)"
+                              [currentPage]="currentPage"
+                              [itemsPerPage]="itemsPerPage"
+                              [totalItems]="allAdvertisementsCount"
+                              (pageChanged)="onPageChange($event)"></app-table-advertisements-footer>
+  </div>
+</div>

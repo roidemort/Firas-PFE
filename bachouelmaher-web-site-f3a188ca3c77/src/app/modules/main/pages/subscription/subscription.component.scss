@@ -1,0 +1,32 @@
+.swiper-container {
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  .swiper-wrapper {
+    display: flex;
+  }
+  
+  .swiper-slide {
+    flex-shrink: 0;
+    width: calc(100% / 8);
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+  }
+  
+  .swiper-slide img {
+    object-fit: contain;
+  }
+
+  .custom-background-img{
+    background-image: url(../../../../../assets/images/fond-2.png);
+    background-repeat: no-repeat;
+    background-position-x: right;
+  }
+
+  .custom-background-img-1 {
+    background-image: url(../../../../../assets/images/fond-3.png);
+    background-repeat: no-repeat;
+    background-position-x: 40rem;
+  }

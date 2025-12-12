@@ -1,0 +1,911 @@
+<app-loader *ngIf="isLoading"></app-loader>
+<div class="mx-auto px-4 py-4 sm:px-8" #actions>
+    <div class="mb-4 flex justify-between">
+        <div class="inline-block">
+            <h3 class="font-semibold text-foreground" *ngIf="type == 'add'">Ajouté une formation</h3>
+            <h3 class="font-semibold text-foreground" *ngIf="type == 'edit'"> Modifié la formation</h3>
+            <div class="space-x-1 text-xs font-medium text-night-400 dark:text-night-300">
+            </div>
+        </div>
+    </div>
+  @if (manageCourseForm) {
+    <form [formGroup]="manageCourseForm">
+      <div class="flex min-w-full flex-wrap mb-4">
+        <div class="flex grow flex-col content-start overflow-hidden rounded-xl border border-muted/20 bg-background p-2">
+          <div id="header-content" class="scrollbar-thumb-rounded scrollbar-track-rounded grow overflow-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted">
+            <div class="mx-auto px-4 py-4 sm:px-8">
+
+              <div class="px-12">
+                <div class="my-6 space-y-2 flex flex-col">
+                  <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="title">Titre</label>
+                  <input id="title" formControlName="title" type="text" placeholder="" required
+                         [ngClass]="{'!border-[#f74350] !border-2': manageCourseForm.get('title')?.invalid && manageCourseForm.get('title')!.touched}"
+                         class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+                  <div *ngIf="manageCourseForm.get('title')!.hasError('required') && manageCourseForm.get('title')!.touched"
+                       class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                    Ce champ est obligatoire.
+                  </div>
+                </div>
+              </div>
+              <div class="px-12">
+                <div class="my-6 space-y-2 flex flex-col">
+                  <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="details">Détails</label>
+                  <textarea id="details" formControlName="details" type="text" placeholder="" required
+                            rows="5"
+                            [ngClass]="{'!border-[#f74350] !border-2': manageCourseForm.get('details')?.invalid && manageCourseForm.get('details')!.touched}"
+                            class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor"></textarea>
+                  <div *ngIf="manageCourseForm.get('details')!.hasError('required') && manageCourseForm.get('details')!.touched"
+                       class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                    Ce champ est obligatoire.
+                  </div>
+                </div>
+              </div>
+              <div class="px-12">
+                <div class="my-6 space-y-2 flex flex-col">
+                  <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="previewVideo">Vidéo (Preview)</label>
+                  <input id="previewVideo" formControlName="previewVideo" type="text" placeholder="" required
+                            [ngClass]="{'!border-[#f74350] !border-2': manageCourseForm.get('previewVideo')?.invalid && manageCourseForm.get('previewVideo')!.touched}"
+                            class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+                  <div *ngIf="manageCourseForm.get('previewVideo')!.hasError('required') && manageCourseForm.get('previewVideo')!.touched"
+                       class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                    Ce champ est obligatoire.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex min-w-full md:flex-row flex-col">
+        <div class="rounded-xl border border-muted/20 bg-background p-2 max-md:hidden mr-4">
+          <ul class="flex flex-col space-y-1">
+            <!-- List items -->
+            <li *ngFor="let item of menuCourse">
+              <!-- Menu List -->
+              <div (click)="toggleMenu(item)" class="group relative text-muted-foreground">
+                <!-- Icon -->
+                <div
+                  [ngClass]="item.active && !menuService.showSideBar ? 'text-primary' : 'text-muted-foreground/50'"
+                  class="pointer-events-none absolute m-2">
+                  <svg-icon src="{{ item.icon }}" [svgClass]="'h-5 w-5'"></svg-icon>
+                </div>
+                <div
+                  (click)="onDisplaySection(item.route)"
+                  class="flex h-9 p-4 cursor-pointer items-center justify-start rounded text-muted-foreground hover:bg-card hover:text-foreground">
+                  <a
+                    [ngClass]="title == item.route ? 'text-primary' : ''"
+                    class="ml-10 truncate text-xs font-semibold tracking-wide focus:outline-none">
+                    {{ item.label }}
+                  </a>
+                </div>
+              </div>
+
+              <!-- Submenu items -->
+              <app-sidebar-submenu [submenu]="item"></app-sidebar-submenu>
+            </li>
+          </ul>
+        </div>
+        <div class="rounded-xl border border-muted/20 bg-background p-6 md:hidden w-full mb-4">
+          <details class="group">
+            <summary class="flex justify-between items-center font-medium cursor-pointer list-none">
+              <span> {{ title }} </span>
+              <span class="transition group-open:rotate-180">
+                    <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor"
+                         stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path
+                      d="M6 9l6 6 6-6"></path></svg>
+                  </span>
+            </summary>
+            <ul class="flex flex-col space-y-1">
+              <!-- List items -->
+              <li *ngFor="let item of menuCourse">
+                <!-- Menu List -->
+                <div (click)="toggleMenu(item)" class="group relative text-muted-foreground">
+                  <!-- Icon -->
+                  <div
+                    [ngClass]="item.active && !menuService.showSideBar ? 'text-primary' : 'text-muted-foreground/50'"
+                    class="pointer-events-none absolute m-2">
+                    <svg-icon src="{{ item.icon }}" [svgClass]="'h-5 w-5'"></svg-icon>
+                  </div>
+                  <div
+                    (click)="onDisplaySection(item.route)"
+                    class="flex h-9 p-4 cursor-pointer items-center justify-start rounded text-muted-foreground hover:bg-card hover:text-foreground">
+                    <a
+                      [ngClass]="title == item.route ? 'text-primary' : ''"
+                      class="ml-10 truncate text-xs font-semibold tracking-wide focus:outline-none">
+                      {{ item.label }}
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Submenu items -->
+                <app-sidebar-submenu [submenu]="item"></app-sidebar-submenu>
+              </li>
+            </ul>
+          </details>
+        </div>
+        <div class="flex grow flex-col content-start overflow-hidden rounded-xl border border-muted/20 bg-background p-2">
+          <div
+            id="main-content"
+            class="scrollbar-thumb-rounded scrollbar-track-rounded grow overflow-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted">
+            <div class="mx-auto px-4 py-4 sm:px-8" ngSwitch="{{title}}">
+              <ng-template [ngSwitchCase]="'general'">
+                <h3 class="font-semibold text-foreground">Paramètres généraux</h3>
+                <div class="px-2">
+                  <div class="my-6 space-y-2 flex flex-col">
+                    <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="points">Points de gain</label>
+                    <input id="points" formControlName="points" type="number" min="0" placeholder="" required
+                           [ngClass]="{'!border-[#f74350] !border-2': manageCourseForm.get('points')?.invalid && manageCourseForm.get('points')!.touched}"
+                           class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+                    <div *ngIf="manageCourseForm.get('points')!.hasError('required') && manageCourseForm.get('points')!.touched"
+                         class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                      Ce champ est obligatoire.
+                    </div>
+                  </div>
+                </div>
+                <div class="px-2">
+                  <div class="my-6 space-y-2 flex flex-col">
+                    <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="category">Categorie</label>
+                    <input id="category" formControlName="category" type="text" value="{{getSelectedItem()}}" required matInput [matAutocomplete]="auto"
+                           [ngClass]="{'!border-[#f74350] !border-2': manageCourseForm.get('category')?.invalid && manageCourseForm.get('category')!.touched}"
+                           class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+                    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                      <mat-option disabled>Veuillez sélectionner une catégorie ci-dessous</mat-option>
+                      <mat-tree #tree [dataSource]="categories" [childrenAccessor]="childrenAccessor">
+                        <!-- This is the tree node template for leaf nodes -->
+                        <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
+                          <!-- use a disabled button to provide padding for tree leaf -->
+                          <button mat-icon-button disabled></button>
+                          <div class="w-full flex">
+                            <mat-checkbox class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node.id)" (change)="onSelectCategory($event, node)">
+                              <p>{{node.name}}</p>
+                            </mat-checkbox>
+                          </div>
+                        </mat-tree-node>
+                        <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding matTreeNodeToggle
+                                       [cdkTreeNodeTypeaheadLabel]="node.name">
+                          <button mat-icon-button matTreeNodeToggle
+                                  [attr.aria-label]="'Toggle ' + node.name">
+                            <svg-icon
+                              [src]="
+            tree.isExpanded(node) ? 'assets/icons/heroicons/outline/chevron-down.svg' : 'assets/icons/heroicons/outline/chevron-right.svg'
+             "
+                              [svgClass]="'h-5 w-5'">
+                            </svg-icon>
+                          </button>
+                          <div class="w-full flex">
+                            <mat-checkbox class="checklist-leaf-node" [checked]="checklistSelection.isSelected(node.id)" (change)="onSelectCategory($event, node)">{{node.item}}
+                              <p>{{node.name}}</p>
+                            </mat-checkbox>
+                          </div>
+                        </mat-tree-node>
+                      </mat-tree>
+                    </mat-autocomplete>
+                    <div *ngIf="manageCourseForm.get('category')!.hasError('required') && manageCourseForm.get('category')!.touched"
+                         class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                      Ce champ est obligatoire.
+                    </div>
+                  </div>
+                </div>
+                <div class="px-2">
+                  <div class="my-6 space-y-2 flex flex-col">
+                    <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="expiration">Expiration (en mois)</label>
+                    <div class="flex items-end">
+                      <input id="expiration" formControlName="expiration" type="number" placeholder="" required min="0"
+                             [ngClass]="{'!border-[#f74350] !border-2': manageCourseForm.get('expiration')?.invalid && manageCourseForm.get('expiration')!.touched}"
+                             class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+                      <div class="text-gray-500 text-left text-xs whitespace-nowrap ml-2">
+                        définir sur 0 pour l'accès à vie.
+                      </div>
+                    </div>
+
+                    <div *ngIf="manageCourseForm.get('expiration')!.hasError('required') && manageCourseForm.get('expiration')!.touched"
+                         class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                      Ce champ est obligatoire.
+                    </div>
+                  </div>
+                </div>
+                <div class="px-2 flex gap-2">
+                  <div class="my-6 space-y-2 flex flex-col w-full">
+                    <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="language">Langue</label>
+
+                    <mat-select id="language" formControlName="language"
+                                [ngClass]="{'!border-[#f74350] !border-2': manageCourseForm.get('language')?.invalid && manageCourseForm.get('language')!.touched}"
+                                class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+                      <mat-option *ngFor="let language of languages" value="{{ language.value }}">{{ language.viewValue }}</mat-option>
+                    </mat-select>
+
+                    <div *ngIf="manageCourseForm.get('language')!.hasError('required') && manageCourseForm.get('language')!.touched"
+                         class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                      Ce champ est obligatoire.
+                    </div>
+                  </div>
+                  <div class="my-6 space-y-2 flex flex-col w-full">
+                    <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="level">Niveau</label>
+
+                    <mat-select id="level" formControlName="level"
+                                [ngClass]="{'!border-[#f74350] !border-2': manageCourseForm.get('level')?.invalid && manageCourseForm.get('level')!.touched}"
+                                class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+                      <mat-option *ngFor="let level of levels" value="{{ level.value }}">{{ level.viewValue }}</mat-option>
+                    </mat-select>
+
+                    <div *ngIf="manageCourseForm.get('level')!.hasError('required') && manageCourseForm.get('level')!.touched"
+                         class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                      Ce champ est obligatoire.
+                    </div>
+                  </div>
+                </div>
+                <div class="px-2 flex gap-2">
+                  <div class="my-6 space-y-2 flex flex-col w-full">
+                    <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="hours">Durée</label>
+                    <div class="flex items-end">
+                      <div class="w-full">
+                        <span class="text-gray-500 text-left text-xs whitespace-nowrap ml-2">heures</span>
+                        <input id="hours" formControlName="hours" type="number" placeholder="" required min="0"
+                               [ngClass]="{'!border-[#f74350] !border-2': (manageCourseForm.get('hours')?.invalid && manageCourseForm.get('hours')!.touched) || (manageCourseForm.get('minutes')?.invalid && manageCourseForm.get('minutes')!.touched)}"
+                               class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+
+                      </div>
+                      <span class="mx-4">:</span>
+                      <div class="w-full">
+                        <span class="text-gray-500 text-left text-xs whitespace-nowrap ml-2">minutes</span>
+                        <input id="minutes" formControlName="minutes" type="number" placeholder="" required max="59" min="0"
+                               [ngClass]="{'!border-[#f74350] !border-2': (manageCourseForm.get('hours')?.invalid && manageCourseForm.get('hours')!.touched) || (manageCourseForm.get('minutes')?.invalid && manageCourseForm.get('minutes')!.touched)}"
+                               class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+                      </div>
+                    </div>
+
+                    <div *ngIf="(manageCourseForm.get('hours')!.hasError('required') && manageCourseForm.get('hours')!.touched) || (manageCourseForm.get('minutes')!.hasError('required') && manageCourseForm.get('minutes')!.touched)"
+                         class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                      Ce champ est obligatoire.
+                    </div>
+                  </div>
+                </div>
+                <div class="px-2">
+                  <div class="space-x-3 flex flex-row items-center">
+                    <label for="apercu" class="font-semibold text-base text-gray-600 dark:text-night-100" >Aperçu</label>
+                    <button (click)="browserMedia('preview')" class="bg-card font-semibold text-base text-gray-600 dark:text-night-100 p-2 px-4 rounded-md border-b-[3px] border-primary-dark flex items-center" type="button">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-10 w-10 text-primary mr-2" fill="currentColor">
+                        <path d="M19.906 9c.382 0 .749.057 1.094.162V9a3 3 0 0 0-3-3h-3.879a.75.75 0 0 1-.53-.22L11.47 3.66A2.25 2.25 0 0 0 9.879 3H6a3 3 0 0 0-3 3v3.162A3.756 3.756 0 0 1 4.094 9h15.812ZM4.094 10.5a2.25 2.25 0 0 0-2.227 2.568l.857 6A2.25 2.25 0 0 0 4.951 21H19.05a2.25 2.25 0 0 0 2.227-1.932l.857-6a2.25 2.25 0 0 0-2.227-2.568H4.094Z" />
+                      </svg>
+                      <span class="max-md:hidden">Parcourir</span>
+                    </button>
+                    <div class="p-2.5 rounded-lg align-bottom bg-slate-300">
+                      <div class="m-0 border-2 rounded-lg border-dotted border-borderColor w-[148px] h-[148px] bg-background">
+                        <img *ngIf="selectedPreview" [src]="selectedPreview.secure_url" alt="preview formation" class="object-cover w-full rounded-lg" />
+                      </div>
+                    </div>
+                    <div *ngIf="submitted && !this.selectedPreview"
+                         class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                      Ce champ est obligatoire.
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+              <ng-template [ngSwitchCase]="'price'">
+                <div class="px-2 flex gap-2">
+                  <div class="my-6 space-y-2 flex flex-col w-full">
+                    <div class="my-6 space-x-2 flex flex-row items-center">
+                      <label for="paid" class="font-semibold text-base text-gray-600 dark:text-night-100" >Paid</label>
+                      <label class="inline-flex items-center cursor-pointer relative">
+                        <input type="checkbox" class="sr-only peer" formControlName="paid" [checked]="showPaid" id="paid" (change)="openPaid()">
+                        <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-[#21c65f]"></div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="px-2" *ngIf="showPaid">
+                  <div class="my-6 space-y-2 flex flex-col">
+                    <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="price">Prix</label>
+                    <div class="flex items-end">
+                      <input id="price" formControlName="price" type="number" placeholder="" required min="0"
+                             [ngClass]="{'!border-[#f74350] !border-2': manageCourseForm.get('price')?.invalid && manageCourseForm.get('price')!.touched}"
+                             class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+                    </div>
+
+                    <div *ngIf="manageCourseForm.get('price')!.hasError('required') && manageCourseForm.get('price')!.touched"
+                         class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                      Ce champ est obligatoire.
+                    </div>
+                  </div>
+                </div>
+                <div class="px-2" *ngIf="showPaid">
+                  <div class="my-6 space-y-2 flex flex-col">
+                    <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="discountPrice">Prix après remise</label>
+                    <div class="flex items-end">
+                      <input id="discountPrice" formControlName="discountPrice" type="number" placeholder="" min="0"
+                             class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+              <ng-template [ngSwitchCase]="'additional'">
+                <div class="px-2">
+                  <div class="my-6 space-y-2 flex flex-col">
+                    <label class="font-semibold text-base text-gray-600 dark:text-night-100">Requirements</label>
+                    <div class="" formArrayName='requirements' *ngFor="let valueForm of requirements.controls ;let i = index;" >
+                      <div class="space-x-2 flex flex-row" [formGroupName]="i">
+                        <div class="space-y-2 flex flex-col w-full">
+                          <input id="validation-name-{{i}}" formControlName="value" type="text" [ngClass]="{'!border-[#f74350] !border-2': valueForm.get('value')!.hasError('required') && valueForm.get('value')!.touched}" placeholder="" required class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor" >
+                          <div *ngIf="valueForm.get('value')!.hasError('required') && valueForm.get('value')!.touched"
+                               class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                            Ce champ est obligatoire.
+                          </div>
+                        </div>
+                        <div class="space-y-2 flex flex-col">
+                          <button (click)="gotoPage(valueForm.get('id').value, 'requirement', 'delete', i)"
+                                  matTooltip="Supprimer"
+                                  class="flex h-7 w-7 items-center text-red-600 justify-center rounded-md hover:bg-card hover:text-red-800">
+                            <svg-icon src="./assets/icons/heroicons/outline/trash.svg" [svgClass]="'h-4 w-4'"> </svg-icon>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div *ngIf="manageCourseForm.get('requirements')!.hasError('required') && manageCourseForm.get('requirements')!.touched"
+                         class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                      Il faut ajouter au minimum une exigence.
+                    </div>
+                  </div>
+                </div>
+                <div class="px-2">
+                  <div class="my-6 space-y-2 flex justify-end">
+                    <button (click)=addRequirement() type="button" class="bg-green-700 text-white p-2 px-4 rounded-md border-b-[3px] border-green-950 flex items-center">
+                      <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                      </svg>
+                      <span class="ml-2">Ajouter plus</span>
+                    </button>
+                  </div>
+                </div>
+                <div class="px-2">
+                  <div class="my-6 space-y-2 flex flex-col">
+                    <label class="font-semibold text-base text-gray-600 dark:text-night-100">FAQs</label>
+                    <div class="space-y-2 rounded-xl border border-muted/20 divide-y" formArrayName='faqs' *ngFor="let valueForm of faqs.controls ;let i = index;" >
+                      <div class="space-x-2 flex flex-row w-full" [formGroupName]="i">
+                        <div class="flex flex-col w-full">
+                          <div class="flex flex-col w-full">
+                            <input id="validation-name-{{i}}" formControlName="title" type="text" [ngClass]="{'!border-[#f74350] !border-2': valueForm.get('title')!.hasError('required') && valueForm.get('title')!.touched}" placeholder="Titre" required class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor" >
+                            <div *ngIf="valueForm.get('title')!.hasError('required') && valueForm.get('title')!.touched"
+                                 class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                              Ce champ est obligatoire.
+                            </div>
+
+                          </div>
+                          <div class="flex flex-col w-full">
+                            <textarea id="validation-content-{{i}}" rows="4" formControlName="content" type="text" placeholder="Contenu" required [ngClass]="{'!border-[#f74350] !border-2': valueForm.get('content')!.hasError('required') && valueForm.get('content')!.touched}" class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor" > </textarea>
+
+                            <div *ngIf="valueForm.get('content')!.hasError('required') && valueForm.get('content')!.touched"
+                                 class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                              Ce champ est obligatoire.
+                            </div>
+
+                          </div>
+                        </div>
+                        <div class="space-y-2 flex flex-col">
+                          <button (click)="gotoPage(valueForm.get('id').value, 'faq', 'delete', i)"
+                                  matTooltip="Supprimer"
+                                  class="flex h-7 w-7 items-center text-red-600 justify-center rounded-md hover:bg-card hover:text-red-800">
+                            <svg-icon src="./assets/icons/heroicons/outline/trash.svg" [svgClass]="'h-4 w-4'"> </svg-icon>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div *ngIf="manageCourseForm.get('faqs')!.hasError('required') && manageCourseForm.get('faqs')!.touched"
+                         class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                      Il faut ajouter au minimum une FAQ.
+                    </div>
+                  </div>
+                </div>
+                <div class="px-2">
+                  <div class="my-6 space-y-2 flex justify-end">
+                    <button (click)=addFaq() type="button" class="bg-green-700 text-white p-2 px-4 rounded-md border-b-[3px] border-green-950 flex items-center">
+                      <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                      </svg>
+                      <span class="ml-2">Ajouter plus</span>
+                    </button>
+                  </div>
+                </div>
+                <div class="px-2">
+                  <div class="my-6 space-y-2 flex flex-col">
+                    <label class="font-semibold text-base text-gray-600 dark:text-night-100">Includes</label>
+                    <div class="space-y-2 rounded-xl border border-muted/20 divide-y" formArrayName='includes' *ngFor="let valueForm of includes.controls ;let i = index;" >
+                      <div class="space-x-2 flex flex-row w-full" [formGroupName]="i">
+                        <div class="space-x-2 flex flex-row w-full">
+                          <div class="flex flex-col w-full">
+
+                            <!--<input id="validation-name-{{i}}" formControlName="icon" type="text" [ngClass]="{'!border-[#f74350] !border-2': valueForm.get('icon')!.hasError('required') && valueForm.get('icon')!.touched}" placeholder="Icon" required class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor" > -->
+
+                            <div class="flex flex-col w-full">
+                              <div class="flex relative">
+                                <button id="icons-button-{{i}}" (click)="toggleIcons(i)" class="icons-button flex-shrink-0 inline-flex items-center gap-x-2 py-2.5 px-4 text-sm font-medium text-center bg-inputColor text-subtitleColor p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor" type="button">
+                                  <svg-icon *ngIf="selectedIcons[i]" [src]="getIconPath(selectedIcons[i])" [svgClass]="'h-5 w-5'"></svg-icon>
+                                  <span *ngIf="!selectedIcons[i]">Icône</span>
+                                  <svg-icon src="assets/icons/heroicons/outline/chevron-down.svg" [svgClass]="'h-4 w-4'"></svg-icon>
+                                </button>
+
+                                <div *ngIf="showIconsIndex === i" class="icon-selector absolute top-full z-10 w-full mt-2 bg-white divide-y divide-gray-100 shadow dark:bg-gray-700">
+                                  <div class="popover-body w-a mx-auto pt-5 pb-3">
+                                    <div class="flex justify-between items-center mb-3 px-4">
+                                      <button class="btn btn-arrow btn-previous btn-primary" [disabled]="currentPage === 1" (click)="changePage(-1)">
+                                        <svg-icon src="assets/icons/heroicons/outline/chevron-left.svg" [svgClass]="'h-6 w-6'"></svg-icon>
+                                      </button>
+                                      <span class="page-count">{{ currentPage }} / {{ totalPages }}</span>
+                                      <button class="btn btn-arrow btn-next btn-primary" [disabled]="currentPage === totalPages" (click)="changePage(1)">
+                                        <svg-icon src="assets/icons/heroicons/outline/chevron-right.svg" [svgClass]="'h-6 w-6'"></svg-icon>
+                                      </button>
+                                    </div>
+                                    <div class="px-4">
+                                      <input type="text" class="form-control search-control w-full p-2 mb-3" placeholder="Rechercher une icône" [(ngModel)]="searchQuery" [ngModelOptions]="{standalone: true}" (input)="filterIcons()">
+                                    </div>
+                                    <div class="grid grid-cols-5 text-center gap-2">
+                                      <ng-container *ngFor="let row of cachedPaginatedIcons">
+                                        <div *ngFor="let icon of row">
+                                          <button class="btn btn-icon text-fontColor" (click)="selectIcon(icon, i)" [title]="icon">
+                                            <svg-icon [src]="getIconPath(icon)" [svgClass]="'h-6 w-6'"></svg-icon>
+                                          </button>
+                                        </div>
+                                      </ng-container>
+                                    </div>
+                                    <div class="text-center mt-3">
+                                      <span class="icons-count">{{ displayedIcons.length }} icônes trouvées</span>
+                                    </div>
+                                  </div>
+                                </div>
+                                <input [value]="selectedIcons[i]" [placeholder]="selectedIcons[i] ? getIconName(selectedIcons[i]) : 'Icône'"  readonly type="text" formControlName="icon" [ngClass]="{'!border-[#f74350] !border-2': valueForm.get('icon')!.hasError('required') && valueForm.get('icon')!.touched}" class="bg-transparent text-subtitleColor p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor" />                                      </div>
+                              <div *ngIf="valueForm.get('icon')!.hasError('required') && valueForm.get('icon')!.touched" class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                                Ce champ est obligatoire.
+                              </div>
+                            </div>
+
+                          </div>
+                          <div class="flex flex-col w-full">
+                            <input id="validation-content-{{i}}" formControlName="text" type="text" placeholder="Texte" required [ngClass]="{'!border-[#f74350] !border-2': valueForm.get('text')!.hasError('required') && valueForm.get('text')!.touched}" class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor" >
+
+                            <div *ngIf="valueForm.get('text')!.hasError('required') && valueForm.get('text')!.touched"
+                                 class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                              Ce champ est obligatoire.
+                            </div>
+
+                          </div>
+                        </div>
+                        <div class="space-y-2 flex flex-col">
+                          <button (click)="gotoPage(valueForm.get('id').value, 'include', 'delete', i)"
+                                  matTooltip="Supprimer"
+                                  class="flex h-7 w-7 items-center text-red-600 justify-center rounded-md hover:bg-card hover:text-red-800">
+                            <svg-icon src="./assets/icons/heroicons/outline/trash.svg" [svgClass]="'h-4 w-4'"> </svg-icon>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div *ngIf="manageCourseForm.get('includes')!.hasError('required') && manageCourseForm.get('includes')!.touched"
+                         class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                      Il faut ajouter au minimum une include.
+                    </div>
+                  </div>
+                </div>
+                <div class="px-2">
+                  <div class="my-6 space-y-2 flex justify-end">
+                    <button (click)=addInclude() type="button" class="bg-green-700 text-white p-2 px-4 rounded-md border-b-[3px] border-green-950 flex items-center">
+                      <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                      </svg>
+                      <span class="ml-2">Ajouter plus</span>
+                    </button>
+                  </div>
+                </div>
+                <div class="px-2">
+                  <div class="my-6 space-y-2 flex flex-col">
+                    <label class="font-semibold text-base text-gray-600 dark:text-night-100">Objectifs</label>
+                    <div class="space-y-2 rounded-xl border border-muted/20 divide-y" formArrayName='objectives' *ngFor="let valueForm of objectives.controls ;let i = index;" >
+                      <div class="space-x-2 flex flex-row w-full" [formGroupName]="i">
+                        <div class="flex flex-col w-full">
+                          <div class="flex flex-col w-full">
+                            <textarea id="validation-content-{{i}}" rows="4" formControlName="value" type="text" placeholder="Contenu" required [ngClass]="{'!border-[#f74350] !border-2': valueForm.get('value')!.hasError('required') && valueForm.get('value')!.touched}" class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor" > </textarea>
+
+                            <div *ngIf="valueForm.get('value')!.hasError('required') && valueForm.get('value')!.touched"
+                                 class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                              Ce champ est obligatoire.
+                            </div>
+
+                          </div>
+                        </div>
+                        <div class="space-y-2 flex flex-col">
+                          <button (click)="gotoPage(valueForm.get('id').value, 'objective', 'delete', i)"
+                                  matTooltip="Supprimer"
+                                  class="flex h-7 w-7 items-center text-red-600 justify-center rounded-md hover:bg-card hover:text-red-800">
+                            <svg-icon src="./assets/icons/heroicons/outline/trash.svg" [svgClass]="'h-4 w-4'"> </svg-icon>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div *ngIf="manageCourseForm.get('objectives')!.hasError('required') && manageCourseForm.get('objectives')!.touched"
+                         class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                      Il faut ajouter au minimum un objectif.
+                    </div>
+                  </div>
+                </div>
+                <div class="px-2">
+                  <div class="my-6 space-y-2 flex justify-end">
+                    <button (click)=addObjective() type="button" class="bg-green-700 text-white p-2 px-4 rounded-md border-b-[3px] border-green-950 flex items-center">
+                      <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                      </svg>
+                      <span class="ml-2">Ajouter plus</span>
+                    </button>
+                  </div>
+                </div>
+              </ng-template>
+              <ng-template [ngSwitchCase]="'providers'">
+                <div class="px-2">
+                  <div class="my-6 space-y-2 flex flex-col">
+                    <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="provider">Fournisseurs</label>
+
+                    <mat-select id="provider" formControlName="provider" (selectionChange)="changeProvider($event)"
+                                [ngClass]="{'!border-[#f74350] !border-2': manageCourseForm.get('provider')?.invalid && manageCourseForm.get('provider')!.touched}"
+                                class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+                      <mat-option *ngFor="let provider of providers" value="{{ provider.id }}">{{ provider.name }}</mat-option>
+                    </mat-select>
+
+                    <div *ngIf="manageCourseForm.get('provider')!.hasError('required') && manageCourseForm.get('provider')!.touched"
+                         class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                      Ce champ est obligatoire.
+                    </div>
+                  </div>
+                </div>
+                <div class="px-2">
+                  <div class="my-6 space-y-2 flex flex-col">
+                    <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="provider">Équipe</label>
+
+                    <mat-select id="team" formControlName="team" multiple
+                                [ngClass]="{'!border-[#f74350] !border-2': manageCourseForm.get('team')?.invalid && manageCourseForm.get('team')!.touched}"
+                                class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+                      <mat-option *ngFor="let trainer of selectedProvider?.trainers" value="{{ trainer.id }}">{{ trainer.name }}</mat-option>
+                    </mat-select>
+
+                    <div *ngIf="manageCourseForm.get('team')!.hasError('required') && manageCourseForm.get('team')!.touched"
+                         class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                      Ce champ est obligatoire.
+                    </div>
+                  </div>
+                </div>
+                <div class="px-2">
+                  <div class="my-6 space-y-2 flex flex-col">
+                    <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="provider">Rôles</label>
+
+                    <mat-select id="roles" formControlName="roles" multiple
+                                [ngClass]="{'!border-[#f74350] !border-2': manageCourseForm.get('roles')?.invalid && manageCourseForm.get('roles')!.touched}"
+                                class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+                      <mat-option value="PHARMACIST_HOLDER">Pharmacien Titulaire</mat-option>
+                      <mat-option value="PHARMACIST">Pharmacien</mat-option>
+                      <mat-option value="PREPARER">Préparateur en pharmacie</mat-option>
+                      <mat-option value="STUDENT">Parapharmacie</mat-option>
+                    </mat-select>
+
+                    <div *ngIf="manageCourseForm.get('roles')!.hasError('required') && manageCourseForm.get('roles')!.touched"
+                         class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                      Ce champ est obligatoire.
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+              <ng-template [ngSwitchCase]="'certificates'">
+                <div *ngIf="submitted && !selectedCertificate"
+                     class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                  Ce champ est obligatoire.
+                </div>
+                <app-table-course-action class="mb-10" (changeStatus)="onChangeStatus($event)" (changeText)="onChangeText($event)" [selectedPrice]="false" [selectedCS]="false"></app-table-course-action>
+                <div class="flex min-w-full flex-wrap">
+                  @for (certificate of certificates; track certificate) {
+                    <div class="p-4 cursor-pointer" [ngClass]="{'border-green-600 border-2 rounded-lg': selectedCertificate && certificate.id == selectedCertificate.id}" (click)="onChangeSelectedCertificate(certificate)">
+                      <div class="h-full max-w-52 border-2 border-gray-200 border-opacity-60 rounded-lg overflow-hidden">
+                        <img class="lg:h-36 md:h-24 w-full object-cover object-center" src="{{ certificate.background?.secure_url }}" alt="blog cover"/>
+                        <div class="p-4">
+                          <h1 class="title-font text-lg font-medium text-gray-900">{{ certificate.name }}</h1>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                  @if (!certificates || !certificates.length) {
+                    <h2 class="font-semibold text-foreground">Aucune certificat trouvé</h2>
+                  }
+                </div>
+                <app-table-course-footer class="mt-10" (changeItemsPerPage)="onChangeItemsPerPage($event)"
+                                         [currentPage]="currentPageCertificate"
+                                         [itemsPerPage]="itemsPerPageCertificate"
+                                         [totalItems]="allCertificatesCount"
+                                         (pageChanged)="onPageChange($event)"></app-table-course-footer>
+              </ng-template>
+              <ng-template [ngSwitchCase]="'coming'">
+                <div class="px-2 flex gap-2">
+                  <div class="my-6 space-y-2 flex flex-col w-full">
+                    <div class="my-6 space-x-2 flex flex-row items-center">
+                      <label for="comingSoon" class="font-semibold text-base text-gray-600 dark:text-night-100" >Activer le mode "Coming Soon"</label>
+                      <label class="inline-flex items-center cursor-pointer relative">
+                        <input type="checkbox" class="sr-only peer" formControlName="comingSoon" [checked]="showComingSoon" id="coming_soon" (change)="openComingSoon()">
+                        <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-[#21c65f]"></div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="px-2" *ngIf="showComingSoon">
+                  <div class="my-6 space-y-2 flex flex-col">
+                    <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="price">Message</label>
+                    <div class="flex items-end">
+                              <textarea id="messageComingSoon" formControlName="messageComingSoon" type="text" placeholder="" required
+                                        [ngClass]="{'!border-[#f74350] !border-2': manageCourseForm.get('messageComingSoon')?.invalid && manageCourseForm.get('messageComingSoon')!.touched}"
+                                        class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor"></textarea>
+                    </div>
+
+                    <div *ngIf="manageCourseForm.get('messageComingSoon')!.hasError('required') && manageCourseForm.get('messageComingSoon')!.touched"
+                         class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                      Ce champ est obligatoire.
+                    </div>
+                  </div>
+                </div>
+                <div class="px-2" *ngIf="showComingSoon">
+                  <div class="my-6 space-y-2 flex flex-col">
+                    <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="endTimeComingSoon">Date du fin</label>
+                    <div class="flex items-end">
+                      <input id="endTimeComingSoon" formControlName="endTimeComingSoon" type="datetime-local" placeholder="" required
+                             [ngClass]="{'!border-[#f74350] !border-2': manageCourseForm.get('endTimeComingSoon')?.invalid && manageCourseForm.get('endTimeComingSoon')!.touched}"
+                             class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+                    </div>
+
+                    <div *ngIf="manageCourseForm.get('endTimeComingSoon')!.hasError('required') && manageCourseForm.get('endTimeComingSoon')!.touched"
+                         class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                      Ce champ est obligatoire.
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+              <ng-template [ngSwitchCase]="'rating'">
+                @if (averageRating) {
+                  <div class="w-full flex flex-col lg:flex-row items-start lg:items-center space-y-4 lg:space-y-0">
+                    <div class="w-full">
+                      <div class="my-8 space-y-6">
+                        <h1 class="font-semibold text-2xl text-[#19272A]">Avis et notes des clients</h1>
+                        <!-- Star Rating -->
+                        <div class="flex items-center space-x-4 mb-4">
+                          <div class="flex space-x-1">
+                            <svg *ngFor="let star of [1, 2, 3, 4, 5]; let i = index"
+                                 xmlns="http://www.w3.org/2000/svg" [attr.fill]="i < averageRating ? '#FCD34D' : 'none'"
+                                 class="w-6 h-6" viewBox="0 0 24 24" stroke="#FCD34D" stroke-width="2">
+                              <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 2l2.94 5.97L22 9.27l-4.81 4.69 1.14 6.62L12 17.77l-6.33 3.82 1.14-6.62L2 9.27l7.06-1.3L12 2z" />
+                            </svg>
+                          </div>
+                          <p class="text-xs text-[#64748B]">{{ averageRating }} sur 5</p>
+                        </div>
+                        <p class="text-sm text-[#476F77]">Basé sur {{ allRatingsCount }} avis</p>
+                      </div>
+                    </div>
+                    <div class="w-full">
+                      <div class="w-full flex items-center space-x-3">
+                        <p class="text-primary text-sm whitespace-nowrap">5 étoiles
+                        </p>
+                        <div class="w-full bg-primary-dark rounded-full h-1.5 mb-2 mt-2 !ml-0">
+                          <div class="bg-primary h-1.5 rounded-full" [style.width]="90 + '%'"></div>
+                        </div>
+                        <p class="text-primary text-sm w-1/6 text-right">{{ fiveStar.count }}</p>
+                      </div>
+                      <div class="w-full flex items-center space-x-3">
+                        <p class="text-primary text-sm whitespace-nowrap">4 étoiles
+                        </p>
+                        <div class="w-full bg-primary-dark rounded-full h-1.5 mb-2 mt-2 !ml-0">
+                          <div class="bg-primary h-1.5 rounded-full" [style.width]="30 + '%'"></div>
+                        </div>
+                        <p class="text-primary text-sm w-1/6 text-right">{{ fourStar.count }}</p>
+                      </div>
+                      <div class="w-full flex items-center space-x-3">
+                        <p class="text-primary text-sm whitespace-nowrap">3 étoiles
+                        </p>
+                        <div class="w-full bg-primary-dark rounded-full h-1.5 mb-2 mt-2 !ml-0">
+                          <div class="bg-primary h-1.5 rounded-full" [style.width]="20 + '%'"></div>
+                        </div>
+                        <p class="text-primary text-sm w-1/6 text-right">{{ threeStar.count }}</p>
+                      </div>
+                      <div class="w-full flex items-center space-x-3">
+                        <p class="text-primary text-sm whitespace-nowrap">2 étoiles
+                        </p>
+                        <div class="w-full bg-primary-dark rounded-full h-1.5 mb-2 mt-2 !ml-0">
+                          <div class="bg-primary h-1.5 rounded-full" [style.width]="30 + '%'"></div>
+                        </div>
+                        <p class="text-primary text-sm w-1/6 text-right">{{ twoStar.count }}</p>
+                      </div>
+                      <div class="w-full flex items-center space-x-3">
+                        <p class="text-primary text-sm whitespace-nowrap">1 étoile
+                        </p>
+                        <div class="w-full bg-primary-dark rounded-full h-1.5 mb-2 mt-2 !ml-0">
+                          <div class="bg-primary h-1.5 rounded-full" [style.width]="30 + '%'"></div>
+                        </div>
+                        <p class="text-primary text-sm w-1/6 text-right">{{ oneStar.count }}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <hr class="border-primary my-8 lg:mt-0">
+                  @for (rating of ratings; track rating) {
+                    <div class="w-full flex flex-col sm:flex-row items-start mb-8">
+                      <div class="w-1/2 space-y-5 relative">
+                      <!-- Star Rating -->
+                      <div class="flex items-center space-x-1 mb-4">
+                        <div class="flex space-x-1">
+                          <svg *ngFor="let star of [1, 2, 3, 4, 5]; let i = index"
+                               xmlns="http://www.w3.org/2000/svg" [attr.fill]="i < rating.rating ? '#FCD34D' : 'none'"
+                               class="w-6 h-6" viewBox="0 0 24 24" stroke="#FCD34D" stroke-width="2">
+
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  d="M12 2l2.94 5.97L22 9.27l-4.81 4.69 1.14 6.62L12 17.77l-6.33 3.82 1.14-6.62L2 9.27l7.06-1.3L12 2z" />
+                          </svg>
+                        </div>
+                      </div>
+
+                      <!-- User Info -->
+                      <div class="flex items-center cursor-pointer" (click)="goToUserDetails(rating.user?.id)">
+                        <img *ngIf="rating?.user?.img_link" class="w-10 h-10 rounded-full mr-4" [src]="rating.user?.img_link"
+                             alt="User profile picture" />
+                        <img *ngIf="!rating?.user?.img_link" class="w-10 h-10 rounded-full object-contain mr-4" src="assets/images/default-img.png" />
+                        <div>
+                          <p class="text-sm font-semibold text[#19272A]">{{ rating.user?.firstName }} {{ rating.user?.lastName }}</p>
+                        </div>
+                      </div>
+
+                      <!-- Date -->
+                      <p class="text-xs text-[#64748B] my-4">{{ rating.createdAt | date:"medium" }}</p>
+                    </div>
+                      <div class="w-full space-y-6 mt-4 sm:mt-0">
+                      <!-- Review Content -->
+                      <p class="text-sm text-[#19272A] mb-4">{{ rating.comment }}
+                      </p>
+                    </div>
+                    </div>
+                  }
+                } @else {
+                  <div class="w-full flex items-center justify-center text-center text-xl text-primary">
+                    Aucun avis n'a été publié pour cette formation.
+                  </div>
+                }
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flex min-w-full flex-wrap mt-4">
+        <div class="flex grow flex-col content-start overflow-hidden rounded-xl border border-muted/20 bg-background p-2">
+          <div id="lesson-content" class="scrollbar-thumb-rounded scrollbar-track-rounded grow overflow-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted">
+            <div class="mx-auto group rounded-xl border border-muted/20 divide-y">
+              <details formArrayName='sections' *ngFor="let valueForm of sections.controls ;let i = index;" >
+                <!-- should not use pr-11 in span, maybe use flex or some gap end property-->
+                <summary class="m-5 hover:text-hover purple group-open:text-dark purple flex cursor-pointer list-none items-center justify-evenly gap-4 font-semibold  md:text-[1.2rem] md:tracking-[-0.038rem]" >
+                  <div class="flex items-center gap-2 w-full" [formGroupName]="i">
+                    <svg-icon
+                      [svgClass]="'h-5 w-5'"
+                      src="assets/icons/heroicons/outline/queue-list.svg"
+                    ></svg-icon>
+                    <div class="flex flex-col w-full">
+                      <input id="validation-title-{{i}}" formControlName="title" type="text" [ngClass]="{'!border-[#f74350] !border-2': valueForm.get('title')!.hasError('required') && valueForm.get('title')!.touched}" placeholder="Titre section" required class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-0 focus:outline-borderColor" >
+                      <div *ngIf="valueForm.get('title')!.hasError('required') && valueForm.get('title')!.touched"
+                           class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                        Ce champ est obligatoire.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2" [formGroupName]="i">
+                    <button (click)="removeSection(i)" *ngIf="type =='add' || !valueForm.get('id').value"
+                            matTooltip="Supprimer"
+                            class="flex h-7 w-7 items-center text-red-600 justify-center rounded-md hover:bg-card hover:text-red-800">
+                      <svg-icon src="./assets/icons/heroicons/outline/trash.svg" [svgClass]="'h-4 w-4'"> </svg-icon>
+                    </button>
+                    <button *ngIf="type =='edit'"
+                            (click)="gotoPage(valueForm.get('id').value, 'section', 'edit')"
+                            matTooltip="Modifier"
+                            class="flex h-7 w-7 items-center text-blue-600 justify-center rounded-md hover:bg-card hover:text-blue-800">
+                      <svg-icon src="./assets/icons/heroicons/outline/pencil-square.svg" [svgClass]="'h-4 w-4'"> </svg-icon>
+                    </button>
+                    <svg-icon
+                      [svgClass]="'h-5 w-5'"
+                      class="group-open:hidden"
+                      src="assets/icons/heroicons/outline/chevron-down.svg"
+                    ></svg-icon>
+                    <svg-icon
+                      [svgClass]="'h-5 w-5'"
+                      class="hidden group-open:inline"
+                      src="assets/icons/heroicons/outline/chevron-up.svg"
+                    ></svg-icon>
+                  </div>
+                </summary>
+                <div [formGroupName]="i">
+                  <div class="m-6 mb-0">
+                    <textarea id="validation-details-{{i}}" formControlName="details" type="text" placeholder="Description de la section" class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-0" > </textarea>
+                  </div>
+                  <div *ngIf="valueForm.get('lessons')!.hasError('required') && valueForm.get('lessons')!.touched"
+                       class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                    Il faut ajouter au minimum une leçon.
+                  </div>
+                  <div class="mx-6 mb-6 gap-y-0.5" formArrayName='lessons' *ngFor="let lessonForm of getLessonBySection(i).controls ;let j = index;">
+                    <div class="flex items-center gap-2 w-full" [formGroupName]="j">
+                      <svg-icon
+                        [svgClass]="'h-5 w-5'"
+                        src="assets/icons/heroicons/outline/book-open.svg"
+                      ></svg-icon>
+                      <div class="flex flex-col w-full">
+                        <input id="validation-title-{{j}}" formControlName="title" type="text" [ngClass]="{'!border-[#f74350] !border-2': lessonForm.get('title')!.hasError('required') && lessonForm.get('title')!.touched}" placeholder="Titre leçon" required class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-0 focus:outline-borderColor" >
+                        <div *ngIf="lessonForm.get('title')!.hasError('required') && lessonForm.get('title')!.touched"
+                             class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                          Ce champ est obligatoire.
+                        </div>
+                      </div>
+                      <button (click)="gotoPage(lessonForm.get('id').value, 'lesson', 'delete', i, j)"
+                              matTooltip="Supprimer"
+                              class="flex h-7 w-7 items-center text-red-600 justify-center rounded-md hover:bg-card hover:text-red-800">
+                        <svg-icon src="./assets/icons/heroicons/outline/trash.svg" [svgClass]="'h-4 w-4'"> </svg-icon>
+                      </button>
+                      <button *ngIf="type =='edit'"
+                              (click)="gotoPage(lessonForm.get('id').value, 'lesson', 'edit')"
+                              matTooltip="Modifier"
+                              class="flex h-7 w-7 items-center text-blue-600 justify-center rounded-md hover:bg-card hover:text-blue-800">
+                        <svg-icon src="./assets/icons/heroicons/outline/pencil-square.svg" [svgClass]="'h-4 w-4'"> </svg-icon>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="m-6 mt-0" [formGroupName]="i" >
+                  <button (click)="addLesson(i)" class="flex items-center w-full text-left border border-primary text-primary rounded-md p-3">
+                    <svg-icon src="assets/icons/heroicons/outline/plus.svg" [svgClass]="'h-5 w-5'"> </svg-icon>
+                    Créer une nouvelle leçon
+                  </button>
+                </div>
+                <div [formGroupName]="i" class="m-6 mt-0">
+                  <div class="flex items-center gap-2 w-full">
+                    <svg-icon
+                      [svgClass]="'h-5 w-5'"
+                      src="assets/icons/heroicons/outline/numbered-list.svg"
+                    ></svg-icon>
+                    <input id="validation-quiz-{{i}}" formControlName="quiz" type="text" [ngClass]="{'!border-[#f74350] !border-2': valueForm.get('quiz')!.hasError('required') && valueForm.get('quiz')!.touched}" placeholder="Quiz de la section" required class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-0 focus:outline-borderColor" >
+                    <button *ngIf="type =='edit'"
+                            (click)="gotoPage(valueForm.get('quizId').value, 'quiz', 'edit')"
+                            matTooltip="Modifier"
+                            class="flex h-7 w-7 items-center text-blue-600 justify-center rounded-md hover:bg-card hover:text-blue-800">
+                      <svg-icon src="./assets/icons/heroicons/outline/pencil-square.svg" [svgClass]="'h-4 w-4'"> </svg-icon>
+                    </button>
+                    <button *ngIf="type =='edit'"
+                            (click)="gotoPage(valueForm.get('quizId').value, 'quiz', 'view')"
+                            matTooltip="Voir"
+                            class="flex h-7 w-7 items-center text-green-600 justify-center rounded-md hover:bg-card hover:text-green-800">
+                      <svg-icon src="./assets/icons/heroicons/outline/eye.svg" [svgClass]="'h-4 w-4'"> </svg-icon>
+                    </button>
+                  </div>
+                  <div *ngIf="valueForm.get('quiz')!.hasError('required') && valueForm.get('quiz')!.touched"
+                       class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                    Ce champ est obligatoire.
+                  </div>
+                </div>
+              </details>
+              <div *ngIf="manageCourseForm.get('sections')!.hasError('required') && manageCourseForm.get('sections')!.touched"
+                   class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                Il faut ajouter au minimum une section.
+              </div>
+              <button (click)="addSection()" class="flex items-center w-full text-left p-5 bg-primary text-white rounded-b-md border-primary-dark">
+                <svg-icon src="assets/icons/heroicons/outline/plus.svg" [svgClass]="'h-5 w-5'"> </svg-icon>
+                Créer une nouvelle section
+              </button>
+            </div>
+          </div>
+          <div class="flex items-center justify-end p-6 rounded-b space-x-2">
+            <button class="font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:translate-y-px disabled:pointer-events-none disabled:opacity-50 bg-transparent text-primary hover:bg-primary/10 focus-visible:ring-primary p-2 px-4 rounded-lg" type="button" (click)="bachToList()">
+              Annuler</button>
+            <button (click)="manageCourse()" [disabled]="isLoading"
+                    class="bg-primary text-white p-2 px-4 rounded-md border-b-[3px] border-primary-dark flex items-center" type="button">
+              <svg *ngIf="isLoading" class="-ml-1 mr-3 h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg"
+                   fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                </path>
+              </svg>
+              Enregistrer</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  }
+</div>

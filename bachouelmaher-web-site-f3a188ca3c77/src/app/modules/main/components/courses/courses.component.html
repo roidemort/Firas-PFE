@@ -1,0 +1,30 @@
+<section class="w-full relative h-[90vh] pb-8 px-2 overflow-y-scroll">
+    <div *ngIf="!isLoading">
+        <app-card-carousel [inProgress]="true" [cards]="courses"></app-card-carousel>
+    </div>
+    <div *ngIf="!isLoading">
+        <div class="w-full sm:-mt-4 p-4 sm:px-8 sm:pt-12">
+            <h1 class="font-semibold text-2xl text-titleColor">Nouvel arrivage</h1>
+        </div>
+        <!-- <ng-container *ngIf="courses && courses.length > 0 else noCourses"> -->
+        <app-card-carousel [cards]="courses"></app-card-carousel>
+        <!-- </ng-container>
+        <ng-template #noCourses>
+            <p class="text-[#476F77] pl-8 text-xl">Aucun cours trouvé</p>
+        </ng-template> -->
+    </div>
+
+    <div class="pb-4" *ngIf="!isLoading">
+        <div class="w-full p-4 sm:px-8 sm:pt-8">
+            <h1 class="font-semibold text-2xl text-titleColor">Capsules</h1>
+        </div>
+        <!-- <ng-container *ngIf="capsules.length > 0 else noCapsules"> -->
+        <app-card-shorts [cards]="capsules"></app-card-shorts>
+        <!-- </ng-container>
+        <ng-template #noCapsules>
+            <p class="text-[#476F77] pl-8 text-xl">Aucune capsule trouvée</p>
+        </ng-template> -->
+    </div>
+</section>
+
+<app-loader-main *ngIf="isLoading"></app-loader-main>

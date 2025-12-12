@@ -1,0 +1,172 @@
+
+<div class="mx-auto px-4 py-4 sm:px-8">
+  <div class="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4 p-2">
+    <div class="relative flex flex-col bg-clip-border rounded-xl bg-background text-gray-700 shadow-md">
+      <div class="bg-clip-border mx-4 rounded-xl overflow-hidden bg-gradient-to-tr from-green-600 to-green-400 text-white shadow-green-500/40 shadow-lg absolute -mt-4 grid h-16 w-16 place-items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="w-6 h-6 text-white">
+          <path d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z"></path>
+        </svg>
+      </div>
+      <div class="p-4 text-right">
+        <p class="block antialiased font-sans text-sm leading-normal font-normal text-foreground">Membres</p>
+        <h4 class="block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-foreground">{{dashboardDetails?.users?.countAllUsers}}</h4>
+      </div>
+      <div class="border-t border-blue-gray-50 p-4">
+        <p class="block antialiased font-sans text-base leading-relaxed font-normal text-foreground" *ngIf="dashboardDetails">
+          <strong [ngClass]="dashboardDetails?.users?.percentageUsers < 0 ? 'text-red-500' : 'text-green-500'">{{dashboardDetails?.users?.percentageUsers}}%</strong>&nbsp;que le mois dernier
+        </p>
+      </div>
+    </div>
+    <div class="relative flex flex-col bg-clip-border rounded-xl bg-background text-gray-700 shadow-md">
+      <div class="bg-clip-border mx-4 rounded-xl overflow-hidden bg-gradient-to-tr from-pink-600 to-pink-400 text-white shadow-pink-500/40 shadow-lg absolute -mt-4 grid h-16 w-16 place-items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+          <path d="M5.223 2.25c-.497 0-.974.198-1.325.55l-1.3 1.298A3.75 3.75 0 0 0 7.5 9.75c.627.47 1.406.75 2.25.75.844 0 1.624-.28 2.25-.75.626.47 1.406.75 2.25.75.844 0 1.623-.28 2.25-.75a3.75 3.75 0 0 0 4.902-5.652l-1.3-1.299a1.875 1.875 0 0 0-1.325-.549H5.223Z" />
+          <path fill-rule="evenodd" d="M3 20.25v-8.755c1.42.674 3.08.673 4.5 0A5.234 5.234 0 0 0 9.75 12c.804 0 1.568-.182 2.25-.506a5.234 5.234 0 0 0 2.25.506c.804 0 1.567-.182 2.25-.506 1.42.674 3.08.675 4.5.001v8.755h.75a.75.75 0 0 1 0 1.5H2.25a.75.75 0 0 1 0-1.5H3Zm3-6a.75.75 0 0 1 .75-.75h3a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-.75.75h-3a.75.75 0 0 1-.75-.75v-3Zm8.25-.75a.75.75 0 0 0-.75.75v5.25c0 .414.336.75.75.75h3a.75.75 0 0 0 .75-.75v-5.25a.75.75 0 0 0-.75-.75h-3Z" clip-rule="evenodd" />
+        </svg>
+      </div>
+      <div class="p-4 text-right">
+        <p class="block antialiased font-sans text-sm leading-normal font-normal text-foreground">Pharmacies</p>
+        <h4 class="block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-foreground">{{dashboardDetails?.pharmacies?.countAllPharmacies}}</h4>
+      </div>
+      <div class="border-t border-blue-gray-50 p-4">
+        <p class="block antialiased font-sans text-base leading-relaxed font-normal text-foreground" *ngIf="dashboardDetails">
+          <strong [ngClass]="dashboardDetails?.pharmacies?.percentagePharmacies < 0 ? 'text-red-500' : 'text-green-500'">{{dashboardDetails?.pharmacies?.percentagePharmacies}}%</strong>&nbsp;que le mois dernier
+        </p>
+      </div>
+    </div>
+    <div class="relative flex flex-col bg-clip-border rounded-xl bg-background text-gray-700 shadow-md">
+      <div class="bg-clip-border mx-4 rounded-xl overflow-hidden bg-gradient-to-tr from-orange-600 to-orange-400 text-white shadow-orange-500/40 shadow-lg absolute -mt-4 grid h-16 w-16 place-items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="w-6 h-6 text-white">
+          <path d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.036-.84-1.875-1.875-1.875h-.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 01-1.875-1.875V8.625zM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 013 19.875v-6.75z"></path>
+        </svg>
+      </div>
+      <div class="p-4 text-right">
+        <p class="block antialiased font-sans text-sm leading-normal font-normal text-foreground">Ventes</p>
+        <h4 class="block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-foreground">{{dashboardDetails?.subscriptions?.countAllSubscriptions}}</h4>
+      </div>
+      <div class="border-t border-blue-gray-50 p-4">
+        <p class="block antialiased font-sans text-base leading-relaxed font-normal text-foreground" *ngIf="dashboardDetails">
+          <strong [ngClass]="dashboardDetails?.subscriptions?.percentageSubscriptions < 0 ? 'text-red-500' : 'text-green-500'">{{dashboardDetails?.subscriptions?.percentageSubscriptions}}%</strong>&nbsp;que le mois dernier
+        </p>
+      </div>
+    </div>
+    <div class="relative flex flex-col bg-clip-border rounded-xl bg-background text-gray-700 shadow-md">
+        <div class="bg-clip-border mx-4 rounded-xl overflow-hidden bg-gradient-to-tr from-blue-600 to-blue-400 text-white shadow-blue-500/40 shadow-lg absolute -mt-4 grid h-16 w-16 place-items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+            <path fill-rule="evenodd" d="M2.25 5.25a3 3 0 0 1 3-3h13.5a3 3 0 0 1 3 3V15a3 3 0 0 1-3 3h-3v.257c0 .597.237 1.17.659 1.591l.621.622a.75.75 0 0 1-.53 1.28h-9a.75.75 0 0 1-.53-1.28l.621-.622a2.25 2.25 0 0 0 .659-1.59V18h-3a3 3 0 0 1-3-3V5.25Zm1.5 0v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5Z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="p-4 text-right">
+          <p class="block antialiased font-sans text-sm leading-normal font-normal text-foreground">Cours</p>
+          <h4 class="block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-foreground">{{dashboardDetails?.courses?.countAllCourses}}</h4>
+        </div>
+        <div class="border-t border-blue-gray-50 p-4">
+          <p class="block antialiased font-sans text-base leading-relaxed font-normal text-foreground" *ngIf="dashboardDetails">
+            <strong [ngClass]="dashboardDetails?.courses?.percentageCourses < 0 ? 'text-red-500' : 'text-green-500'">{{dashboardDetails?.courses?.percentageCourses}}%</strong>&nbsp;que le mois dernier
+          </p>
+        </div>
+    </div>
+  </div>
+  <div class="flex pb-10">
+    <div class="w-3/6 mr-10 bg-clip-border rounded-xl bg-background">
+      @if (dashboardDetails) {
+      <apx-chart
+        [series]="dashboardDetails.dataUsers"
+        [chart]="chartOptions.chart!"
+        [legend]="chartOptions.legend!"
+        [dataLabels]="chartOptions.dataLabels!"
+        [fill]="chartOptions.fill!"
+        [stroke]="chartOptions.stroke!"
+        [xaxis]="chartOptions.xaxis!"
+        [yaxis]="chartOptions.yaxis!"
+        [states]="chartOptions.states!"
+        [tooltip]="chartOptions.tooltip!"
+        [colors]="chartOptions.colors!"
+        [grid]="chartOptions.grid!"
+        [title]="chartOptions.title!">
+      </apx-chart>
+      }
+    </div>
+    <div class="w-3/6 bg-clip-border rounded-xl bg-background">
+      @if (dashboardDetails) {
+      <apx-chart
+        [series]="dashboardDetails.dataSubscriptions"
+        [chart]="chartOptions2.chart!"
+        [legend]="chartOptions2.legend!"
+        [dataLabels]="chartOptions2.dataLabels!"
+        [fill]="chartOptions2.fill!"
+        [stroke]="chartOptions2.stroke!"
+        [xaxis]="chartOptions2.xaxis!"
+        [yaxis]="chartOptions2.yaxis!"
+        [states]="chartOptions2.states!"
+        [tooltip]="chartOptions2.tooltip!"
+        [colors]="chartOptions2.colors!"
+        [grid]="chartOptions2.grid!"
+        [title]="chartOptions2.title!">
+      </apx-chart>
+      }
+    </div>
+  </div>
+  <div class="flex pb-10">
+    <div class="w-3/6 mr-10 bg-clip-border rounded-xl bg-background">
+      @if (dashboardDetails) {
+        <apx-chart
+          [title]="chartOptions4.title!"
+          [series]="dashboardDetails.seriesEnrollCategory.seriesEnrollCategoryData"
+          [chart]="chartOptions4.chart"
+          [labels]="dashboardDetails.seriesEnrollCategory.seriesEnrollCategoryNames"
+          [responsive]="chartOptions4.responsive"
+        ></apx-chart>
+      }
+    </div>
+    <div class="w-3/6 bg-clip-border rounded-xl bg-background">
+      @if (dashboardDetails) {
+        <apx-chart
+          [series]="dashboardDetails.seriesEnroll"
+          [chart]="chartOptions3.chart"
+          [xaxis]="chartOptions3.xaxis"
+          [stroke]="chartOptions3.stroke"
+          [tooltip]="chartOptions3.tooltip"
+          [dataLabels]="chartOptions3.dataLabels"
+          [legend]="chartOptions3.legend"
+          [markers]="chartOptions3.markers"
+          [grid]="chartOptions3.grid"
+          [yaxis]="chartOptions3.yaxis"
+          [title]="chartOptions3.title"
+        ></apx-chart>
+      }
+    </div>
+
+  </div>
+  <div class="flex">
+    <div class="w-3/6 mr-10 bg-clip-border rounded-xl bg-background">
+      @if (dashboardDetails) {
+        <apx-chart
+          [series]="dashboardDetails.seriesEnrollCourse.series"
+          [chart]="chartOptions5.chart"
+          [dataLabels]="chartOptions5.dataLabels"
+          [stroke]="chartOptions5.stroke"
+          [colors]="chartOptions5.colors"
+          [title]="chartOptions5.title"
+          [subtitle]="chartOptions5.subtitle"
+          [plotOptions]="chartOptions5.plotOptions"
+          [yaxis]="chartOptions5.yaxis"
+          [xaxis]="dashboardDetails.seriesEnrollCourse.xaxis"
+          [tooltip]="chartOptions5.tooltip"
+        ></apx-chart>
+      }
+    </div>
+    <div class="w-3/6 mr-10 bg-clip-border rounded-xl bg-background">
+      @if (dashboardDetails) {
+        <apx-chart
+          [title]="chartOptions6.title!"
+          [series]="dashboardDetails.seriesEnrollType.series"
+          [chart]="chartOptions6.chart"
+          [labels]="dashboardDetails.seriesEnrollType.labels"
+          [responsive]="chartOptions6.responsive"
+        ></apx-chart>
+      }
+    </div>
+  </div>
+</div>
+

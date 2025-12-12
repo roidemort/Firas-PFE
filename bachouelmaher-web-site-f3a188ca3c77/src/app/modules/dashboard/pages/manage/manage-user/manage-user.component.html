@@ -1,0 +1,170 @@
+<div class="mx-auto px-4 py-4 sm:px-8">
+  <div class="mb-4 flex justify-between">
+    <div class="inline-block">
+      <h3 class="font-semibold text-foreground" *ngIf="type == 'add'">Ajouté un utilisateur</h3>
+      <h3 class="font-semibold text-foreground" *ngIf="type == 'edit'">Modifié l'utilisateur</h3>
+      <div class="space-x-1 text-xs font-medium text-night-400 dark:text-night-300">
+      </div>
+    </div>
+  </div>
+  <div class="flex min-w-full flex-col rounded-xl border border-muted/20 bg-background p-2">
+    <div class="overflow-x-auto">
+      <div class="inline-block min-w-full w-full py-2 sm:px-6 lg:px-8">
+        <form [formGroup]="manageUserForm">
+          <div class="flex flex-wrap -mx-3 mb-6" *ngIf="type == 'add'">
+            <div class="w-full px-3 mb-6 md:mb-0 space-y-2 flex flex-col">
+              <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="key">Clé d'activation</label>
+              <input id="key" formControlName="key" type="text" placeholder="" required
+                     [ngClass]="{'!border-[#f74350] !border-2': manageUserForm.get('key')?.invalid && manageUserForm.get('key')!.touched}"
+                     class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+              <div *ngIf="manageUserForm.get('key')!.hasError('required') && manageUserForm.get('key')!.touched"
+                   class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                Ce champ est obligatoire.
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-wrap -mx-3 mb-6">
+            <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0 space-y-2 flex flex-col">
+              <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="firstName">Prénom</label>
+              <input id="firstName" formControlName="firstName" type="text" placeholder="" required
+                     [ngClass]="{'!border-[#f74350] !border-2': manageUserForm.get('firstName')?.invalid && manageUserForm.get('firstName')!.touched}"
+                     class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+              <div *ngIf="manageUserForm.get('firstName')!.hasError('required') && manageUserForm.get('firstName')!.touched"
+                   class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                Ce champ est obligatoire.
+              </div>
+            </div>
+            <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0 space-y-2 flex flex-col">
+              <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="lastName">Nom</label>
+              <input id="lastName" formControlName="lastName" type="text" placeholder="" required
+                     [ngClass]="{'!border-[#f74350] !border-2': manageUserForm.get('lastName')?.invalid && manageUserForm.get('lastName')!.touched}"
+                     class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+              <div *ngIf="manageUserForm.get('lastName')!.hasError('required') && manageUserForm.get('lastName')!.touched"
+                   class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                Ce champ est obligatoire.
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-wrap -mx-3 mb-6">
+            <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0 space-y-2 flex flex-col justify-center">
+              <div class="flex">
+                <div class="flex items-center me-4">
+                  <input id="inline-radio" formControlName="gender" type="radio" value="Male"
+                         class="w-4 h-4 text-primary bg-gray-100 border-gray-300 focus:ring-primary dark:focus:ring-primary dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                  <label for="inline-radio" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Homme</label>
+                </div>
+                <div class="flex items-center me-4">
+                  <input id="inline-2-radio" formControlName="gender" type="radio" value="Female"
+                         class="w-4 h-4 text-primary bg-gray-100 border-gray-300 focus:ring-primary dark:focus:ring-primary  dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                  <label for="inline-2-radio"
+                         class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Femme</label>
+                </div>
+              </div>
+            </div>
+            <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0 space-y-2 flex flex-col">
+              <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="lastName">Date de naissance</label>
+              <input id="birthday" formControlName="birthday" type="date" placeholder="" required
+                     [ngClass]="{'!border-[#f74350] !border-2': manageUserForm.get('birthday')?.invalid && manageUserForm.get('birthday')!.touched}"
+                     class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+              <div *ngIf="manageUserForm.get('birthday')!.hasError('required') && manageUserForm.get('birthday')!.touched"
+                   class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                Ce champ est obligatoire.
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-wrap -mx-3 mb-6">
+            <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0 space-y-2 flex flex-col">
+              <label class="font-semibold text-base text-gray-600 dark:text-night-100">Numéro de téléphone</label>
+<!--              <input id="tel" formControlName="tel" type="text" placeholder="" required-->
+<!--                     [ngClass]="{'!border-[#f74350] !border-2': manageUserForm.get('tel')?.invalid && manageUserForm.get('tel')!.touched}"-->
+<!--                     class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">-->
+
+              <ngx-material-intl-tel-input class="material-intl-tel-input" [hidePhoneIcon]="true" [textLabels]="textLabels" [fieldControl]="manageUserForm.controls['tel']" [required]="true" [autoIpLookup]="false" [autoSelectedCountry]="'fr'"> </ngx-material-intl-tel-input>
+
+
+              <div *ngIf="manageUserForm.controls['tel'].errors?.['invalidNumber']"
+                   class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                Le numéro n'est pas valide.
+              </div>
+              <div *ngIf="manageUserForm.controls['tel'].errors?.['required'] && manageUserForm.get('tel')!.touched"
+                   class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                Ce champ est obligatoire.
+              </div>
+            </div>
+            <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0 space-y-2 flex flex-col">
+              <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="lastName">Email</label>
+              <input id="email" formControlName="email" type="text" placeholder="" required
+                     [ngClass]="{'!border-[#f74350] !border-2': manageUserForm.get('email')?.invalid && manageUserForm.get('email')!.touched}"
+                     class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+              <div *ngIf="manageUserForm.get('email')!.hasError('email') && manageUserForm.get('email')!.touched"
+                   class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                Insérez une adresse e-mail valide.
+              </div>
+              <div *ngIf="manageUserForm.get('email')!.hasError('required') && manageUserForm.get('email')!.touched"
+                   class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                Ce champ est obligatoire.
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-wrap -mx-3 mb-6">
+            <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0 space-y-2 flex flex-col">
+              <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="city">Ville</label>
+              <input id="city" formControlName="city" type="text" placeholder=""
+                     class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+            </div>
+            <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0 space-y-2 flex flex-col">
+              <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="zipCode">Code postal</label>
+              <input id="zipCode" formControlName="zipCode" type="number" placeholder=""
+                     class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+            </div>
+          </div>
+          <div class="flex flex-wrap -mx-3 mb-6">
+            <div class="w-full px-3 mb-6 md:mb-0 space-y-2 flex flex-col">
+              <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="address">Adresse complète</label>
+              <textarea id="address" formControlName="address" cols="15" rows="5"
+                        class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor"
+                        type="date"> </textarea>
+            </div>
+          </div>
+          <div class="flex flex-wrap -mx-3 mb-6" *ngIf="type == 'add'">
+            <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0 space-y-2 flex flex-col">
+              <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="tel">Mot de passe</label>
+              <input id="password" formControlName="password" type="password" placeholder="" required
+                     [ngClass]="{'!border-[#f74350] !border-2': manageUserForm.get('password')?.invalid && manageUserForm.get('password')!.touched}"
+                     class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+              <div *ngIf="manageUserForm.get('password')!.hasError('required') && manageUserForm.get('password')!.touched"
+                   class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                Ce champ est obligatoire.
+              </div>
+            </div>
+            <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0 space-y-2 flex flex-col">
+              <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="lastName">Confirmez le mot de passe</label>
+              <input id="confirmPassword" formControlName="confirmPassword" type="password" placeholder="" required
+                     [ngClass]="{'!border-[#f74350] !border-2': manageUserForm.errors?.['PasswordNoMatch'] && manageUserForm.get('confirmPassword')!.touched}"
+                     class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+              <div *ngIf="manageUserForm.errors?.['PasswordNoMatch'] && manageUserForm.get('confirmPassword')!.touched"
+                   class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                Le mot de passe ne correspond pas.
+              </div>
+            </div>
+          </div>
+
+        </form>
+      </div>
+      <div class="flex items-center justify-end p-6 rounded-b space-x-2">
+        <button class="font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:translate-y-px disabled:pointer-events-none disabled:opacity-50 bg-transparent text-primary hover:bg-primary/10 focus-visible:ring-primary p-2 px-4 rounded-lg" type="button" (click)="bachToList()">
+          Annuler</button>
+        <button (click)="manageUser()" [disabled]="isLoading"
+                class="bg-primary text-white p-2 px-4 rounded-md border-b-[3px] border-primary-dark flex items-center" type="button">
+          <svg *ngIf="isLoading" class="-ml-1 mr-3 h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg"
+               fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+            </path>
+          </svg>
+          Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,64 @@
+<section class="flex h-[89vh] relative">
+    <div class="w-full p-4 sm:p-8">
+        <div *ngIf="!feedbackSent" class="w-full flex flex-col items-center justify-center gap-y-6">
+            <p class="text-white font-semibold text-sm">Merci d'avoir suivi titre du cours</p>
+            <h1 class="font-semibold text-secondaryfontColor text-3xl text-center">Vos commentaires sont très précieux</h1>
+            <p class="text-white text-sm">S'il vous plaît dites-nous comment améliorer</p>
+
+            <div class="w-full flex flex-col sm:flex-row items-center justify-center gap-y-4 gap-x-10 2xl:gap-x-24">
+                <div *ngFor="let feedback of feedbackOptions; let i = index" (click)="selectFeedback(i)"
+                    class="w-full flex justify-center items-center gap-x-4 p-4 rounded-xl cursor-pointer"
+                    [ngClass]="{'bg-[#274848] text-[#61DBE3]': selectedFeedback === i, 'bg-[#EDF6F6] text-[#19272A]': selectedFeedback !== i}">
+                    <span class="text-2xl">{{ feedback.emoji }}</span>
+                    <p class="font-semibold text-base w-1/2 md:w-auto">{{ feedback.text }}</p>
+                </div>
+            </div>
+            
+
+
+            <div *ngIf="message" class="w-full md:w-1/2 sm:px-4">
+                <p class="font-normal text-sm leading-6 -tracking-[-3%] text-red-500">Vous avez déjà attribué une note.</p>
+            </div>
+
+            <div class="w-full md:w-1/2 sm:p-4">
+                <form class="lg:space-y-4 text-center" [formGroup]="feedBackForm" (ngSubmit)="onSubmit()">
+                    <div class="w-full">
+                        <div class="w-full relative mb-3">
+                            <textarea type="text" formControlName="comment" rows="4" id="comment" placeholder=""
+                                class="peer pl-4 transition duration-200 text-white ease-linear bg-transparent outline-none border border-[#88BFBF] placeholder:font-medium placeholder:leading-7 placeholder:text-base text-base placeholder:text-white focus:outline-none rounded-2xl pt-5 pb-[10px] pr-4"></textarea>
+                            <label for="comment"
+                                class="pt-[15px] text-[#476F77] font-medium pointer-events-none absolute left-0 top-0 origin-[0_0] border border-solid border-transparent p-4 transition-[opacity,_transform] duration-200 ease-linear peer-focus:-translate-y-2 peer-focus:translate-x-[0.15rem] peer-focus:scale-[0.85] peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:translate-x-[0.15rem] peer-[:not(:placeholder-shown)]:scale-[0.85]">
+                                Vos commentaires </label>
+                        </div>
+                        <!-- <div *ngIf="feedBackForm.get('comment')!.hasError('required') && feedBackForm.get('comment')!.touched"
+                                class="text-red-500 text-left !mt-1 text-sm ml-1">
+                                Le champ est obligatoire.
+                            </div> -->
+                    </div>
+                    <button type="submit"
+                        class="border-2 border-fontColor bg-fontColor rounded-[40px] text-sm text-center px-11 py-4 text-secondaryColor">
+                        Envoyer des commentaires
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div *ngIf="feedbackSent" class="w-full flex flex-col items-center justify-center gap-y-6">
+            <img src="assets/images/check.svg" alt="check">
+
+            <div class="w-full space-y-4 text-center">
+                <p class="text-white text-sm">Merci d'avoir suivi {{cours.title}}</p>
+                <h1 class="font-semibold text-secondaryfontColor text-3xl">Merci pour votre temps</h1>
+                <p class="text-white text-sm">S'il vous plaît dites-nous comment nous améliorer.</p>
+            </div>
+            <div class="py-4 text-center">
+                <button type="button" routerLink="/notre-plateforme/cours"
+                    class="border-2 hover:bg-transparent hover:text-fontColor border-fontColor bg-fontColor rounded-[40px] text-sm text-center px-4 xs:px-5 lg:px-8 py-3 text-secondaryColor transition duration-300 ease-in-out cursor-pointer">
+                    Retour aux cours
+                </button>
+            </div>
+        </div>
+
+
+    </div>
+</section>

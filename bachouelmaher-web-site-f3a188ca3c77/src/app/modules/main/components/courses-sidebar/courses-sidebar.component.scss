@@ -1,0 +1,19 @@
+// input[type="checkbox"] {
+//     appearance: none;
+//     -webkit-appearance: none;
+//     -moz-appearance: none;
+//     width: 25px;
+//     height: 25px;
+//     border-radius: 15px;
+//     color: #366464;
+  
+//     background-image: url('../../../../../assets/images/Checkbox.png') !important;
+  
+//     &:checked {
+//       background-image: url('../../../../../assets/images/Checkbox-active.png') !important;
+//     }
+//   }
+
+.custom-background {
+    background: linear-gradient(170deg, rgb(13, 27, 42) 46%, rgb(209, 250, 148) 180%);
+  }

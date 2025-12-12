@@ -1,0 +1,28 @@
+<ng-container>
+  <th class="min-w-[100px] cursor-pointer hover:bg-card" (click)="setSortColumn('startedAt')">
+    <p
+      class="flex items-center justify-between gap-2 leading-none">
+      Commencé à
+      <app-sortable name="startedAt" [sortConfig]="sortConfig"></app-sortable>
+    </p>
+  </th>
+  <th class="min-w-[100px] cursor-pointer hover:bg-card" (click)="setSortColumn('endedAt')">
+    <p
+      class="flex items-center justify-between gap-2 leading-none">
+      Expiré à
+      <app-sortable name="endedAt" [sortConfig]="sortConfig"></app-sortable>
+    </p>
+  </th>
+  <th class="min-w-[150px]">Acheteur</th>
+  <th class="min-w-[100px]">Package</th>
+  <th class="min-w-[100px]">Total</th>
+  <th class="min-w-[50px]">Statut</th>
+  <th class="min-w-[150px] cursor-pointer hover:bg-card" (click)="setSortColumn('createdAt')">
+    <p
+      class="flex items-center justify-between gap-2 leading-none">
+      Créé à
+      <app-sortable name="createdAt" [sortConfig]="sortConfig"></app-sortable>
+    </p>
+  </th>
+  <th class="w-[60px]"></th>
+</ng-container>

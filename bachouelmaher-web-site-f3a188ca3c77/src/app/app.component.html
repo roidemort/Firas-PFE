@@ -1,0 +1,6 @@
+<section>
+  <router-outlet></router-outlet>
+  <!-- <app-responsive-helper></app-responsive-helper> -->
+  <app-loader *ngIf="isDashboardLogged" [style]="false"></app-loader>
+  <app-loader-main *ngIf="isLogged" [style]="false"></app-loader-main>
+</section>

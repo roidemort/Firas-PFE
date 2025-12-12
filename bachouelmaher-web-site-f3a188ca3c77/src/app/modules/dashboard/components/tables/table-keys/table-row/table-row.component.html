@@ -1,0 +1,24 @@
+<ng-container #actions>
+  <td class="cursor-pointer" (click)="copyToClipboard(key.key)">
+    <div class="w-24 truncate ..." *ngIf="!copied">
+      {{ key.key }}
+    </div>
+    <p *ngIf="copied"
+      class="flex items-center justify-between gap-2 leading-none">
+      Copié
+      <svg-icon src="assets/icons/heroicons/outline/check.svg" [svgClass]="'h-5 w-5'"> </svg-icon>
+    </p>
+
+    </td>
+  <td *ngIf="key.user" (click)="goToUserDetails(key.user.id)"  class="cursor-pointer">{{ key.user.firstName }} {{ key.user.lastName }}</td>
+  <td *ngIf="!key.user" class="cursor-pointer"></td>
+  <td>
+    <label class="inline-flex items-center cursor-pointer relative">
+      <input type="checkbox" class="sr-only peer" (click)="onChangeStatus($event, key.id, key.status)" [checked]="key.status == 0 || key.status == 3" [disabled]="key.status == 3">
+      <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 " [ngClass]="{'peer-checked:bg-[#21c65f]': key.status === 1 || key.status === 0, 'peer-checked:bg-[#c62121]' : key.status === 3 }"></div>
+    </label>
+  </td>
+  <td>{{ key.createdAt | date:"dd-MM-yyyy" }}</td>
+  <td>{{ key.updatedAt | date:"dd-MM-yyyy" }}</td>
+</ng-container>
+

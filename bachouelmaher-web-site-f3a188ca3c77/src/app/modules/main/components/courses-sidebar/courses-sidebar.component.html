@@ -1,0 +1,208 @@
+<!-- Nav Principal -->
+<nav [ngClass]="menu ? 'w-60 lg:w-[300px]' : 'w-0'"
+  class="overflow-auto min-h-[90vh] hidden h-full flex-col justify-between bg-[#0b1b29] pt-3 transition-all duration-300 lg:flex">
+  <ng-container *ngTemplateOutlet="navContent"></ng-container>
+</nav>
+<!-- scrollbar-thumb-rounded scrollbar-thin scrollbar-track-[#e8fafb] scrollbar-thumb-[#b0edf1] scrollbar-thumb hover:scrollbar-thumb-[#1b9198] scrollbar-track-rounded -->
+<!-- overflow-auto scrollbar-thin scrollbar-thumb-[#b0edf1] scrollbar-track-[#e8fafb] scrollbar-thumb-rounded-lg scrollbar-thumb-hover:bg-[#1b9198] -->
+<!-- Nav Mobile -->
+<nav *ngIf="mobileMenu"
+  class="custom-background overflow-auto absolute max-h-[32rem] justify-start bg-[#0b1b29] top-[60px] xs:top-[66px] left-0 w-full h-screen p-6 pl-8 xs:pr-5 lg:px-12 xs:py-5 flex lg:!hidden items-start z-10">
+  <ng-container *ngTemplateOutlet="navContent"></ng-container>
+</nav>
+
+
+
+<!-- <ng-template #navContent>
+  <div *ngIf="showContent" class="w-full sm:p-4 sm:pl-8 space-y-6">
+    <h1 class="font-semibold text-sm text-[#476F77]">Trouver un cours</h1>
+
+    <div class="space-y-4">
+      <form class="space-y-7" [formGroup]="searchForm" (ngSubmit)="onSubmit()">
+        <div class="relative w-full">
+          <input type="text" id="search" formControlName="search" placeholder="" required (blur)="onSubmit()"
+            class="peer transition duration-200 ease-linear bg-transparent outline-none border border-[#88BFBF] placeholder:font-medium placeholder:leading-7 placeholder:text-base text-base placeholder:text-[#274848] text-[#274848] focus:ring-fontColor focus:border-fontColor focus:outline-none rounded-2xl pt-5 pb-[10px] pr-4 pl-12" />
+          <label for="search"
+            class="pt-[15px] text-[#476F77] font-medium pointer-events-none absolute left-0 top-0 origin-[0_0] border border-solid border-transparent pl-[52px] p-4 transition-[opacity,_transform] duration-200 ease-linear peer-focus:-translate-y-2 peer-focus:translate-x-[0.15rem] peer-focus:scale-[0.85] peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:translate-x-[0.15rem] peer-[:not(:placeholder-shown)]:scale-[0.85]">Tapez
+            quelque chose...</label>
+          <div class="absolute top-[17px] left-4">
+            <img src="assets/images/search.png" alt="search">
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="flex justify-between items-center cursor-pointer select-none" (click)="toggleCategories()">
+      <h1 class="font-semibold text-sm text-[#476F77]">
+        Catégories de cours
+      </h1>
+      <div class="transition-transform duration-300"
+        [ngClass]="{'rotate-180': showCategories, 'rotate-0': !showCategories}">
+        <img src="assets/images/arrow-solid-Down.png" alt="arrow-solid-Down">
+      </div>
+    </div>
+
+    <div class="select-none">
+      <div *ngIf="showCategories" class="">
+        <ul class="space-y-4">
+          <li *ngFor="let category of categories" class="flex items-center">
+            <input class="!ring-transparent" type="checkbox" [checked]="selectedCategories.includes(category.id)"
+              (change)="onCategoryChange(category.id, $event)" />
+            <label class="ml-2 text-sm text-fontColor cursor-pointer">{{ category.name }}</label>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <h1 class="font-semibold text-sm text-[#476F77]">Fournisseur de cours</h1>
+
+    <div class="select-none">
+      <ul class="flex flex-wrap items-center gap-4">
+        <li *ngFor="let provider of providers" class="flex items-center">
+          <label class="text-sm font-medium cursor-pointer py-2 px-3 rounded-full capitalize" [ngClass]="{
+              'bg-[#919EAB52] text-[#476F77]': !isSelected(provider.id),
+              'bg-fontColor text-[#EDF6F6]': isSelected(provider.id)
+            }" (click)="onProviderClick(provider.id)">
+            {{ provider.name }}
+          </label>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+</ng-template> -->
+
+<ng-template #navContent>
+  <div *ngIf="showContent" class="w-full sm:pt-4 sm:pr-4 sm:pl-8 sm:pb-8 space-y-6 max-h-[32rem]">
+    <div class="flex gap-x-2 items-center cursor-pointer" (click)="resetFilters()">
+      <svg-icon src="assets/images/Home.svg" [svgClass]="'h-5 w-5'"></svg-icon>
+      <h1 class="font-medium text-base text-titleColor">Accueil</h1>
+    </div>
+
+    <div class="flex justify-between cursor-pointer select-none" (click)="toggleCategories()">
+      <div class="flex gap-x-2 items-center">
+        <svg-icon src="assets/images/Video_file.svg" [svgClass]="'h-5 w-5'"></svg-icon>
+        <h1 class="font-medium text-base text-titleColor">Nos formations</h1>
+      </div>
+      <!-- <div class="transition-transform duration-300"
+        [ngClass]="{'rotate-180': showCategories, 'rotate-0': !showCategories}">
+        <img src="assets/images/arrow-solid-Down.png" alt="arrow-solid-Down">
+      </div> -->
+    </div>
+
+    <hr class="border-titleColor !mt-3">
+
+    <!-- <div *ngIf="showCategories" class="w-full">
+      <ul class="space-y-4 pl-4">
+        <li *ngFor="let category of categories" class="font-semibold text-[#476F77] text-base relative cursor-pointer"
+          (click)="onCategorieSelected(category.id)">
+          {{ category.name }}
+          <div *ngIf="category.providers.length > 0"
+            class="absolute h-[calc(100%-25px)] w-[2px] left-[2px] border-l border-dotted border-[#476F77]"></div>
+          <ul class="space-y-2 pl-6 !mt-1">
+            <li *ngFor="let provider of category.providers" (click)="onProviderSelected(provider.id, $event)">
+              {{ provider.name }}
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div> -->
+
+    <div *ngIf="showCategories" class="w-full pl-2">
+      <ul class="space-y-4">
+        <li *ngFor="let category of categories"
+          class="font-medium text-titleColor text-base relative cursor-pointer"
+          (click)="onCategorieSelected(category.id)">
+          <div class="flex items-center justify-between">
+            <span class="hover:text-titleColor transition duration-300">
+              {{ category.name }}
+            </span>
+          </div>
+          <div *ngIf="category.providers.length > 0"
+            class="absolute h-[calc(100%-25px)] w-[2px] left-[2px] bg-dotted border-titleColor"></div>
+          <!-- <ul class="space-y-2 pl-6 mt-2 border-l-2 border-dashed border-titleColor">
+            <li *ngFor="let provider of category.providers"
+              class="text-sm text-titleColor hover:text-titleColor cursor-pointer transition duration-300"
+              (click)="onProviderSelected(provider.id, category.id, $event)">
+              {{ provider.name }}
+            </li>
+          </ul> -->
+          <ul class="space-y-2 pl-6 mt-2 border-l-2 border-dashed border-titleColor">
+            <ng-container *ngFor="let provider of category.providers; let i = index">
+              <ng-container *ngIf="i === 0 || provider.name !== category.providers[i - 1]?.name">
+                <li class="text-sm text-titleColor hover:text-titleColor cursor-pointer transition duration-300"
+                    (click)="onProviderSelected(provider.id, category.id, $event)">
+                  {{ provider.name }}
+                </li>
+              </ng-container>
+            </ng-container>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="flex justify-between cursor-pointer select-none" (click)="toggleProviders()">
+      <div class="flex gap-x-2 items-center">
+        <svg-icon src="assets/images/pil.svg" [svgClass]="'h-5 w-5'"></svg-icon>
+        <h1 class="font-medium text-base text-titleColor">Capsules</h1>
+      </div>
+      <!-- <div class="transition-transform duration-300"
+        [ngClass]="{'rotate-180': showProviders, 'rotate-0': !showProviders}">
+        <img src="assets/images/arrow-solid-Down.png" alt="arrow-solid-Down">
+      </div> -->
+    </div>
+
+    <hr class="border-titleColor !mt-3">
+
+    <!-- <div *ngIf="showProviders" class="w-full">
+      <ul class="space-y-4 pl-4">
+        <li *ngFor="let capsule of capsules" class="font-semibold text-[#476F77] text-base relative cursor-pointer"
+          (click)="onCategorieCapsulesSelected(capsule.id)">
+          {{ capsule.name }}
+          <div *ngIf="capsule.providers.length > 0"
+            class="absolute h-[calc(100%-25px)] w-[2px] left-[2px] border-l border-dotted border-[#476F77]"></div>
+          <ul class="space-y-2 pl-6 !mt-1">
+            <li *ngFor="let provider of capsule.providers" (click)="onProviderCapsulesSelected(provider.id, $event)">
+              {{ provider.name }}
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div> -->
+
+    <div *ngIf="showProviders" class="w-full pl-2">
+      <ul class="space-y-4">
+        <li *ngFor="let capsule of capsules"
+          class="font-medium text-titleColor text-base relative cursor-pointer transition duration-300"
+          (click)="onCategorieCapsulesSelected(capsule.id)">
+          <div class="flex items-center justify-between">
+            <span class="hover:text-titleColor transition duration-300">
+              {{ capsule.name }}
+            </span>
+          </div>
+          <div *ngIf="capsule.providers.length > 0"
+            class="absolute h-[calc(100%-25px)] w-[2px] left-[2px] bg-dotted border-titleColor"></div>
+            <ul class="space-y-2 pl-6 mt-2 border-l-2 border-dashed border-titleColor">
+              <ng-container *ngFor="let provider of capsule.providers; let i = index">
+                <ng-container *ngIf="i === 0 || provider.name !== capsule.providers[i - 1]?.name">
+                  <li class="text-sm text-titleColor hover:text-titleColor cursor-pointer transition duration-300"
+                      (click)="onProviderCapsulesSelected(provider.id, capsule.id, $event)">
+                    {{ provider.name }}
+                  </li>
+                </ng-container>
+              </ng-container>
+            </ul>
+        </li>
+      </ul>
+    </div>
+
+
+    <div class="flex gap-x-2 items-center !mb-4 cursor-not-allowed pb-8">
+      <svg-icon src="assets/images/Date_today.svg" [svgClass]="'h-5 w-5'"></svg-icon>
+      <h1 class="font-medium text-base text-titleColor">Vidéos à venir</h1>
+    </div>
+
+
+
+  </div>
+</ng-template>

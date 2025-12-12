@@ -1,0 +1,122 @@
+<div class="mx-auto px-4 py-4 sm:px-8" #actions>
+  <div class="mb-4 flex justify-between">
+    <div class="inline-block">
+      <h3 class="font-semibold text-foreground" *ngIf="type == 'add'">Ajouté un abonnement</h3>
+      <h3 class="font-semibold text-foreground" *ngIf="type == 'edit'"> Modifié l'abonnement</h3>
+      <div class="space-x-1 text-xs font-medium text-night-400 dark:text-night-300">
+      </div>
+    </div>
+  </div>
+  <div class="flex min-w-full flex-col rounded-xl border border-muted/20 bg-background p-2">
+    <div class="overflow-x-auto">
+      <div class="inline-block min-w-full w-full py-2 sm:px-6 lg:px-8">
+        @if (manageSubscriptionForm) {
+          <form [formGroup]="manageSubscriptionForm">
+            <div class="px-12">
+              <div class="my-6 space-y-2 flex flex-col">
+                <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="package">Package</label>
+                <mat-select id="package" formControlName="package" (selectionChange)="onSelectedPackage($event)"
+                            [ngClass]="{'!border-[#f74350] !border-2': manageSubscriptionForm.get('package')?.invalid && manageSubscriptionForm.get('package')!.touched}"
+                            class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+                  <mat-option *ngFor="let pack of packages" value="{{ pack.id }}">{{ pack.name }}</mat-option>
+                </mat-select>
+                <div *ngIf="manageSubscriptionForm.get('package')!.hasError('required') && manageSubscriptionForm.get('package')!.touched"
+                     class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                  Ce champ est obligatoire.
+                </div>
+              </div>
+            </div>
+            <div class="px-12">
+              <div class="my-6 space-y-2 flex flex-col">
+                <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="usersNumber">Nombre des utilisateurs</label>
+                <input id="usersNumber" formControlName="usersNumber" type="number" placeholder="" required
+                       [ngClass]="{'!border-[#f74350] !border-2': manageSubscriptionForm.get('usersNumber')?.invalid && manageSubscriptionForm.get('usersNumber')!.touched}"
+                       class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor"          >
+                <div *ngIf="manageSubscriptionForm.get('usersNumber')!.hasError('required') && manageSubscriptionForm.get('usersNumber')!.touched"
+                     class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                  Ce champ est obligatoire.
+                </div>
+              </div>
+            </div>
+            <div class="px-12">
+              <div class="my-6 space-y-2 flex flex-col">
+                <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="startedAt">Commencé à</label>
+                <input id="startedAt" formControlName="startedAt" type="date" placeholder="" required min="{{datePickerMin}}" (change)="onSelectStartDate()"
+                       [ngClass]="{'!border-[#f74350] !border-2': manageSubscriptionForm.get('startedAt')?.invalid && manageSubscriptionForm.get('startedAt')!.touched}"
+                       class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor"          >
+                <div *ngIf="manageSubscriptionForm.get('startedAt')!.hasError('required') && manageSubscriptionForm.get('startedAt')!.touched"
+                     class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                  Ce champ est obligatoire.
+                </div>
+              </div>
+            </div>
+            <div class="px-12">
+              <div class="my-6 space-y-2 flex flex-col">
+                <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="endedAt">Expiré à</label>
+                <input id="endedAt" formControlName="endedAt" type="date" placeholder="" required
+                       [ngClass]="{'!border-[#f74350] !border-2': manageSubscriptionForm.get('endedAt')?.invalid && manageSubscriptionForm.get('endedAt')!.touched}"
+                       class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor"          >
+                <div *ngIf="manageSubscriptionForm.get('endedAt')!.hasError('required') && manageSubscriptionForm.get('endedAt')!.touched"
+                     class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                  Ce champ est obligatoire.
+                </div>
+              </div>
+            </div>
+            <div class="px-12">
+              <div class="my-6 space-y-2 flex flex-col">
+                <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="buyer">Acheteur</label>
+                <mat-select id="buyer" formControlName="buyer"
+                            [ngClass]="{'!border-[#f74350] !border-2': manageSubscriptionForm.get('buyer')?.invalid && manageSubscriptionForm.get('buyer')!.touched}"
+                            class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+                  <mat-option *ngFor="let user of users" value="{{ user.id }}">{{ user.firstName }} {{user.lastName}}</mat-option>
+                </mat-select>
+                <div *ngIf="manageSubscriptionForm.get('buyer')!.hasError('required') && manageSubscriptionForm.get('buyer')!.touched"
+                     class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                  Ce champ est obligatoire.
+                </div>
+              </div>
+            </div>
+            <div class="px-12">
+              <div class="my-6 space-y-2 flex flex-col">
+                <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="paymentMethod">Moyen de paiement</label>
+                <mat-select id="paymentMethod" formControlName="paymentMethod"
+                            [ngClass]="{'!border-[#f74350] !border-2': manageSubscriptionForm.get('paymentMethod')?.invalid && manageSubscriptionForm.get('paymentMethod')!.touched}"
+                            class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+                  <mat-option *ngFor="let payment of payments" value="{{ payment.value }}">{{ payment.label }}</mat-option>
+                </mat-select>
+                <div *ngIf="manageSubscriptionForm.get('paymentMethod')!.hasError('required') && manageSubscriptionForm.get('paymentMethod')!.touched"
+                     class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                  Ce champ est obligatoire.
+                </div>
+              </div>
+            </div>
+            <div class="px-12">
+              <div class="my-6 space-y-2 flex flex-col">
+                <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="paymentMethod">Pièce jointe</label>
+                <input (change)="onChange($event)" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" type="file" accept="image/png, image/gif, image/jpeg">
+              </div>
+            </div>
+            <div class="px-12" *ngIf="subscription?.secure_url">
+              <label class="font-semibold text-base text-gray-600 dark:text-night-100">Ancienne pièce jointe</label>
+              <img class="" src="{{subscription.secure_url}}">
+            </div>
+          </form>
+        }
+      </div>
+      <div class="flex items-center justify-end p-6 rounded-b space-x-2">
+        <button class="font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:translate-y-px disabled:pointer-events-none disabled:opacity-50 bg-transparent text-primary hover:bg-primary/10 focus-visible:ring-primary p-2 px-4 rounded-lg" type="button" (click)="bachToList()">
+          Annuler</button>
+        <button (click)="manageSubscription()" [disabled]="isLoading"
+                class="bg-primary text-white p-2 px-4 rounded-md border-b-[3px] border-primary-dark flex items-center" type="button">
+          <svg *ngIf="isLoading" class="-ml-1 mr-3 h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg"
+               fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+            </path>
+          </svg>
+          Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>

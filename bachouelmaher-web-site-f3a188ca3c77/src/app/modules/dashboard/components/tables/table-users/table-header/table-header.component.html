@@ -1,0 +1,36 @@
+<ng-container>
+  <th class="min-w-[200px]" [ngClass]="{'cursor-pointer hover:bg-card': sortable}" (click)="setSortColumn('email')">
+    <p
+      class="flex items-center justify-between gap-2 leading-none">
+      Email
+      <app-sortable *ngIf="sortable" name="email" [sortConfig]="sortConfig"></app-sortable>
+    </p>
+  </th>
+  <th class="min-w-[100px]" [ngClass]="{'cursor-pointer hover:bg-card': sortable}" (click)="setSortColumn('firstName')">
+    <p
+      class="flex items-center justify-between gap-2 leading-none">
+      Prénom
+      <app-sortable *ngIf="sortable" name="firstName" [sortConfig]="sortConfig"></app-sortable>
+    </p>
+  </th>
+  <th class="min-w-[100px]" [ngClass]="{'cursor-pointer hover:bg-card': sortable}" (click)="setSortColumn('lastName')">
+    <p
+      class="flex items-center justify-between gap-2 leading-none">
+      Nom
+      <app-sortable *ngIf="sortable" name="lastName" [sortConfig]="sortConfig"></app-sortable>
+    </p>
+  </th>
+  <th class="min-w-[50px]">Statut</th>
+  <th class="min-w-[50px]">Gender</th>
+  <th class="min-w-[50px]">Rôle</th>
+  <th class="min-w-[150px]" [ngClass]="{'cursor-pointer hover:bg-card': sortable}" (click)="setSortColumn('createdAt')">
+    <p
+      class="flex items-center justify-between gap-2 leading-none">
+      Créé à
+      <app-sortable *ngIf="sortable" name="createdAt" [sortConfig]="sortConfig"></app-sortable>
+    </p>
+  </th>
+  @if (sortable) {
+    <th class="w-[60px]"></th>
+  }
+</ng-container>

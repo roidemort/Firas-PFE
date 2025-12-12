@@ -1,0 +1,6 @@
+<div class="flex flex-col items-start space-y-2">
+  <p class="text-xs text-gray-600">{{ progression }}% Complete</p>
+  <div class="w-full bg-gray-200 rounded-full h-2">
+    <div class="bg-primary h-2 rounded-full" [style.width]="progression + '%'"></div>
+  </div>
+</div>

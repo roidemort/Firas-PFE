@@ -1,0 +1,33 @@
+.custom-bg-card {
+    position: relative;
+    overflow: hidden;
+  
+    iframe {
+      width: 100%;
+      height: 100%;
+      border-radius: 0.75rem 0.75rem 0 0;
+    }
+  }
+
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 15px;
+  }
+
+.custom-bg, .custom-bg-rev{
+  background-position-x: -230px;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.custom-bg-rev{
+    transform: scaleX(-1);
+}
+
+@media only screen and (min-width: 768px) {
+  .custom-bg, .custom-bg-rev{
+      background-image: url(../../../../../assets/images/bg.png);
+  }
+}

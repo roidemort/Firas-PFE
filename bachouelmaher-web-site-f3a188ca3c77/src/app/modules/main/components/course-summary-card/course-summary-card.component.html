@@ -1,0 +1,29 @@
+<div class="w-full">
+    <div class="w-auto">
+        <div class="py-6 px-4 bg-[#EDF6F6] rounded-3xl space-y-4">
+            <h1 class="font-semibold text-xs text-[#476F77] ml-6 lg:ml-3">Cours</h1>
+            <div class="w-11/12 mx-auto space-y-4">
+                <p *ngIf="cours.discountPrice && cours.price" class="font-semibold text-base text-[#19272A]">TND {{ cours?.discountPrice?.split('.')[0] }} 
+                    <span class="text-[#9BBCC3] font-normal text-base line-through ml-2">TND {{ cours?.price?.split('.')[0] }}</span>
+                </p>
+                <p *ngIf="!cours.discountPrice && cours.price" class="font-semibold text-base text-[#19272A]">TND {{ cours?.price?.split('.')[0] }} </p>
+                <p *ngIf="!cours.price" class="font-semibold text-base text-[#19272A]">Gratuit</p>
+                <h1 class="font-semibold text-xs text-[#476F77]">Le cours comprend</h1>
+                <div *ngFor="let includ of cours?.includes" class="flex gap-x-2 items-center text-fontColor">
+                    <svg-icon [src]="includ.icon" [svgClass]="'h-6 w-6'"></svg-icon>
+                    <p class="text-sm text-[#294045]">{{ includ.text }}</p>
+                </div>
+            </div>
+            <div class="w-full flex justify-start md:justify-center gap-x-4 gap-y-4 ml-5 sm:ml-0">
+                <button type="button" (click)="startLearning()" [disabled]="!hasAccess" [ngClass]="{'hover:bg-transparent hover:text-fontColor cursor-pointer' : hasAccess}"
+                    class="border-2 w-11/12 border-fontColor bg-fontColor rounded-[40px] text-sm text-center px-8 sm:px-12 lg:px-5 xl:px-8 2xl:px-12 py-3 text-secondaryColor transition duration-300 ease-in-out cursor-not-allowed">
+                    Commencer
+                </button>
+
+                <!--w-3/4 <button class="p-3 w-auto border-2 border-fontColor rounded-full" [disabled]="!hasAccess">
+                    <img src="assets/images/heart-courses.svg" class="w-5 h-5" alt="heart">
+                </button> -->
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,75 @@
+<div class="fixed top-0 sm:top-[74px] right-0 h-full sm:h-[90%] 2xl:h-[89%] w-full sm:w-80 lg:w-[300px] bg-[#101E2D] shadow-lg transition-transform duration-300 ease-in-out"
+    [ngClass]="{'translate-x-0 w-80 lg:w-[300px]': isChatOpen, 'translate-x-full w-0 ': !isChatOpen}">
+    <div class="flex flex-col h-full">
+        <div class="bg-[#D1FA94] text-white px-2 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-x-2">
+                <img src="assets/images/chat.svg" alt="chat">
+                <div>
+                    <h2 class="text-sm font-medium text-[#274848]">Chat et assistance</h2>
+                    <p class="font-medium text-xs text-[#1FC16B]">En ligne</p>
+                </div>
+            </div>
+            <button (click)="toggleChat()"
+                class="text-[#D00416] font-semibold text-sm border border-[#D00416] px-6 py-[6px] bg-[#FB37481A] rounded-[40px]">
+                Fermer
+            </button>
+        </div>
+
+        <div #chatContainer class="flex-grow overflow-y-auto p-4" [ngClass]="{'flex items-center justify-center': count == 0}">
+            <ng-container *ngIf="count > 0 else noConversations">
+                <div *ngFor="let convo of conversations" class="mb-4">
+                    <div *ngIf="convo.sender.id != user.id" class="flex items-start mb-2">
+                        <div class="space-y-4">
+                            <p class="text-sm text-[#366464] bg-[#A4CECE] px-4 py-2 rounded-full rounded-tl-none">
+                                {{ convo.content }}
+                            </p>
+                            <div class="flex items-center justify-start gap-x-1">
+                                <p class="text-xs text-[#97ADB6]">{{ convo.createdAt | date }}</p>
+                                <p class="text-xs text-[#97ADB6]">à {{ convo.createdAt | date:'shortTime' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="convo.sender.id == user.id" class="flex justify-end items-start mb-2">
+                        <div class="space-y-4">
+                            <p class="text-sm text-white bg-[#315A5A] p-4 rounded-full rounded-tr-none">
+                                {{ convo.content }}
+                            </p>
+                            <div class="flex items-center justify-end gap-x-1">
+                                <p class="text-xs text-[#97ADB6]">{{ convo.createdAt | date }}</p>
+                                <p class="text-xs text-[#97ADB6]">à {{ convo.createdAt | date:'shortTime' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+            <ng-template #noConversations>
+                <p class="text-[#476F77] text-xl ">Aucune conversation trouvée</p>
+            </ng-template>
+        </div>
+
+
+        <div class="p-4">
+            <form class="lg:space-y-4" [formGroup]="chatForm" (ngSubmit)="onSubmit()">
+                <div class="w-full">
+                    <div class="w-full relative mb-3">
+                        <textarea type="text" formControlName="message" rows="3" id="message" placeholder="" required
+                            class="peer pl-4 transition duration-200 ease-linear bg-transparent outline-none border border-secondaryfontColor placeholder:font-medium placeholder:leading-7 placeholder:text-base text-base placeholder:text-[#274848] text-[#274848] focus:ring-fontColor focus:border-fontColor focus:outline-none rounded-2xl pt-5 pb-[10px] pr-4"></textarea>
+                        <label for="message"
+                            class="pt-[15px] text-[#476F77] font-medium pointer-events-none absolute left-0 top-0 origin-[0_0] border border-solid border-transparent p-4 transition-[opacity,_transform] duration-200 ease-linear peer-focus:-translate-y-2 peer-focus:translate-x-[0.15rem] peer-focus:scale-[0.85] peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:translate-x-[0.15rem] peer-[:not(:placeholder-shown)]:scale-[0.85]">
+                            Poser une question </label>
+                    </div>
+                    <!-- <div *ngIf="chatForm.get('message')!.hasError('required') && chatForm.get('message')!.touched"
+                        class="text-red-500 text-left !mt-1 text-sm ml-1">
+                        Le champ est obligatoire.
+                    </div> -->
+                </div>
+                <div class="w-full">
+                    <button type="submit"
+                        class="border-2 w-full border-secondaryfontColor bg-secondaryfontColor rounded-[40px] text-sm text-center px-11 py-4 text-[#315A5A]">
+                        Envoyer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

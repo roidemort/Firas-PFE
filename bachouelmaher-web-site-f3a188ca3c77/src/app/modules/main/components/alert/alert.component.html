@@ -1,0 +1,24 @@
+<div class="w-full fixed bottom-0 z-10 transition-width duration-300 ease-in-out responsive-width" [ngStyle]="{
+    'width': SideBarIsOpen ? 'calc(100% - 70px)' : isSidebarOpen ? 'calc(100% - 145px)' : 'calc(100% - 365px)',
+    'margin-left': SideBarIsOpen ? '30px' : '0'
+  }" *ngIf="handleResponse || handleErrorResponse || handleError" [ngClass]="{
+         'translate-y-0 opacity-100': handleResponse || handleErrorResponse || handleError,
+         '-translate-y-10 opacity-0': !(handleResponse || handleErrorResponse || handleError)
+     }">
+    <div class="flex items-center p-4 mb-6 rounded-2xl shadow-lg border transition-all duration-300" [ngClass]="{
+             'bg-red-100 border-red-400 text-red-700': handleError,
+             'bg-yellow-100 border-yellow-400 text-yellow-700': handleErrorResponse,
+             'bg-green-100 border-green-400 text-green-700': handleResponse
+         }">
+        <svg (click)="closeAlert()" class="cursor-pointer w-6 h-6 mr-2" [ngClass]="{
+             'text-red-500': handleError,
+             'text-yellow-500': handleErrorResponse,
+             'text-green-500': handleResponse
+         }" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M18.364 5.636l-12.728 12.728M5.636 5.636l12.728 12.728">
+            </path>
+        </svg>
+        <p class="font-semibold text-sm">{{ alertMessage }}</p>
+    </div>
+</div>
