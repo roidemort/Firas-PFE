@@ -21,18 +21,18 @@ export const questionEnrollCourse = async (req: Request, res: Response, next: Ne
     const { quizEnrollId, quizId } = req.body;
 
     const User = await findUser({ id: Equal(id), status: 1 });
-    if(!User) return res.customSuccess(200, 'Error', {}, false);
+    if(!User) return res.customSuccess(200, 'Error User', {}, false);
 
     const enrollCourse = await findEnrollCourse({ id: Equal(enrollCourseId), user: { id: Equal(id), status: 1 }})
-    if(!enrollCourse) return res.customSuccess(200, 'Error', {}, false);
+    if(!enrollCourse) return res.customSuccess(200, 'Error Course', {}, false);
 
     const enrollQuiz = await findEnrollQuiz({ id: Equal(quizEnrollId), quiz: { id: quizId } }, ['section', 'quiz', 'questions'])
-    if(!enrollQuiz || enrollQuiz.status != 0) return res.customSuccess(200, 'Error', {}, false);
+    if(!enrollQuiz || enrollQuiz.status != 0) return res.customSuccess(200, 'Error Quiz', {}, false);
 
     const enrollSection = await findEnrollSection({
       id: Equal(enrollQuiz.section.id), status: 1
     })
-    if(!enrollSection) return res.customSuccess(200, 'Error', {}, false);
+    if(!enrollSection) return res.customSuccess(200, 'Error Section', {}, false);
 
     const questions = await getRandomQuestionFromQuiz(enrollQuiz.quiz.id)
 

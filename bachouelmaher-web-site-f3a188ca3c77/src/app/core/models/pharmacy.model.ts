@@ -20,4 +20,5 @@ export interface Key {
   updatedAt: string;
   user?: User
   pharmacy?: Pharmacy
+  role?: string; 
 }

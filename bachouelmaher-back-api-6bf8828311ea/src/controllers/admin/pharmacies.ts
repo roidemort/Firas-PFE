@@ -10,7 +10,7 @@ import {
 import pick from "@/utils/pick"
 import { IOptions } from "@/interfaces/IOptions"
 import { organize } from "@/utils/organize"
-
+import { emailBullMq } from "@/queues/email.queue"
 
 export const getAllPharmacies = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -92,5 +92,80 @@ export const removePharmacy = async (req: Request, res: Response, next: NextFunc
     return res.customSuccess( 200, 'Category successfully deleted.', true);
   } catch (err) {
     return  res.customSuccess(200, 'Error', {}, false);
+  }
+};
+
+export const sendPharmacyNotifications = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { pharmacyId, html, text, subject, unusedKeys } = req.body; // Add 'html' parameter
+  const { id } = req.jwtPayload;
+  
+  try {
+    // Find the pharmacy by ID
+    const pharmacy = await findPharmacyById(pharmacyId);
+    
+    if (!pharmacy) {
+      return res.customSuccess(200, 'Pharmacie non trouvée', {}, false);
+    }
+
+    // Use html if provided, otherwise use text
+    let emailContent = html || text;
+    
+    if (!emailContent) {
+      return res.customSuccess(200, 'Contenu de l\'email manquant', {}, false);
+    }
+
+    if (unusedKeys && unusedKeys.length > 0) {
+      // Group keys by role
+      const keysByRole: { [key: string]: any[] } = {};
+      
+      unusedKeys.forEach((key: any) => {
+        const role = key.role || 'Sans rôle';
+        if (!keysByRole[role]) {
+          keysByRole[role] = [];
+        }
+        keysByRole[role].push(key);
+      });
+
+      // Generate keys list HTML
+      let keysListHTML = '<h3>Liste des clés non utilisées :</h3>';
+      
+      Object.keys(keysByRole).forEach(role => {
+        keysListHTML += `<h4>${role} :</h4>`;
+        keysListHTML += '<ul>';
+        
+        keysByRole[role].forEach(key => {
+          keysListHTML += `<li><strong>${key.key || key.code || 'N/A'}</strong>`;
+          if (key.expiresAt) {
+            keysListHTML += ` (Expire le: ${new Date(key.expiresAt).toLocaleDateString('fr-FR')})`;
+          }
+          keysListHTML += '</li>';
+        });
+        
+        keysListHTML += '</ul>';
+      });
+            
+    }
+
+    // Send email to pharmacy
+    await emailBullMq.add('send-notification', {
+      from: process.env.SMTP_USERNAME,
+      to: pharmacy.email,
+      subject: subject,
+      html: emailContent, // Send as html
+    });
+
+    return res.customSuccess(
+      200,
+      'Email envoyé à la pharmacie avec succès.',
+      true,
+      true
+    );
+  } catch (err) {
+    console.error('Error sending pharmacy notification:', err);
+    return res.customSuccess(200, 'Erreur lors de l\'envoi de l\'email', {}, false);
   }
 };

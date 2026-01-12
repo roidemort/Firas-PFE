@@ -2,8 +2,11 @@
     <div class="relative w-full h-full">
         <div *ngIf="!validKey" class="w-full h-full flex items-center">
             <div class="flex w-full h-screen">
-                <div class="hidden md:flex w-[50%] bg-[#ecf2eb] flex-col items-center justify-center">
-                    <img class="h-auto rounded-[40px] w-[70%]" src="assets/images/signup.png" alt="container">
+                <div class="hidden md:flex w-[50%] bg-[#101E1F] flex-col items-center justify-center">
+                    <video class="h-auto rounded-[40px] w-[100%]" autoplay muted playsinline loop>
+                        <source src="assets/video/video-inscription.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
                 </div>
                 <!-- <div class="hidden md:flex w-[45%] lg:w-[55%] xl:w-[50%]  space-y-4 lg:space-y-8 flex-col items-start lg:items-center justify-center lg:justify-start">
                     <div class="w-full">
@@ -325,7 +328,7 @@
                                              (registerForm.get('password')!.hasError('minlength') || registerForm.get('password')!.hasError('passwordInvalid')) && 
                                              registerForm.get('password')!.touched}"
                                                 class="font-medium text-base leading-7 tracking-[0.75px] text-[#689BA6]">
-                                                au moins 8 caractères avec un mélange de lettres, de chiffres, de
+                                                au moins 8 caractères avec un mélange de lettres majuscule et miniscule, de chiffres, de
                                                 symboles.
                                             </p>
                                         </div>

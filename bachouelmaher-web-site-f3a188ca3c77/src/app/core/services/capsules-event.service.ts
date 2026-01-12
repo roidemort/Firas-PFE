@@ -3,8 +3,10 @@ import { BehaviorSubject } from 'rxjs';
 
 interface CourseOrCapsuleFilter {
   categoryId?: string;
+  categoryName?: string;
   providerId?: string;
-  // searchText?: string;
+  providerName?: string; 
+  searchText?: string;
 }
 @Injectable({
   providedIn: 'root'

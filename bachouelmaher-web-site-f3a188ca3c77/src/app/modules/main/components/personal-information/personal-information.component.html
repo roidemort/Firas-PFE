@@ -1,4 +1,12 @@
 <section class="relative h-full">
+
+<div class="mb-6">
+  <a class="flex items-center justify-start gap-x-2 cursor-pointer" routerLink="/notre-plateforme/cours">
+    <img src="assets/images/arrow-back-simple.png" alt="arrow-back">
+    <h6 class="text-titleColor font-semibold text-xs">Retour aux cours</h6>
+  </a>
+</div>
+
     <div class="w-full absolute bottom-0 z-10 -mt-9 transition-transform duration-300 ease-in-out"
         *ngIf="handleResponse || handleErrorResponse || handleError" [ngClass]="{
             'translate-y-0 opacity-100': handleResponse || handleErrorResponse || handleError,

@@ -37,7 +37,7 @@ export class CoursesSidebarComponent {
   showCategories = true;
   showProviders = false;
   courses : any
-  
+
   constructor(private fb: FormBuilder, private coursesService: CoursesService, private coursesEventService: CoursesEventService, private categoriesService: CategoriesService, private pharmaciesService: PharmaciesService, private providersService: ProvidersService, private categorieCapsulesService: CategoriesCapsulesService, private capsulesEventService: CapsulesEventService, private loadingService: LoadingService) {
     // this.searchForm = this.fb.group({
     //   search: [null, Validators.required]
@@ -161,55 +161,52 @@ export class CoursesSidebarComponent {
   // isSelected(providerId: string): boolean {
   //   return this.selectedProviderIds.includes(providerId);
   // }
-  
+
 
   // onSubmit(){
   //   if (this.searchForm.invalid) return;
   //   console.log('Search:', this.searchForm.value)
   // }
-  
-  onCategorieSelected(categorieId: string): void {
-    // console.log('Categorie ID:', categorieId);
-    this.coursesEventService.setFilter({
-      categoryId: categorieId,
-      providerId: undefined,
-      // searchText: undefined
-    });
-    this.toggleMobileMenu()
-  }
 
-  onProviderSelected(providerId: string, categorieId: string, event: MouseEvent): void {
-    event.stopPropagation();
-    // console.log('Provider ID:', providerId);
-    this.coursesEventService.setFilter({
-      categoryId: categorieId,
-      providerId: providerId,
-      // searchText: undefined
-    });
-    this.toggleMobileMenu()
+  onCategorieSelected(categorie: any): void {
+  this.coursesEventService.setFilter({
+    categoryId: categorie.id,
+    categoryName: categorie.name,
+    providerId: undefined,
+    providerName: undefined
+  });
+  this.toggleMobileMenu();
+}
 
-  }
+  onProviderSelected(provider: any, categorie: any, event: MouseEvent): void {
+  event.stopPropagation();
+  this.coursesEventService.setFilter({
+    categoryId: categorie.id,
+    categoryName: categorie.name, // ADD THIS
+    providerId: provider.id,
+    providerName: provider.name // ADD THIS
+  });
+  this.toggleMobileMenu();
+}
 
-  onCategorieCapsulesSelected(categorieId: string): void {
-    // console.log('Categorie ID:', categorieId);
-    this.capsulesEventService.setFilter({
-      categoryId: categorieId,
-      providerId: undefined,
-      // searchText: undefined
-    });
-    this.toggleMobileMenu()
+  onCategorieCapsulesSelected(capsule: any): void {
+  this.capsulesEventService.setFilter({
+    categoryId: capsule.id,
+    categoryName: capsule.name, // ADD THIS
+    providerId: undefined,
+    providerName: undefined
+  });
+  this.toggleMobileMenu();
+}
 
-  }
-  
-  onProviderCapsulesSelected(providerId: string, categorieId: string, event: MouseEvent): void {
-    event.stopPropagation();
-    // console.log('Provider ID:', providerId);
-    this.capsulesEventService.setFilter({
-      categoryId: categorieId,
-      providerId: providerId,
-      // searchText: undefined
-    });
-    this.toggleMobileMenu()
-
-  }
+onProviderCapsulesSelected(provider: any, capsule: any, event: MouseEvent): void {
+  event.stopPropagation();
+  this.capsulesEventService.setFilter({
+    categoryId: capsule.id,
+    categoryName: capsule.name, // ADD THIS
+    providerId: provider.id,
+    providerName: provider.name // ADD THIS
+  });
+  this.toggleMobileMenu();
+}
 }

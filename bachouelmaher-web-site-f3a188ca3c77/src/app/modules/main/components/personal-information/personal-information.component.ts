@@ -7,11 +7,12 @@ import { AppPhoneNumberDirective } from 'src/app/shared/directives/app-phone-num
 import { UsersService } from 'src/app/core/services/users.service';
 import { LoadingService } from 'src/app/core/services/loading.service';
 import { OnlyNumbersDirective } from 'src/app/shared/directives/only-numbers.directive';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-personal-information',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, AppPhoneNumberDirective, OnlyNumbersDirective],
+  imports: [CommonModule, ReactiveFormsModule, AppPhoneNumberDirective, OnlyNumbersDirective , RouterModule],
   templateUrl: './personal-information.component.html',
   styleUrls: ['./personal-information.component.scss'],
 })

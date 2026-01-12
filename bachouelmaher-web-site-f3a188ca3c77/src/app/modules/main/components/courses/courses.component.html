@@ -2,28 +2,37 @@
     <div *ngIf="!isLoading">
         <app-card-carousel [inProgress]="true" [cards]="courses"></app-card-carousel>
     </div>
+
     <div *ngIf="!isLoading">
-        <div class="w-full sm:-mt-4 p-4 sm:px-8 sm:pt-12">
-            <h1 class="font-semibold text-2xl text-titleColor">Nouvel arrivage</h1>
+        <!-- Updated section with dynamic title -->
+        <div class="w-full sm:-mt-4 p-4 sm:px-8 sm:pt-12 flex justify-between items-center">
+            <div>
+                <h1 class="font-semibold text-2xl text-titleColor">{{ sectionTitle }}</h1>
+
+                <!-- Show clear filter button if filtered -->
+                <div *ngIf="currentFilter" class="mt-2 flex items-center gap-2">
+                    <span class="text-sm text-gray-600">
+                        Filtre actif
+                    </span>
+                    <button (click)="clearFilters()"
+                            class="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        Effacer
+                    </button>
+                </div>
+            </div>
         </div>
-        <!-- <ng-container *ngIf="courses && courses.length > 0 else noCourses"> -->
+
         <app-card-carousel [cards]="courses"></app-card-carousel>
-        <!-- </ng-container>
-        <ng-template #noCourses>
-            <p class="text-[#476F77] pl-8 text-xl">Aucun cours trouvé</p>
-        </ng-template> -->
     </div>
 
     <div class="pb-4" *ngIf="!isLoading">
         <div class="w-full p-4 sm:px-8 sm:pt-8">
             <h1 class="font-semibold text-2xl text-titleColor">Capsules</h1>
         </div>
-        <!-- <ng-container *ngIf="capsules.length > 0 else noCapsules"> -->
         <app-card-shorts [cards]="capsules"></app-card-shorts>
-        <!-- </ng-container>
-        <ng-template #noCapsules>
-            <p class="text-[#476F77] pl-8 text-xl">Aucune capsule trouvée</p>
-        </ng-template> -->
     </div>
 </section>
 

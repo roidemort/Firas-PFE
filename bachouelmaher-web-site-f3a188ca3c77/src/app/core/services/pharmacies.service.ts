@@ -85,6 +85,28 @@ export class PharmaciesService {
       }));
   }
 
+
+
+  sendPharmacyNotification(data: any) {
+    return this.http.post<any>(`${environment.apiEndpoint}/admin/pharmacies/sendNotifications`, data)
+      .pipe(map(response => {
+        return response;
+      }));
+  }
+
+  // Get unused keys (you might need to filter from getAllKeys or create a new endpoint)
+  getUnusedKeys(pharmacyId: string) {
+    let params = new HttpParams();
+    params = params.append('pharmacy', pharmacyId);
+    params = params.append('status', '0'); // Assuming 0 means unused
+    params = params.append('relations', 'user'); // Optional: include user relation
+
+    return this.http.get<any>(`${environment.apiEndpoint}/admin/pharmacies-users/getAllKeys`, { params: params })
+      .pipe(map(response => {
+        return response;
+      }));
+  }
+
 }
 
 

@@ -97,8 +97,8 @@ export class CourseDetailsComponent {
 
   showAlert(alertType: 'handleResponse' | 'handleError' | 'handleErrorResponse') {
     const messages: { [key: string]: string } = {
-      // handleResponse: 'Membres rÃ©cupÃ©rÃ© avec succÃ¨s.',
-      handleErrorResponse: 'AccÃ¨s refusÃ© : vous n\'Ãªtes pas autorisÃ© Ã  suivre ce cours.',
+      // handleResponse: 'Membres récupéré avec succès.',
+      handleErrorResponse: 'Accès refusé : vous n\'êtes pas autorisé à suivre ce cours.',
       handleError: 'Une erreur s\'est produite.'
     };
 

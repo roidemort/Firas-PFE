@@ -112,7 +112,7 @@
       <ul class="space-y-4">
         <li *ngFor="let category of categories"
           class="font-medium text-titleColor text-base relative cursor-pointer"
-          (click)="onCategorieSelected(category.id)">
+          (click)="onCategorieSelected(category)">
           <div class="flex items-center justify-between">
             <span class="hover:text-titleColor transition duration-300">
               {{ category.name }}
@@ -131,7 +131,7 @@
             <ng-container *ngFor="let provider of category.providers; let i = index">
               <ng-container *ngIf="i === 0 || provider.name !== category.providers[i - 1]?.name">
                 <li class="text-sm text-titleColor hover:text-titleColor cursor-pointer transition duration-300"
-                    (click)="onProviderSelected(provider.id, category.id, $event)">
+                    (click)="onProviderSelected(provider, category, $event)">
                   {{ provider.name }}
                 </li>
               </ng-container>
@@ -174,7 +174,7 @@
       <ul class="space-y-4">
         <li *ngFor="let capsule of capsules"
           class="font-medium text-titleColor text-base relative cursor-pointer transition duration-300"
-          (click)="onCategorieCapsulesSelected(capsule.id)">
+          (click)="onCategorieCapsulesSelected(capsule)">
           <div class="flex items-center justify-between">
             <span class="hover:text-titleColor transition duration-300">
               {{ capsule.name }}
@@ -186,7 +186,7 @@
               <ng-container *ngFor="let provider of capsule.providers; let i = index">
                 <ng-container *ngIf="i === 0 || provider.name !== capsule.providers[i - 1]?.name">
                   <li class="text-sm text-titleColor hover:text-titleColor cursor-pointer transition duration-300"
-                      (click)="onProviderCapsulesSelected(provider.id, capsule.id, $event)">
+                      (click)="onProviderCapsulesSelected(provider, capsule, $event)">
                     {{ provider.name }}
                   </li>
                 </ng-container>

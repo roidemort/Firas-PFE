@@ -6,13 +6,14 @@ import { AuthService } from 'src/app/core/services/auth.service';
 import { CoursesService } from 'src/app/core/services/courses.service';
 import { UsersService } from 'src/app/core/services/users.service';
 import { MainLoaderComponent } from '../loader/loader.component';
+import { AlertComponent } from '../alert/alert.component'; // Import the alert component
 
 @Component({
   selector: 'app-card-carousel',
   standalone: true,
-  imports: [CommonModule, RouterModule, MainLoaderComponent],
+  imports: [CommonModule, RouterModule, MainLoaderComponent, AlertComponent], // Add AlertComponent
   templateUrl: './card-carousel.component.html',
-  styleUrl: './card-carousel.component.scss'
+  styleUrls: ['./card-carousel.component.scss']
 })
 export class CardCarouselComponent {
   @Input() cards: any[] = [];
@@ -25,24 +26,36 @@ export class CardCarouselComponent {
   isHoveringNext = false;
   coursesWithDetails: any[] = [];
   courseProgressions: { [key: string]: any } = {};
-  user: any
-  courses: any
-  prevStatus = true
-  nextStatus = true
-  prevStatusEnrolls = true
-  nextStatusEnrolls = true
-  isLoading = false
+  user: any;
+  courses: any;
+  prevStatus = true;
+  nextStatus = true;
+  prevStatusEnrolls = true;
+  nextStatusEnrolls = true;
+  isLoading = false;
 
+  // Alert properties
+  showAlert = false;
+  alertMessage = '';
+  alertType: 'error' | 'warning' | 'success' = 'warning';
 
-  constructor(private router: Router, private userService: UsersService, private authService: AuthService, private coursService: CoursesService) {
+  constructor(
+    private router: Router,
+    private userService: UsersService,
+    private authService: AuthService,
+    private coursService: CoursesService
+  ) {}
 
-  }
   ngOnInit() {
     this.isLoading = true;
     this.user = this.authService.getUser();
-    this.getUserDetails(this.user.id);
+    if (this.inProgress) {
+      this.getUserDetails(this.user.id);
+    } else {
+      this.isLoading = false;
+    }
   }
-  
+
   extractCourseDataById(courseId: string): void {
     const card = this.cards.find(card => card.id === courseId);
     if (card) {
@@ -62,20 +75,20 @@ export class CardCarouselComponent {
     this.userService.getMyTeamDetails(id).subscribe({
       next: (res) => {
         if (res.status) {
-          this.user = res.data.users
-          this.courses = res.data.users.enrolls
+          this.user = res.data.users;
+          this.courses = res.data.users.enrolls;
           if (this.inProgress) {
             this.courses.forEach((course: { course: { id: string; }; }) => {
               this.extractCourseDataById(course.course.id);
             });
           }
-          this.sortCoursesByStartedAt(this.courses)
-          this.getCoursProgrssion(this.courses)
+          this.sortCoursesByStartedAt(this.courses);
+          this.getCoursProgrssion(this.courses);
         }
-        this.isLoading = false
+        this.isLoading = false;
       },
       error: (error) => {
-        console.error(error)
+        console.error(error);
       }
     });
   }
@@ -88,77 +101,88 @@ export class CardCarouselComponent {
     courses.forEach((course: any) => {
       this.getProgression(course.id);
     });
-    this.isLoading = false
+    this.isLoading = false;
   }
 
   getProgression(coursId: string) {
     const data = {
       courseId: coursId,
       userId: this.user.id
-    }
+    };
     this.userService.getProgression(data).subscribe({
       next: (res) => {
         if (res.status) {
           this.courseProgressions[coursId] = res.data.course;
-          // console.log('getProgression',res.data)
         }
       },
       error: (error) => {
-        console.error(error)
+        console.error(error);
       }
     });
   }
 
   prevCard() {
-    this.prevStatus = false
-    this.nextStatus = false
+    this.prevStatus = false;
+    this.nextStatus = false;
     if (this.currentIndex > 0) {
       this.currentIndex--;
       setTimeout(() => {
-        this.nextStatus = true
-        this.prevStatus = true
+        this.nextStatus = true;
+        this.prevStatus = true;
       }, 250);
     }
   }
 
   nextCard() {
-    this.nextStatus = false
-    this.prevStatus = false
+    this.nextStatus = false;
+    this.prevStatus = false;
     if (this.currentIndex < this.cards.length - this.cardsToShow) {
       this.currentIndex++;
       setTimeout(() => {
-        this.prevStatus = true
-        this.nextStatus = true
+        this.prevStatus = true;
+        this.nextStatus = true;
       }, 250);
     }
   }
 
   prevEnroll() {
-    this.prevStatusEnrolls = false
-    this.nextStatusEnrolls = false
+    this.prevStatusEnrolls = false;
+    this.nextStatusEnrolls = false;
     if (this.currentIndexEnrolls > 0) {
       this.currentIndexEnrolls--;
       setTimeout(() => {
-        this.nextStatusEnrolls = true
-        this.prevStatusEnrolls = true
+        this.nextStatusEnrolls = true;
+        this.prevStatusEnrolls = true;
       }, 250);
     }
   }
 
   nextEnroll() {
-    this.nextStatusEnrolls = false
-    this.prevStatusEnrolls = false
+    this.nextStatusEnrolls = false;
+    this.prevStatusEnrolls = false;
     if (this.currentIndexEnrolls < this.user.enrolls.length - this.cardsToShow) {
       this.currentIndexEnrolls++;
       setTimeout(() => {
-        this.prevStatusEnrolls = true
-        this.nextStatusEnrolls = true
+        this.prevStatusEnrolls = true;
+        this.nextStatusEnrolls = true;
       }, 250);
     }
   }
 
-  goToCourse(id: string) {
-    const route = `notre-plateforme/details-cours/${id}`;
+  goToCourse(card: any) {
+    // Check if the course is coming soon
+    if (card.comingSoon) {
+      this.showComingSoonAlert(card);
+      return;
+    }
+
+    // Also check the status field if needed
+    /*if (card.status !== 1) { // Assuming 1 means active
+      this.showAlertMessage('Ce cours n\'est pas encore disponible.', 'warning');
+      return;
+    }*/
+
+    const route = `notre-plateforme/details-cours/${card.id}`;
     const navigationPromise = this.router.navigate([route]);
 
     if (!this.style) {
@@ -166,10 +190,44 @@ export class CardCarouselComponent {
     }
   }
 
-  getRoundedScore(score: number): number {
-    return Math.floor(score);
+  // Check if a course is clickable
+  isCourseClickable(card: any): boolean {
+    return !card.comingSoon && card.status === 1;
   }
 
+  // Get coming soon message
+  getComingSoonMessage(card: any): string {
+    return card.messageComingSoon || 'Bientôt disponible';
+  }
+
+  // Show coming soon alert
+  showComingSoonAlert(card: any) {
+    const message = card.messageComingSoon
+      ? card.messageComingSoon
+      : `"${card.title}" sera disponible prochainement.`;
+
+    this.showAlertMessage(message, 'warning');
+  }
+
+  // Show alert message
+  showAlertMessage(message: string, type: 'error' | 'warning' | 'success' = 'warning') {
+    this.alertMessage = message;
+    this.alertType = type;
+    this.showAlert = true;
+
+    // Auto-dismiss after 5 seconds
+    setTimeout(() => {
+      this.closeAlert();
+    }, 5000);
+  }
+
+  // Close alert
+  closeAlert() {
+    this.showAlert = false;
+    this.alertMessage = '';
+  }
+
+  // Format duration
   formatDuration(duration?: string): string {
     if (!duration) return '00h 00 minutes';
 
@@ -181,4 +239,8 @@ export class CardCarouselComponent {
     return `${hours}h ${minutes} minutes`;
   }
 
+  // Get rounded score
+  getRoundedScore(score: number): number {
+    return Math.floor(score);
+  }
 }

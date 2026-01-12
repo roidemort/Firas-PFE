@@ -4,6 +4,8 @@ import { BehaviorSubject } from 'rxjs';
 interface CourseOrCapsuleFilter {
   categoryId?: string;
   providerId?: string;
+  categoryName?: string;
+  providerName?:string;
   // searchText?: string;
 }
 @Injectable({
@@ -31,6 +33,14 @@ export class CoursesEventService {
 
   private currentQuiz = new BehaviorSubject<any>(null);
   currentQuiz$ = this.currentQuiz.asObservable();
+
+
+  private defaultLessonId = new BehaviorSubject<string | null>(null);
+  defaultLessonId$ = this.defaultLessonId.asObservable();
+
+  setDefaultLessonId(lessonId: string | null) {
+    this.defaultLessonId.next(lessonId);
+  }
 
   private enrollCourseSubject = new BehaviorSubject<any>(null);
   enrollCourse$ = this.enrollCourseSubject.asObservable();

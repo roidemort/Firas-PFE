@@ -16,6 +16,7 @@ import {
   getDetailsPharmacy,
   removePharmacy,
   updatePharmacy,
+  sendPharmacyNotifications,
   generateNewKey,
   getAllKeys,
   updateKey,
@@ -97,6 +98,7 @@ router.post('/pharmacies/add', [checkJwt, checkRole(['SUPER_ADMIN'])], addPharma
 router.get('/pharmacies/getDetails/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], getDetailsPharmacy);
 router.delete('/pharmacies/remove/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], removePharmacy);
 router.put('/pharmacies/edit/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], updatePharmacy);
+router.post('/pharmacies/sendNotifications', [checkJwt, checkRole(['SUPER_ADMIN'])], sendPharmacyNotifications);
 
 router.post('/pharmacies-users/generateNewKey', [checkJwt, checkRole(['SUPER_ADMIN'])], generateNewKey);
 router.get('/pharmacies-users/getAllKeys', [checkJwt, checkRole(['SUPER_ADMIN'])], getAllKeys);

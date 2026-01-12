@@ -53,12 +53,14 @@ export class UsersService {
         return response;
       }));
   }
+
   sendNotifications(data: any){
     return this.http.post<any>(`${environment.apiEndpoint}/admin/users/sendNotifications`, data)
       .pipe(map(response => {
         return response;
       }));
   }
+
   updateProfile(data: any) {
     return this.http.put<any>(`${environment.apiEndpoint}/user/edit-profile`, data);
   }

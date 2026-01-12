@@ -159,6 +159,7 @@ export const getProgression = async (
     return res.customSuccess(200, 'Error', {}, false);
   }
 };
+
 export const getMyCertificate = async (
   req: Request,
   res: Response,
