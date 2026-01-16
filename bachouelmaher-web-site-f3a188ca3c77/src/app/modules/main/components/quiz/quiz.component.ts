@@ -74,7 +74,7 @@ export class QuizComponent {
       quizEnrollId: this.currentQuiz.quizEnrollId,
       quizId: this.currentQuiz.quizId,
     };
-      
+
     if (this.currentQuiz.status === 0) {
       this.startNewQuiz();
     } else {
@@ -108,47 +108,49 @@ export class QuizComponent {
 
   handleNewQuizResponse(result: any) {
     this.questions = result.data.map((question: any) => {
-      const options: any = {};
-      if (question.a) options.a = question.a;
-      if (question.b) options.b = question.b;
-      if (question.c) options.c = question.c;
-      if (question.d) options.d = question.d;
+        const options: any = {};
+        if (question.a) options.a = question.a;
+        if (question.b) options.b = question.b;
+        if (question.c) options.c = question.c;
+        if (question.d) options.d = question.d;
 
-      return {
-        id: question.id,
-        text: question.text,
-        type: question.type,
-        topic: question.topic,
-        options: options,
-        details: question.details
-      };
+        return {
+            id: question.id,
+            text: question.text,
+            type: question.type,
+            topic: question.topic,
+            options: options,
+            details: question.details,
+            image: question.image // <--- ADD THIS LINE
+        };
     });
-  }
+}
 
 
   handleRegeneratedQuizResponse(result: any) {
     if (result.data.newEnrollQuiz) {
-      this.currentQuiz.quizEnrollId = result.data.newEnrollQuiz.id;
-      this.quizData.quizEnrollId = result.data.newEnrollQuiz.id;
+        this.currentQuiz.quizEnrollId = result.data.newEnrollQuiz.id;
+        this.quizData.quizEnrollId = result.data.newEnrollQuiz.id;
     }
 
     this.questions = result.data.questions.map((question: any) => {
-      const options: any = {};
-      if (question.a) options.a = question.a;
-      if (question.b) options.b = question.b;
-      if (question.c) options.c = question.c;
-      if (question.d) options.d = question.d;
+        const options: any = {};
+        if (question.a) options.a = question.a;
+        if (question.b) options.b = question.b;
+        if (question.c) options.c = question.c;
+        if (question.d) options.d = question.d;
 
-      return {
-        id: question.id,
-        text: question.text,
-        type: question.type,
-        topic: question.topic,
-        options: options,
-        details: question.details
-      };
+        return {
+            id: question.id,
+            text: question.text,
+            type: question.type,
+            topic: question.topic,
+            options: options,
+            details: question.details,
+            image: question.image // <--- ADD THIS LINE
+        };
     });
-  }
+}
 
   getOptions(index: number): string[] {
     const question = this.questions[index].options;
@@ -197,7 +199,7 @@ export class QuizComponent {
         answer: this.formatSelectedAnswers(this.selectedAnswers),
         questionNumber : this.selectedAnswerNumber
       }
-      // console.log(data)      
+      // console.log(data)
       this.coursesService.answerQuestionEnrollCourse(this.enrollCourseId, data).subscribe({
         next: (result) => {
           if(result.status){
@@ -267,7 +269,7 @@ export class QuizComponent {
       error: (error) => console.error(error),
     });
   }
-  
+
   indexToChar(index: number): string {
     return String.fromCharCode(65 + index);
   }
@@ -302,5 +304,5 @@ export class QuizComponent {
       error: (err) => console.error(err)
     });
   }
-  
+
 }

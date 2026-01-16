@@ -25,6 +25,11 @@
             <div *ngIf="currentQuestionIndex < questions.length; else noMoreQuestions">
                 <div class="w-full space-y-4 text-center mb-8 select-none">
                     <h1 class="text-secondaryfontColor font-semibold">{{ questions[currentQuestionIndex]?.text }}</h1>
+                    <div *ngIf="questions[currentQuestionIndex]?.image?.secure_url" class="flex justify-center py-4">
+                      <img [src]="questions[currentQuestionIndex].image.secure_url"
+                          alt="illustration"
+                          class="max-w-full h-auto max-h-[300px] rounded-lg shadow-sm border border-secondaryfontColor/20">
+                  </div>
                     <p class="text-white text-sm">Sujet : {{questions[currentQuestionIndex]?.topic}}</p>
                 </div>
 

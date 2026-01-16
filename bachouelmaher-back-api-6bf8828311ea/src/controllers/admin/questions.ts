@@ -51,20 +51,27 @@ export const getAllQuestions = async (req: Request, res: Response, next: NextFun
     return  res.customSuccess(200, 'Error', {}, false);
   }
 };
+
 export const getDetailsQuestion = async (req: Request, res: Response, next: NextFunction) => {
   const questionId = req.params.id;
   try {
-    const question = await findQuestionById(questionId, ['quiz', 'quiz.section', 'quiz.section.course'])
+    // ADD 'image' TO THE ARRAY BELOW
+    const question = await findQuestionById(questionId, ['quiz', 'quiz.section', 'quiz.section.course', 'image'])
+    
     if (!question) {
-      return  res.customSuccess(200, 'Error', {}, false);
+      return res.customSuccess(200, 'Error', {}, false);
     }
-    return res.customSuccess( 200, 'Details of question.', question, true);
+    return res.customSuccess(200, 'Details of question.', question, true);
   } catch (err) {
-    return  res.customSuccess(200, 'Error', {}, false);
+    return res.customSuccess(200, 'Error', {}, false);
   }
 };
+
+
 export const addQuestion = async (req: Request, res: Response, next: NextFunction) => {
-  const { text, type, topic, answer, points, a, b, c, d, details, justification, sectionId } = req.body;
+  // Add 'imageId' to the destructured body
+  const { text, type, topic, answer, points, a, b, c, d, details, justification, sectionId, imageId } = req.body;
+
   try {
     const Quiz = await findOneQuiz( { 'section.id': Equal(sectionId)}, ['section', 'section.course'])
     if (!Quiz) {
@@ -72,9 +79,13 @@ export const addQuestion = async (req: Request, res: Response, next: NextFunctio
     }
     let newAnswer = answer
     if(Array.isArray(answer)){ newAnswer = answer.join(',')}
+
     const question = await createQuestion({
-      text, type, topic, answer: newAnswer, points, a, b, c, d, details, justification, quiz: Quiz
+      text, type, topic, answer: newAnswer, points, a, b, c, d, details, justification, quiz: Quiz,
+      // Add this line:
+      image: imageId ? { id: imageId } as any : null
     });
+
     await RedisService.incCreateIfNotExist('questions', 1)
     await verifyCourseStatus(Quiz.section.course.id)
     return res.customSuccess( 200, 'Question successfully created.', { question }, true);
@@ -82,8 +93,9 @@ export const addQuestion = async (req: Request, res: Response, next: NextFunctio
     return  res.customSuccess(200, 'Error', {}, false);
   }
 };
+
 export const updateQuestion = async (req: Request, res: Response, next: NextFunction) => {
-  const { text, type, topic, answer, points, a, b, c, d, details, status, justification  } = req.body;
+  const { text, type, topic, answer, points, a, b, c, d, details, status, justification, imageId  } = req.body;
   const questionId = req.params.id;
 
   try {
@@ -109,6 +121,13 @@ export const updateQuestion = async (req: Request, res: Response, next: NextFunc
     if (d) Question.d = d;
     if (details) Question.details = details;
     if (status) Question.status = status;
+
+    if (imageId) {
+        Question.image = { id: imageId } as any;
+    } else if (imageId === null) {
+        // Handle case where user wants to remove the image
+        Question.image = null;
+    }
 
     Question.updatedAt = new Date();
 

@@ -8,6 +8,10 @@ import {
 import { QuizEntity } from "./quiz.entity"
 import { QuestionResponseEntity } from "./question-response.entity"
 
+
+import { ImageEntity } from "./image.entity"; // <--- Import this
+import { JoinColumn } from "typeorm";
+
 @Entity('questions')
 export class QuestionEntity {
   @PrimaryGeneratedColumn("uuid")
@@ -50,6 +54,12 @@ export class QuestionEntity {
     default: 1,
   })
   status: number;
+
+  // --- ADD THIS SECTION ---
+  @ManyToOne(() => ImageEntity, { nullable: true, eager: false })
+  @JoinColumn({ name: 'imageId' }) // This creates an 'imageId' column in your DB
+  image: ImageEntity;
+  // ------------------------
 
   @Column()
   @CreateDateColumn()

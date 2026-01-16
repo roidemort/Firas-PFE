@@ -13,6 +13,10 @@ import {MatSelect} from "@angular/material/select";
 import {CoursesService} from "../../../../../core/services/courses.service";
 import {Course} from "../../../../../core/models/course.entity";
 
+
+
+
+import { MediaDialogComponent } from "../../../components/dialog/media-dialog/media-dialog.component";
 @Component({
   selector: 'app-manage-question',
   standalone: true,
@@ -52,6 +56,7 @@ export class ManageQuestionComponent implements OnInit {
     { value: 'CU', label: 'Choix Unique' },
   ]
 
+
   constructor(private coursesService: CoursesService, private fb : FormBuilder, private questionsService: QuestionsService, private toastr: ToastrService, private router: Router, private route: ActivatedRoute) {}
   async ngOnInit() {
     const result$ = this.coursesService.getAllCourses({ column: 'createdAt', direction: 'desc' }, 50, 0 , '', '', 'sections')
@@ -80,6 +85,7 @@ export class ManageQuestionComponent implements OnInit {
       this.manageQuestionForm.get('course')!.disable();
       this.manageQuestionForm.get('section')!.disable();
       this.selectedSection = this.sectionId!
+      this.selectedImage = undefined;
       this.manageQuestionForm.patchValue({
         course: this.courseId,
         section: this.sectionId,
@@ -99,6 +105,8 @@ export class ManageQuestionComponent implements OnInit {
       if(this.question.type == 'CM') {
         newAnswer = this.question.answer.split(',')
       }
+
+      this.selectedImage = result.data.image;
       this.manageQuestionForm.patchValue({
         text: this.question.text,
         type: this.question.type,
@@ -141,6 +149,22 @@ export class ManageQuestionComponent implements OnInit {
     }
 
   }
+
+  browserMedia() {
+    const mediaDialogComponent = this.actions.createComponent(MediaDialogComponent);
+
+    // Optional: If you only want to allow 1 image, keep 'single'.
+    // mediaDialogComponent.instance.selectedType = 'single';
+
+    mediaDialogComponent.instance.closeActions.subscribe((res: any) => {
+      if (res != 'cancel') {
+        // The dialog returns an array, so we take the first item for a single selection
+        this.selectedImage = res[0];
+      }
+      mediaDialogComponent.destroy();
+    });
+  }
+
   markAllAsTouched() {
     Object.keys(this.manageQuestionForm.controls).forEach((key) => {
       this.manageQuestionForm.get(key)?.markAsTouched();
@@ -166,6 +190,7 @@ export class ManageQuestionComponent implements OnInit {
         b: this.manageQuestionForm.value.b,
         c: this.manageQuestionForm.value.c,
         d: this.manageQuestionForm.value.d,
+        imageId: this.selectedImage ? this.selectedImage.id : null,
       }
 
       if(this.type == 'add'|| this.type == 'new') {

@@ -13,6 +13,7 @@ import { errorHandler } from "@/middleware/errorHandler"
 
 const app: Express = express();
 import './utils/response/customSuccess';
+import { setupSwagger } from "./core/swegger";
 app.use('/upload', express.static('upload'))
 app.use(cors());
 app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
@@ -36,6 +37,12 @@ app.all('*', async function (req, res, next) {
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+//swgger config 
+if (process.env.NODE_ENV === 'development' || process.env.ENABLE_SWAGGER === 'true') {
+  setupSwagger(app);
+}
+
 
 app.use(APP_PREFIX_PATH, routes);
 

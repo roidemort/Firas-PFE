@@ -284,52 +284,53 @@ export class DetailsPharmacyComponent implements OnInit {
       <h3 style="color: #ffffff; margin-top: 0; margin-bottom: 25px; font-size: 20px;">📋 Comment s'inscrire ?</h3>
 
       <div style="display: grid; gap: 18px;">
-        <div style="display: flex; align-items: flex-start; gap: 15px;">
-          <div style="background-color: #D1FA94; color: #111827; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 14px;">1</div>
-          <div style="color: #cedddeff;">
+        <div style="display: flex; align-items: flex-start;">
+          <!-- Responsive circle with min-width/max-width -->
+          <div style="background-color: #D1FA94; color: #111827; min-width: 28px; width: 28px; max-width: 28px; min-height: 28px; height: 28px; max-height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 14px; margin-right: 15px; margin-top: 2px;">1</div>
+          <div style="color: #cedddeff; flex: 1;">
             <span style="font-weight: bold; color: #e5e7eb;">Rendez-vous sur</span>
             <a href="https://galiocare.com/inscription" style="color: #D1FA94; text-decoration: none; font-weight: bold; margin-left: 5px;">www.galiocare.com</a>
           </div>
         </div>
 
-        <div style="display: flex; align-items: flex-start; gap: 15px;">
-          <div style="background-color: #D1FA94; color: #111827; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 14px;">2</div>
-          <div style="color: #e5e7eb;">Cliquez sur <span style="font-weight: bold; color: #e5e7eb;">"Commencer"</span> depuis la page d'accueil de Galiocare.</div>
+        <div style="display: flex; align-items: flex-start;">
+          <div style="background-color: #D1FA94; color: #111827; min-width: 28px; width: 28px; max-width: 28px; min-height: 28px; height: 28px; max-height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 14px; margin-right: 15px; margin-top: 2px;">2</div>
+          <div style="color: #e5e7eb; flex: 1;">Cliquez sur <span style="font-weight: bold; color: #e5e7eb;">"Commencer"</span> depuis la page d'accueil de Galiocare.</div>
         </div>
 
-        <div style="display: flex; align-items: flex-start; gap: 15px;">
-          <div style="background-color: #D1FA94; color: #111827; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 14px;">3</div>
-          <div style="color: #e5e7eb;">Puis <span style="font-weight: bold; color: #e5e7eb;">"Inscription"</span></div>
+        <div style="display: flex; align-items: flex-start;">
+          <div style="background-color: #D1FA94; color: #111827; min-width: 28px; width: 28px; max-width: 28px; min-height: 28px; height: 28px; max-height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 14px; margin-right: 15px; margin-top: 2px;">3</div>
+          <div style="color: #e5e7eb; flex: 1;">Puis <span style="font-weight: bold; color: #e5e7eb;">"Inscription"</span></div>
         </div>
 
-        <div style="display: flex; align-items: flex-start; gap: 15px;">
-          <div style="background-color: #D1FA94; color: #111827; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 14px;">4</div>
-          <div style="color: #e5e7eb;">Entrez votre clé d'activation pour lier votre profil au compte de votre pharmacie.</div>
+        <div style="display: flex; align-items: flex-start;">
+          <div style="background-color: #D1FA94; color: #111827; min-width: 28px; width: 28px; max-width: 28px; min-height: 28px; height: 28px; max-height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 14px; margin-right: 15px; margin-top: 2px;">4</div>
+          <div style="color: #e5e7eb; flex: 1;">Entrez votre clé d'activation pour lier votre profil au compte de votre pharmacie.</div>
         </div>
 
-        <div style="display: flex; align-items: flex-start; gap: 15px;">
-          <div style="background-color: #D1FA94; color: #111827; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 14px;">5</div>
-          <div style="color: #e5e7eb;">Complétez vos informations</div>
+        <div style="display: flex; align-items: flex-start;">
+          <div style="background-color: #D1FA94; color: #111827; min-width: 28px; width: 28px; max-width: 28px; min-height: 28px; height: 28px; max-height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 14px; margin-right: 15px; margin-top: 2px;">5</div>
+          <div style="color: #e5e7eb; flex: 1;">Complétez vos informations</div>
         </div>
 
-        <div style="display: flex; align-items: flex-start; gap: 15px;">
-          <div style="background-color: #D1FA94; color: #111827; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 14px;">6</div>
-          <div style="color: #e5e7eb;">Accédez aux formations et commencez votre parcours à votre rythme.</div>
+        <div style="display: flex; align-items: flex-start;">
+          <div style="background-color: #D1FA94; color: #111827; min-width: 28px; width: 28px; max-width: 28px; min-height: 28px; height: 28px; max-height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 14px; margin-right: 15px; margin-top: 2px;">6</div>
+          <div style="color: #e5e7eb; flex: 1;">Accédez aux formations et commencez votre parcours à votre rythme.</div>
         </div>
 
-        <div style="display: flex; align-items: flex-start; gap: 15px;">
-          <div style="background-color: #D1FA94; color: #111827; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 14px;">7</div>
-          <div style="color: #e5e7eb;">Distribuez le reste des clés d'activation à votre équipe afin que chacun puisse se former à son rythme.</div>
+        <div style="display: flex; align-items: flex-start;">
+          <div style="background-color: #D1FA94; color: #111827; min-width: 28px; width: 28px; max-width: 28px; min-height: 28px; height: 28px; max-height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 14px; margin-right: 15px; margin-top: 2px;">7</div>
+          <div style="color: #e5e7eb; flex: 1;">Distribuez le reste des clés d'activation à votre équipe afin que chacun puisse se former à son rythme.</div>
         </div>
       </div>
     </div>
 
     <!-- CTA Button -->
-    <div style="text-align: center; margin-bottom: 35px;">
-      <a href="https://galiocare.com/inscription" style="background: linear-gradient(135deg, #D1FA94 0%, #0E9CA6 100%); color: #111827; padding: 18px 45px; text-decoration: none; border-radius: 30px; font-weight: bold; font-size: 16px; display: inline-block; box-shadow: 0 4px 15px rgba(209, 250, 148, 0.3); transition: all 0.3s ease;">
-        Inscription
-      </a>
-    </div>
+<div style="text-align: center; margin-bottom: 35px;">
+  <a href="https://galiocare.com/inscription" style="background: linear-gradient(135deg, #D1FA94 0%, #0E9CA6 100%); color: #FFFFFF; padding: 18px 45px; text-decoration: none; border-radius: 30px; font-weight: bold; font-size: 16px; display: inline-block; box-shadow: 0 4px 15px rgba(209, 250, 148, 0.3); transition: all 0.3s ease; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);">
+    Inscription
+  </a>
+</div>
 
     <!-- New Section: Do not reply directly -->
     <div style="background-color: #1f2937; padding: 25px; border-radius: 10px; margin-bottom: 30px; border: 1px solid #374151;">
@@ -389,15 +390,11 @@ export class DetailsPharmacyComponent implements OnInit {
   if (!roleKey) return 'Autre rôle';
 
   const roleMap: { [key: string]: string } = {
-    'PHARMACIST': 'PHARMACIEN TITULAIRE',
-    'PHARMACIEN': 'PHARMACIEN TITULAIRE',
+    'PHARMACIST_HOLDER': 'PHARMACIEN TITULAIRE',
     'PHARMACIEN_TITULAIRE': 'PHARMACIEN TITULAIRE',
-    'PHARMACISTS': 'PHARMACIENS',
-    'PREPARATEUR': 'PRÉPARATEURS EN OFFICINE',
-    'PREPARATEURS': 'PRÉPARATEURS EN OFFICINE',
-    'PREPARATEUR_EN_OFFICINE': 'PRÉPARATEURS EN OFFICINE',
+    'PHARMACIST': 'PHARMACIENS',
     'STAGIAIRE': 'STAGIAIRES',
-    'ADMIN_PHARMACY': 'ADMINISTRATEUR PHARMACIE',
+    'PREPARER':'Préparateur en pharmacie'
     // Add other role mappings as needed
   };
 

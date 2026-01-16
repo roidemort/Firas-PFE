@@ -17,4 +17,8 @@ export interface Question {
   createdAt: string;
   updatedAt: string;
   quiz?: Quiz
+  image?: {
+      id: string;
+      secure_url: string;
+  } | null;
 }

@@ -1,0 +1,32 @@
+{
+  "info": {
+    "description": "Galiocare API Documentation",
+    "title": "Galiocare API",
+    "version": "1.0.0"
+  },
+  "host": "api.galiocare.com",
+  "basePath": "/api/v1",
+  "produces": [
+    "application/json"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "schemes": [
+    "https"
+  ],
+  "securityDefinitions": {
+    "BearerAuth": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "Authorization",
+      "description": "Bearer token (Format: Bearer {token})"
+    }
+  },
+  "swagger": "2.0",
+  "paths": {},
+  "definitions": {},
+  "responses": {},
+  "parameters": {},
+  "tags": []
+}

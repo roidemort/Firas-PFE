@@ -73,7 +73,23 @@ export const countQuestions = async (query: any) => {
 export const getRandomQuestionFromQuiz = async (quizId: string) => {
   return await questionRepository
     .createQueryBuilder('question')
-    .select(['question.id', 'question.text', 'question.points', 'question.type', 'question.topic', 'question.a', 'question.b', 'question.c', 'question.d', 'question.details'])
+    // 1. Join the image table
+    .leftJoin('question.image', 'image')
+    // 2. Update select to include image properties (url and id)
+    .select([
+        'question.id',
+        'question.text',
+        'question.points',
+        'question.type',
+        'question.topic',
+        'question.a',
+        'question.b',
+        'question.c',
+        'question.d',
+        'question.details',
+        'image.secure_url', // <--- We need the URL to show it
+        'image.id'          // <--- Good practice to have the ID
+    ])
     .where("question.quizId = :quizId", { quizId: quizId })
     .orderBy('RAND()')
     .take(QUESTION_QUIZ)

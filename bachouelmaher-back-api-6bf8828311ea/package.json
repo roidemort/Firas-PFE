@@ -11,7 +11,10 @@
     "migration:show": "yarn typeorm migration:show",
     "migration:create": "node scripts/migration-create.js",
     "migration:run": "typeorm-ts-node-commonjs -d src/orm/data-source.ts migration:run",
-    "migration:revert": "yarn typeorm migration:revert"
+    "migration:revert": "yarn typeorm migration:revert",
+    "swagger:generate": "ts-node scripts/generate-swagger.ts",
+    "swagger:export": "curl -s http://localhost:3000/api-docs.json -o swagger.json",
+    "swagger:serve": "npx swagger-ui-dist-cli -p 8080 swagger.json"
   },
   "engines": {
     "node": "20.x",
@@ -30,6 +33,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-async-errors": "^3.1.1",
+    "express-swagger-generator": "^1.1.17",
     "helmet": "^7.1.0",
     "ioredis": "^5.4.1",
     "jade": "^1.11.0",
