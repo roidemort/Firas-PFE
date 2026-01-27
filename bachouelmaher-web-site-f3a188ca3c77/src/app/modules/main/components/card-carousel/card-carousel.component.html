@@ -1,4 +1,5 @@
-<div class="w-full p-4 sm:px-8 sm:pt-4" *ngIf="inProgress && user?.enrolls?.length > 0">
+<!-- In Progress Courses Section - Only show if there are in-progress courses -->
+<div class="w-full p-4 sm:px-8 sm:pt-4" *ngIf="inProgress && showInProgressSection">
     <h1 class="font-semibold text-2xl text-titleColor">Continuer à apprendre</h1>
 </div>
 
@@ -17,19 +18,12 @@
         <div class="flex flex-col md:flex-row transition-transform duration-300"
             [ngStyle]="{'transform': 'translateX(-' + (currentIndex * (100 / cardsToShow)) + '%)'}">
             <ng-container *ngIf="!inProgress">
-                <ng-container *ngIf="cards.length > 0 else noCourses">
+                <ng-container *ngIf="cards.length > 0; else noCoursesTemplate">
                     <div *ngFor="let card of cards; let i = index" class="w-full md:w-1/3 min-w-[calc(100%/3)] py-2"
                         [ngClass]="{'px-2': style,'sm:pr-4': !style && i < 2}">
 
                         <!-- Card Container -->
                         <div class="relative" [class.opacity-90]="card.comingSoon">
-
-                            <!-- Coming Soon Ribbon Badge
-                            <div *ngIf="card.comingSoon" class="absolute top-0 right-0 z-40" style="overflow: visible;">
-                    <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 text-white  font-bold  px-4 py-1 transform rotate-45 translate-x-8 -translate-y-1 shadow-lg">
-                          Bientôt
-                    </div>
-                </div>-->
 
                             <!-- Card Content -->
                             <div class="cursor-pointer"
@@ -92,50 +86,93 @@
                         </div>
                     </div>
                 </ng-container>
-                <ng-template #noCourses>
+
+                <!-- No courses template -->
+                <ng-template #noCoursesTemplate>
                     <p class="text-secondaryfontColor pl-8 text-xl">Des formations seront bientôt disponibles dans cette catégorie.</p>
                 </ng-template>
             </ng-container>
         </div>
     </div>
 
-    <!-- In Progress Courses Section -->
-    <div class="w-full overflow-hidden">
+    <!-- In Progress Courses Display -->
+    <div class="w-full overflow-hidden" *ngIf="inProgress && showInProgressSection">
         <div class="flex flex-col md:flex-row transition-transform duration-300"
             [ngStyle]="{'transform': 'translateX(-' + (currentIndexEnrolls * (100 / cardsToShow)) + '%)'}">
-            <ng-container *ngIf="inProgress">
-                <div *ngFor="let course of user?.enrolls; let i = index"
+            <ng-container *ngIf="inProgressCourses.length > 0">
+                <div *ngFor="let course of inProgressCourses; let i = index"
                     class="w-full md:w-1/3 min-w-[calc(100%/3)] py-2"
                     [ngClass]="{'px-2': style,'sm:pr-4': !style && i < 2}">
-                    <div class="cursor-pointer" (click)="goToCourse(course.course)">
-                        <div class="custom-bg-card h-44 bg-[#DCECEC] p-4 rounded-t-3xl"
-                        [ngStyle]="{ 'background-image': 'url(' + courses[i]?.preview?.secure_url + ')' }"
-                        >
-                            <div class="flex justify-between items-center">
-                                 <div class="flex items-center" *ngIf="courses[i]?.provider?.logo?.secure_url">
-                                    <img [src]="courses[i]?.provider?.logo?.secure_url" alt="Logo"
-                                        class="max-w-full h-7" />
-                                </div>
-                            </div>
-                        </div>
 
-                        <div
-                            class="flex flex-col justify-between bg-[#EDF6F6] p-4 rounded-b-3xl min-h-36 2xl:min-h-40 text-wrap">
-                            <div class="mt-4">
-                                <p class="text-xs 2xl:text-sm font-semibold text-[#476F77]">{{
-                                    courses[i]?.category?.name }}
-                                </p>
-                                <h2 class="text-sm 2xl:text-lg font-semibold text-[#19272A]">{{ course.course?.title
-                                    }}
-                                </h2>
-                            </div>
-                            <div *ngIf="courseProgressions[course.id]">
-                                <div class="!text-[#1B9198] text-left text-xs">
-                                    {{ getRoundedScore(courseProgressions[course.id].progression) }}% terminé
+                    <!-- Card Container -->
+                    <div class="relative">
+                        <!-- Card Content -->
+                        <div class="cursor-pointer" (click)="goToCourse(course.course)">
+                            <!-- Card Image -->
+                            <div class="custom-bg-card h-44 bg-[#DCECEC] p-4 rounded-t-3xl relative"
+                                [ngStyle]="{ 'background-image': 'url(' + course.course?.preview?.secure_url + ')' }">
+
+                                <div class="flex justify-between items-center relative z-10">
+                                    <div class="flex items-center">
+                                        <img [src]="course.course?.provider?.logo?.secure_url" alt="Logo" class="max-w-full h-7" />
+                                    </div>
                                 </div>
-                                <div class="w-full bg-[#B0EDF1] rounded-full h-1.5 mb-4 mt-2">
-                                    <div class="bg-[#1B9198] h-1.5 rounded-full"
-                                        [style.width]="getRoundedScore(courseProgressions[course.id].progression) + '%'">
+                            </div>
+
+                            <!-- Card Info -->
+                            <div class="flex flex-col justify-between bg-[#EDF6F6] p-4 rounded-b-3xl min-h-36 2xl:min-h-40 text-wrap">
+                                <div class="mt-4">
+                                    <p class="text-xs 2xl:text-sm font-semibold text-[#476F77]">
+                                        {{ course.course?.category?.name }}
+                                    </p>
+                                    <h2 class="text-sm 2xl:text-lg font-semibold text-[#19272A]">
+                                        {{ course.course?.title }}
+                                    </h2>
+                                </div>
+
+                                <!-- Progress Bar Section -->
+                                <div *ngIf="courseProgressions[course.id]" class="mt-4">
+                                    <div class="!text-[#1B9198] text-left text-xs">
+                                        {{ getRoundedScore(courseProgressions[course.id].progression) }}% terminé
+                                    </div>
+                                    <div class="w-full bg-[#B0EDF1] rounded-full h-1.5 mb-4 mt-2">
+                                        <div class="bg-[#1B9198] h-1.5 rounded-full"
+                                            [style.width]="getRoundedScore(courseProgressions[course.id].progression) + '%'">
+                                        </div>
+                                    </div>
+
+                                    <!-- Course details (same as regular cards) -->
+                                    <div class="flex justify-between text-sm font-normal text-[#294045] mt-2">
+                                        <span class="flex items-center">
+                                            <img src="assets/images/list-play.png" class="mr-2" alt="play">
+                                            {{ formatDuration(course.course?.duration) }}
+                                        </span>
+                                        <span class="flex items-center">
+                                            <img src="assets/images/list-check.png" class="mr-2" alt="check">
+                                            {{ course.course?.sections?.length}} Quiz
+                                        </span>
+                                        <span class="flex items-center">
+                                            <img src="assets/images/list-check.png" class="mr-2" alt="check">
+                                            Certificate
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- If no progression data yet -->
+                                <div *ngIf="!courseProgressions[course.id]" class="mt-4">
+                                    <div class="flex justify-between text-sm font-normal text-[#294045]">
+                                        <span class="flex items-center">
+                                            <img src="assets/images/list-play.png" class="mr-2" alt="play">
+                                            {{ formatDuration(course.course?.duration) }}
+                                        </span>
+                                        <span class="flex items-center">
+                                            <img src="assets/images/list-check.png" class="mr-2" alt="check">
+                                            {{ course.course?.sections?.length}} Quiz
+                                        </span>
+                                        <span class="flex items-center">
+                                            <img src="assets/images/list-check.png" class="mr-2" alt="check">
+                                            Certificate
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -143,11 +180,18 @@
                     </div>
                 </div>
             </ng-container>
+
+            <!-- No in-progress courses message -->
+            <ng-container *ngIf="inProgress && inProgressCourses.length === 0">
+                <div class="w-full p-8 text-center">
+                    <p class="text-gray-500">Aucun cours en cours d'apprentissage.</p>
+                </div>
+            </ng-container>
         </div>
     </div>
 
     <!-- Navigation Buttons for Main Courses -->
-    <div *ngIf="cards.length > 3 && !inProgress">
+    <div *ngIf="!inProgress && cards.length > 3">
         <button *ngIf="style && prevStatus" (mouseover)="isHoveringPrev = true" (mouseleave)="isHoveringPrev = false"
             (click)="prevCard()"
             class="h-[95%] hidden md:block absolute left-6 rounded-tl-3xl rounded-bl-3xl w-1/12 top-2 bg-transparent border-none "
@@ -173,26 +217,32 @@
     </div>
 
     <!-- Navigation Buttons for In Progress Courses -->
-    <div *ngIf="user?.enrolls?.length > 3 && inProgress">
-        <button *ngIf="style && prevStatusEnrolls" (mouseover)="isHoveringPrev = true" (mouseleave)="isHoveringPrev = false"
-            (click)="prevEnroll()"
-            class="h-[95%] hidden md:block absolute left-6 rounded-tl-3xl rounded-bl-3xl w-1/12 top-2 bg-transparent border-none "
-            [ngClass]="{'custom-bg' : prevStatusEnrolls}" [disabled]="currentIndexEnrolls === 0">
+    <div *ngIf="inProgress && showInProgressSection && inProgressCourses.length > 3">
+        <button *ngIf="style && prevStatusEnrolls"
+                (mouseover)="isHoveringPrev = true"
+                (mouseleave)="isHoveringPrev = false"
+                (click)="prevEnroll()"
+                class="h-[95%] hidden md:block absolute left-6 rounded-tl-3xl rounded-bl-3xl w-1/12 top-2 bg-transparent border-none "
+                [ngClass]="{'custom-bg' : prevStatusEnrolls}"
+                [disabled]="currentIndexEnrolls === 0">
             <svg class="ml-4 " width="40" height="40" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M17.5 23.3334L8.16667 14.0001L17.5 4.66675"
-                    [attr.stroke]="isHoveringPrev && currentIndexEnrolls > 0 ? '#ffffff' : '#A4CECE'" stroke-width="1.75"
+                    [attr.stroke]="isHoveringPrev && currentIndexEnrolls > 0 ? '#ffffff' : '#A4CECE'"
+                    stroke-width="1.75"
                     stroke-linecap="round" stroke-linejoin="round" class="transition-colors duration-300" />
             </svg>
         </button>
-        <button *ngIf="style && nextStatusEnrolls" (mouseover)="isHoveringNext = true" (mouseleave)="isHoveringNext = false"
-            (click)="nextEnroll()"
-            class="h-[95%] hidden md:block absolute right-6 rounded-tl-3xl rounded-bl-3xl w-1/12 top-2 bg-transparent border-none"
-            [ngClass]="{'custom-bg-rev' : nextStatusEnrolls}"
-            [disabled]="currentIndexEnrolls >= user.enrolls.length - cardsToShow">
+        <button *ngIf="style && nextStatusEnrolls"
+                (mouseover)="isHoveringNext = true"
+                (mouseleave)="isHoveringNext = false"
+                (click)="nextEnroll()"
+                class="h-[95%] hidden md:block absolute right-6 rounded-tl-3xl rounded-bl-3xl w-1/12 top-2 bg-transparent border-none"
+                [ngClass]="{'custom-bg-rev' : nextStatusEnrolls}"
+                [disabled]="currentIndexEnrolls >= inProgressCourses.length - cardsToShow">
             <svg class="ml-4 hidden md:block" width="40" height="40" viewBox="0 0 28 28" fill="none"
                 xmlns="http://www.w3.org/2000/svg">
                 <path d="M17.5 23.3334L8.16667 14.0001L17.5 4.66675"
-                    [attr.stroke]="isHoveringNext && currentIndexEnrolls < user.enrolls.length - cardsToShow ? '#ffffff' : '#A4CECE'"
+                    [attr.stroke]="isHoveringNext && currentIndexEnrolls < inProgressCourses.length - cardsToShow ? '#ffffff' : '#A4CECE'"
                     stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"
                     class="transition-colors duration-300" />
             </svg>

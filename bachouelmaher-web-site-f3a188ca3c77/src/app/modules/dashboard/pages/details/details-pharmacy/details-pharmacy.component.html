@@ -92,6 +92,15 @@
       </div>
     </div>
     <div class="flex items-center space-x-3">
+
+
+      <button (click)="generateMultipleKeys()"
+          class="flex items-center justify-center bg-amber-500 text-white p-2 rounded-md border-b-[3px] border-amber-600 hover:bg-amber-600 transition-colors"
+          type="button">
+    <svg-icon src="assets/icons/heroicons/outline/document-duplicate.svg" [svgClass]="'h-5 w-5 mr-2'"></svg-icon>
+    Générer plusieurs clés
+  </button>
+  
   <button (click)="sendEmailWithKeys()"
           class="flex items-center justify-center bg-blue-600 text-white p-2 rounded-md border-b-[3px] border-blue-700 hover:bg-blue-700 transition-colors"
           type="button"

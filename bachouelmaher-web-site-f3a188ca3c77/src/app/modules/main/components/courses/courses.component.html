@@ -1,11 +1,23 @@
 <section class="w-full relative h-[90vh] pb-8 px-2 overflow-y-scroll">
+    <!-- Continuer à apprendre Section - This component handles its own visibility -->
     <div *ngIf="!isLoading">
-        <app-card-carousel [inProgress]="true" [cards]="courses"></app-card-carousel>
+        <app-card-carousel [inProgress]="true" [cards]="allCourses"></app-card-carousel>
     </div>
 
-    <div *ngIf="!isLoading">
-        <!-- Updated section with dynamic title -->
+    <!-- Nouvelles Formations Section -->
+    <div *ngIf="!isLoading && showNewCourses">
         <div class="w-full sm:-mt-4 p-4 sm:px-8 sm:pt-12 flex justify-between items-center">
+            <div>
+                <h1 class="font-semibold text-2xl text-titleColor">Nouvelles Formations</h1>
+                <p class="text-sm text-gray-600 mt-1">Formations ajoutées récemment (moins de 7 jours)</p>
+            </div>
+        </div>
+        <app-card-carousel [cards]="newCourses"></app-card-carousel>
+    </div>
+
+    <!-- Toutes les Formations Section -->
+    <div *ngIf="!isLoading && showAllCourses">
+        <div class="w-full p-4 sm:px-8 sm:pt-12 flex justify-between items-center">
             <div>
                 <h1 class="font-semibold text-2xl text-titleColor">{{ sectionTitle }}</h1>
 
@@ -24,15 +36,26 @@
                 </div>
             </div>
         </div>
-
-        <app-card-carousel [cards]="courses"></app-card-carousel>
+        <app-card-carousel [cards]="allCourses"></app-card-carousel>
     </div>
 
-    <div class="pb-4" *ngIf="!isLoading">
+    <!-- Capsules Section -->
+    <div class="pb-4" *ngIf="!isLoading && capsules.length > 0">
         <div class="w-full p-4 sm:px-8 sm:pt-8">
             <h1 class="font-semibold text-2xl text-titleColor">Capsules</h1>
         </div>
         <app-card-shorts [cards]="capsules"></app-card-shorts>
+    </div>
+
+    <!-- No Courses Message -->
+    <div *ngIf="!isLoading && !showNewCourses && !showAllCourses && capsules?.length === 0"
+         class="flex flex-col items-center justify-center h-64">
+        <svg class="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+        </svg>
+        <h3 class="text-lg font-semibold text-gray-700 mb-2">Aucune formation disponible</h3>
+        <p class="text-gray-500 text-center">Revenez plus tard pour découvrir nos nouvelles formations.</p>
     </div>
 </section>
 

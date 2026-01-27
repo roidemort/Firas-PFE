@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectorRef } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { forkJoin, map } from 'rxjs';
 import { AuthService } from 'src/app/core/services/auth.service';
@@ -39,11 +39,20 @@ export class CardCarouselComponent {
   alertMessage = '';
   alertType: 'error' | 'warning' | 'success' = 'warning';
 
+  showInProgressCourses = false;
+
+
+  inProgressCourses: any[] = [];
+  showInProgressSection = false;
+
+
   constructor(
     private router: Router,
     private userService: UsersService,
     private authService: AuthService,
-    private coursService: CoursesService
+    private coursService: CoursesService,
+    private cdRef: ChangeDetectorRef
+
   ) {}
 
   ngOnInit() {
@@ -59,52 +68,91 @@ export class CardCarouselComponent {
   extractCourseDataById(courseId: string): void {
     const card = this.cards.find(card => card.id === courseId);
     if (card) {
-      const courseIndex = this.courses.findIndex((course: { course: { id: string; }; }) => course.course.id === courseId);
+      const courseIndex = this.courses.findIndex((course: any) => course.course?.id === courseId);
       if (courseIndex !== -1) {
+        // Merge the full course data
         this.courses[courseIndex] = {
           ...this.courses[courseIndex],
-          category: card.category,
-          provider: card.provider,
-          preview: card.preview
+          course: {
+            ...this.courses[courseIndex].course,
+            ...card, // Merge all card data into course
+            preview: card.preview,
+            category: card.category,
+            provider: card.provider,
+            duration: card.duration,
+            sections: card.sections
+          }
         };
       }
     }
   }
 
   getUserDetails(id: string) {
-    this.userService.getMyTeamDetails(id).subscribe({
-      next: (res) => {
-        if (res.status) {
-          this.user = res.data.users;
-          this.courses = res.data.users.enrolls;
-          if (this.inProgress) {
-            this.courses.forEach((course: { course: { id: string; }; }) => {
-              this.extractCourseDataById(course.course.id);
-            });
-          }
+  this.userService.getMyTeamDetails(id).subscribe({
+    next: (res) => {
+      if (res.status) {
+        this.user = res.data.users;
+        this.courses = res.data.users.enrolls || [];
+
+        if (this.inProgress && this.courses.length > 0) {
+          // Extract course data for all enrolled courses
+          this.courses.forEach((course: { course: { id: string; }; }) => {
+            this.extractCourseDataById(course.course.id);
+          });
+
           this.sortCoursesByStartedAt(this.courses);
           this.getCoursProgrssion(this.courses);
+        } else {
+          this.isLoading = false;
         }
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error(error);
       }
-    });
-  }
+    },
+    error: (error) => {
+      console.error(error);
+      this.isLoading = false;
+    }
+  });
+}
 
   sortCoursesByStartedAt(courses: any) {
     courses.sort((a: any, b: any) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime());
   }
 
   getCoursProgrssion(courses: any) {
-    courses.forEach((course: any) => {
-      this.getProgression(course.id);
-    });
+  if (!courses || courses.length === 0) {
     this.isLoading = false;
+    return;
   }
 
-  getProgression(coursId: string) {
+  // Create an array to track API calls
+  const progressionRequests: any[] = [];
+
+  courses.forEach((course: any) => {
+    progressionRequests.push(
+      new Promise((resolve) => {
+        this.getProgression(course.id).then(resolve).catch(() => resolve(null));
+      })
+    );
+  });
+
+  // Wait for all progression requests to complete
+  Promise.all(progressionRequests).then(() => {
+    // Filter courses with progression < 100%
+    this.inProgressCourses = courses.filter((course: any) => {
+      const progression = this.courseProgressions[course.id];
+      return progression && progression.progression < 100;
+    });
+
+    // Only show section if there are in-progress courses
+    this.showInProgressSection = this.inProgressCourses.length > 0;
+
+    this.isLoading = false;
+    this.cdRef.detectChanges();
+  });
+}
+
+  getProgression(coursId: string): Promise<any> {
+  return new Promise((resolve, reject) => {
     const data = {
       courseId: coursId,
       userId: this.user.id
@@ -114,12 +162,15 @@ export class CardCarouselComponent {
         if (res.status) {
           this.courseProgressions[coursId] = res.data.course;
         }
+        resolve(res);
       },
       error: (error) => {
-        console.error(error);
+        console.error('Error getting progression:', error);
+        reject(error);
       }
     });
-  }
+  });
+}
 
   prevCard() {
     this.prevStatus = false;
@@ -243,4 +294,14 @@ export class CardCarouselComponent {
   getRoundedScore(score: number): number {
     return Math.floor(score);
   }
+
+
+  filterInProgressCourses(courses: any[]): any[] {
+  if (!this.courseProgressions) return [];
+
+  return courses.filter(course => {
+    const progression = this.courseProgressions[course.id];
+    return progression && progression.progression < 100;
+  });
+}
 }

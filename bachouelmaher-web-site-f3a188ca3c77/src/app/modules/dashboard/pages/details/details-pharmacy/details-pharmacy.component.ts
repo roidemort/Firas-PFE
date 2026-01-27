@@ -17,6 +17,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angula
 // Add Editor imports for email editor
 import {Editor, NgxEditorModule, Toolbar, toHTML} from 'ngx-editor';
 import { schema } from 'ngx-editor/schema'; // ADD THIS IMPORT
+import { GenerateMultipleKeysDialogComponent } from '../../../components/dialog/generate-multiple-keys-dialog/generate-multiple-keys-dialog.component';
 
 @Component({
   selector: 'app-details-pharmacy',
@@ -462,5 +463,64 @@ export class DetailsPharmacyComponent implements OnInit {
       },
     });
   }
+
+
+
+  generateMultipleKeys() {
+  const dialogRef = this.actions.createComponent(GenerateMultipleKeysDialogComponent);
+
+  dialogRef.instance.closeDialog.subscribe((keysToGenerate: any[] | null) => {
+    if (keysToGenerate && keysToGenerate.length > 0) {
+      // Confirm with the user
+      const confirmGenerate = confirm(`Êtes-vous sûr de vouloir générer ${keysToGenerate.length} clé(s) ?`);
+
+      if (confirmGenerate) {
+        // Generate keys one by one (to avoid backend changes)
+        this.generateKeysSequentially(keysToGenerate, 0);
+      }
+    }
+
+    dialogRef.destroy();
+  });
+}
+
+
+private generateKeysSequentially(keysToGenerate: any[], index: number) {
+  if (index >= keysToGenerate.length) {
+    // All keys generated
+    this.toastr.success(`${keysToGenerate.length} clé(s) générée(s) avec succès`, 'Succès', {
+      timeOut: 3000,
+    });
+    this.getAllKeys();
+    return;
+  }
+
+  const keyData = keysToGenerate[index];
+
+  this.pharmaciesService.generateNewKey(this.pharmacyId!, keyData.role).subscribe({
+    next: (result) => {
+      if (result.status) {
+        // Generate next key
+        setTimeout(() => {
+          this.generateKeysSequentially(keysToGenerate, index + 1);
+        }, 300); // Small delay between requests
+      } else {
+        this.toastr.error(`Erreur lors de la génération de la clé ${index + 1}`, 'Erreur', {
+          timeOut: 3000,
+        });
+      }
+    },
+    error: (error) => {
+      this.toastr.error(`Erreur lors de la génération de la clé ${index + 1}`, 'Erreur', {
+        timeOut: 3000,
+      });
+      // Continue with next key anyway
+      setTimeout(() => {
+        this.generateKeysSequentially(keysToGenerate, index + 1);
+      }, 300);
+    },
+  });
+}
+
 
 }

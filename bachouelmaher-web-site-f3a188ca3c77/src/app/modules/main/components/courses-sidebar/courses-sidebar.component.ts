@@ -36,7 +36,11 @@ export class CoursesSidebarComponent {
   showContent = true
   showCategories = true;
   showProviders = false;
-  courses : any
+  //courses : any
+
+
+  filteredCategories: any[] = [];
+  courses: any[] = [];
 
   constructor(private fb: FormBuilder, private coursesService: CoursesService, private coursesEventService: CoursesEventService, private categoriesService: CategoriesService, private pharmaciesService: PharmaciesService, private providersService: ProvidersService, private categorieCapsulesService: CategoriesCapsulesService, private capsulesEventService: CapsulesEventService, private loadingService: LoadingService) {
     // this.searchForm = this.fb.group({
@@ -45,10 +49,75 @@ export class CoursesSidebarComponent {
   }
 
   ngOnInit(): void {
-    this.getCategoriesWithProviders()
+    /*this.getCategoriesWithProviders()
     this.getCapsulesCategoriesWithProviders()
     // this.getProviders()
-    this.mobileMenu = false
+    this.mobileMenu = false*/
+
+
+    this.getAllCourses();
+    this.getCapsulesCategoriesWithProviders();
+    this.mobileMenu = false;
+  }
+
+
+   getAllCourses(): void {
+    this.coursesService.getAllActiveCourses().subscribe({
+      next: (result) => {
+        this.courses = result.data.courses || [];
+        // Now get categories with providers
+        this.getCategoriesWithProviders();
+      },
+      error: (error) => {
+        console.error('Error fetching courses:', error);
+        this.courses = [];
+        this.getCategoriesWithProviders();
+      }
+    });
+  }
+
+  // Method to check if a category has courses
+  private categoryHasCourses(categoryId: string): boolean {
+    if (!this.courses || this.courses.length === 0) return false;
+
+    return this.courses.some(course =>
+      course.category?.id === categoryId || course.categoryId === categoryId
+    );
+  }
+
+  private categoryOrItsProvidersHaveCourses(category: any): boolean {
+    // Check if the category itself has courses
+    if (this.categoryHasCourses(category.id)) {
+      return true;
+    }
+
+    // Check if any provider in this category has courses
+    if (category.providers && category.providers.length > 0) {
+      return category.providers.some((provider: any) =>
+        this.providerHasCourses(provider.id, category.id)
+      );
+    }
+
+    return false;
+  }
+
+  // Method to check if a provider has courses in a specific category
+  private providerHasCourses(providerId: string, categoryId: string): boolean {
+    if (!this.courses || this.courses.length === 0) return false;
+
+    return this.courses.some(course =>
+      (course.provider?.id === providerId || course.providerId === providerId) &&
+      (course.category?.id === categoryId || course.categoryId === categoryId)
+    );
+  }
+
+  // Method to filter providers that have courses in a category
+  private filterProvidersWithCourses(providers: any[], categoryId: string): any[] {
+    if (!providers || providers.length === 0) return [];
+
+    return providers.filter(provider =>
+      this.providerHasCourses(provider.id, categoryId)
+    );
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -72,9 +141,11 @@ export class CoursesSidebarComponent {
     //   providerId: undefined,
     //   // searchText: undefined
     // });
-    this.capsulesEventService.clearFilter()
-    this.coursesEventService.clearFilter()
-    this.toggleMobileMenu()
+
+
+    this.capsulesEventService.clearFilter();
+    this.coursesEventService.clearFilter();
+    this.toggleMobileMenu();
   }
 
   // getProviders() {
@@ -91,23 +162,67 @@ export class CoursesSidebarComponent {
   getCategoriesWithProviders() {
     this.categoriesService.getAllWithProviders().subscribe({
       next: (result) => {
-          this.categories = result.data.categories
-          // console.log(this.categories)
+        const allCategories = result.data.categories || [];
+
+        // Fix: Add type annotation for 'category' parameter
+        this.categories = allCategories.filter((category: any) =>
+          this.categoryOrItsProvidersHaveCourses(category)
+        );
+
+        // Ensure providers array exists for each category
+        this.categories.forEach((category: any) => {
+          if (!category.providers) {
+            category.providers = [];
+          }
+
+          if (category.providers.length > 0) {
+            category.providers = this.filterProvidersWithCourses(category.providers, category.id);
+            category.providers = this.removeDuplicateProviders(category.providers);
+          }
+        });
+
+        this.filteredCategories = this.categories.filter((category: any) =>
+          category.providers && category.providers.length > 0
+        );
+
+        console.log('Filtered categories with courses:', this.categories);
       },
       error: (error) => {
-        console.error(error)
+        console.error('Error fetching categories:', error);
+        this.categories = [];
+        this.filteredCategories = [];
       }
     });
+  }
+
+  private removeDuplicateProviders(providers: any[]): any[] {
+    if (!providers || providers.length === 0) return [];
+
+    const uniqueProviders: any[] = [];
+    const seenNames = new Set();
+
+    providers.forEach(provider => {
+      if (!seenNames.has(provider.name)) {
+        seenNames.add(provider.name);
+        uniqueProviders.push(provider);
+      }
+    });
+
+    return uniqueProviders;
   }
 
   getCapsulesCategoriesWithProviders() {
     this.categorieCapsulesService.getAllWithProviders().subscribe({
       next: (result) => {
-          this.capsules = result.data.categories
-          // console.log(this.capsules)
+        this.capsules = result.data.categories || [];
+
+        // For capsules, you might want to filter similarly if needed
+        // For now, we'll keep all capsules categories
+        console.log('Capsules categories:', this.capsules);
       },
       error: (error) => {
-        console.error(error)
+        console.error(error);
+        this.capsules = [];
       }
     });
   }

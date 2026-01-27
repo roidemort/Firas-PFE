@@ -46,9 +46,9 @@ export class HomeComponent implements AfterViewInit{
           this.listPartners = [...(data.partners || []), ...(data.partners || [])];
           this.listTrends = [...(data.trends || [])];
           const advertisements = data.advertisements || [];
-  
+
           const lastAdIndex = this.advertisementService.getLastAdIndex() % advertisements.length;
-  
+
           if (advertisements.length && !this.advertisementService.isAdShownInSession()) {
             this.showAdvertisement(advertisements[lastAdIndex]);
             this.advertisementService.setAdShownInSession();
@@ -58,13 +58,13 @@ export class HomeComponent implements AfterViewInit{
           console.error('Error fetching home data:', error);
         }
       });
-  
+
       if (!sessionStorage.getItem('sessionInitialized')) {
         this.advertisementService.resetSessionStatus();
         sessionStorage.setItem('sessionInitialized', 'true');
       }
     }
-  
+
     this.isLogged = this.authService.isAuthenticated();
   }
 
@@ -74,6 +74,13 @@ export class HomeComponent implements AfterViewInit{
 
   closeModal() {
     this.selectedAd = null;
+  }
+
+  scrollToPartners() {
+    const element = document.getElementById('partners');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
   }
 
   ngAfterViewInit() {

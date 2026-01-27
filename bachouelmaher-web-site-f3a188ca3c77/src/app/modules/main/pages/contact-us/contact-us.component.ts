@@ -55,6 +55,13 @@ export class ContactUsComponent {
     this.isTextVisible[index] = !this.isTextVisible[index];
   }
 
+  scrollToFAQ() {
+  const faqElement = document.getElementById('faq');
+  if (faqElement) {
+    faqElement.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
   onSubmit() {
     this.markAllAsTouched();
     // stop here if form is invalid
@@ -65,7 +72,7 @@ export class ContactUsComponent {
 
     const { firstName, lastName, email, phoneNumber, message } = this.contactForm.value;
     const data = { firstName, lastName, email, phoneNumber, message };
-    
+
     this.contactService.sendMail(data).subscribe({
       next: (res) => {
         if (res.status) {
@@ -83,6 +90,6 @@ export class ContactUsComponent {
         console.error('Erreur:', error);
       }
     });
-    
+
   }
 }
