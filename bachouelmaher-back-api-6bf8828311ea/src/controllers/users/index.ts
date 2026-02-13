@@ -6,3 +6,5 @@ export * from './getMyTeam';
 export * from './getMyPlan';
 export * from './getMyPlanDetails';
 export * from './addToTeam';
+// Ajouter ces lignes à votre fichier index.ts existant
+export * from './getRanking';

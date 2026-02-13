@@ -17,6 +17,12 @@ import { CoursesComponent } from './components/courses/courses.component';
 import { ReviewsComponent } from './components/reviews/reviews.component';
 import { CourseDetailsComponent } from './components/course-details/course-details.component';
 import { CourseComponent } from './pages/course/course.component';
+import { UserRankingComponent } from './components/user-ranking/user-ranking.component';
+import { MarketplaceComponent } from './components/marketplace/marketplace.component';
+import { CoursesListComponent } from './components/courses-list/courses-list.component';
+import { PaymentComponent } from './components/payment/payment.component';
+import { PaymentSuccessComponent } from './components/payment-success/payment-success.component';
+import { PaymentFailedComponent } from './components/payment-failed/payment-failed.component';
 
 
 
@@ -50,10 +56,11 @@ const routes: Routes = [
         path: 'politique-de-confidentialite',
         loadComponent: () => import('./pages/cgu/cgu.component').then(m => m.CguComponent),
       },
+
     ],
   },
-  { 
-    path: 'profil', component: ProfileComponent,  canActivate: [checkAuthGuard], 
+  {
+    path: 'profil', component: ProfileComponent,  canActivate: [checkAuthGuard],
     children: [
        {
         path: 'details',
@@ -68,8 +75,28 @@ const routes: Routes = [
         component: LearningJourneyComponent
       },
       {
+        path: 'classement',
+        component: UserRankingComponent
+      },
+      {
+        path: 'marketplace',
+        component: MarketplaceComponent
+      },
+      {
         path: 'confidentialite-securite',
         component: PrivacySecurityComponent
+      },
+      {
+        path: 'payment',
+        component: PaymentComponent
+      },
+       {
+        path: 'payment-success',
+        component: PaymentSuccessComponent
+      },
+      {
+        path: 'payment-failed',
+        component: PaymentFailedComponent
       },
       {
         path: 'gestion-abonnements',
@@ -80,24 +107,28 @@ const routes: Routes = [
         component: HelpComponent
       },
       { path: '', redirectTo: 'details', pathMatch: 'full' },
-  ], 
-    data: { roles: ['PHARMACIST_HOLDER', 'PHARMACIST', 'PREPARER', 'STUDENT'] } 
+  ],
+    data: { roles: ['PHARMACIST_HOLDER', 'PHARMACIST', 'PREPARER', 'STUDENT'] }
   },
   { path: 'inscription', component: SignUpComponent },
   { path: 'connexion', component: SignInComponent },
   { path: 'mot-de-passe-oublier', component: ForgetPasswordComponent },
-  { 
+  {
     path: 'notre-plateforme', component: OurPlatformComponent,  canActivate: [checkAuthGuard],
     children: [
       {
         path: 'cours',
         component: CoursesComponent
       },
+      {
+        path: 'courses/list',
+        component: CoursesListComponent
+      },
       { path: 'details-cours/:id', component: CourseDetailsComponent },
       { path: 'cours/avis/:id', component: ReviewsComponent },
       { path: 'cours/apprentissage/:id', component: CourseComponent },
       { path: '', redirectTo: 'cours', pathMatch: 'full' },
-  ], data: { roles: ['PHARMACIST_HOLDER', 'PHARMACIST', 'PREPARER', 'STUDENT'] } 
+  ], data: { roles: ['PHARMACIST_HOLDER', 'PHARMACIST', 'PREPARER', 'STUDENT'] }
   },
 
 ];

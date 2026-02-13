@@ -153,6 +153,7 @@ export class ManageCourseComponent implements OnInit {
     {value: 'advanced', viewValue: 'Avancé'},
   ]
   showPaid = false
+  showFree = false;
   showComingSoon = false
   selectedPreview!: Image | undefined
   providers!: Provider[]
@@ -207,6 +208,14 @@ export class ManageCourseComponent implements OnInit {
     }
     return 0;
   }
+
+  openFree() {
+  this.showFree = !this.showFree;
+  // The form control already exists, we just need to update its value
+  this.manageCourseForm.patchValue({
+    free: this.showFree
+  });
+}
   async ngOnInit() {
     this.isLoading = true
     await this.getCategories()
@@ -229,6 +238,7 @@ export class ManageCourseComponent implements OnInit {
       minutes: [null, Validators.required],
       roles: [null, Validators.required],
       paid: [0, Validators.required],
+      free: [false],
       category: [null, Validators.required],
       sections: this.fb.array([], Validators.required),
       requirements: this.fb.array([], Validators.required),
@@ -261,6 +271,7 @@ export class ManageCourseComponent implements OnInit {
         expiration: this.course.expiration,
         roles: this.course.roles,
         paid: this.course.paid,
+        free: this.course.free,
         comingSoon: this.course.comingSoon,
         language: this.course.language,
         level: this.course.level,
@@ -268,6 +279,8 @@ export class ManageCourseComponent implements OnInit {
         provider: this.course.provider.id,
         team: this.course.trainers.map((trainer: Trainer) => trainer.id),
       });
+
+      this.showFree = this.course.free;
       this.selectedCertificate = this.course.certificate
         this.course.requirements.map(_ => {
         this.addRequirement()
@@ -333,6 +346,7 @@ export class ManageCourseComponent implements OnInit {
       this.addFaq()
       this.addInclude()
       this.addObjective()
+      this.showFree = false; 
     }
     this.isLoading = false
   }
@@ -521,6 +535,7 @@ export class ManageCourseComponent implements OnInit {
         level: this.manageCourseForm.value.level,
         duration: `${this.manageCourseForm.value.hours}:${this.manageCourseForm.value.minutes}`,
         paid: this.manageCourseForm.value.paid,
+        free: this.manageCourseForm.value.free,
         price: this.manageCourseForm.value.price,
         roles: this.manageCourseForm.value.roles,
         discountPrice: this.manageCourseForm.value.discountPrice,

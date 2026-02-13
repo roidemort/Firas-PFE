@@ -1,78 +1,116 @@
-<div  class="relative w-full px-4 pb-12 md:pb-12">
-  <ng-container *ngIf="cards.length > 0 else noCapsules">
+<div class="relative w-full px-4 pb-12 md:pb-12">
+  <ng-container *ngIf="transformedCards.length > 0 else noCapsules">
+    <div class="w-full overflow-hidden">
+      <!-- Desktop/Mobile container -->
+      <div class="flex transition-transform duration-300 ease-out"
+           [ngStyle]="{'transform': 'translateX(-' + (currentIndex * (100 / cardsToShow)) + '%)'}">
 
-  <div class="w-full overflow-hidden">
-    <div class="flex flex-col md:flex-row transition-transform duration-300"
-      [ngStyle]="{'transform': 'translateX(-' + (currentIndex * (100 / cardsToShow)) + '%)'}">
-      <div *ngFor="let card of cards; let i = index" class="w-full md:w-1/4 min-w-[calc(100%/4)] py-2 px-1"
-        [ngClass]="{'pr-1': i < cardsToShow - 1}">
-        <div class="">
+        <div *ngFor="let card of transformedCards; let i = index"
+             [class]="isMobile ? 'w-full flex-shrink-0 px-1' : 'w-full md:w-1/4 flex-shrink-0 px-1'">
 
-          <div class="custom-bg-card h-[40rem] bg-[#DCECEC] rounded-t-3xl">
-            <iframe [src]="card.url | safeUrl" frameborder="0" allowfullscreen
-              class="w-full h-full rounded-t-3xl"></iframe>
-          </div>
+          <!-- Card container -->
+          <div class="flex flex-col h-auto">
+            <!-- Video container -->
+            <div class="custom-bg-card bg-[#DCECEC] rounded-t-3xl relative overflow-hidden">
+              <iframe
+                [src]="card.url | safeUrl"
+                frameborder="0"
+                allowfullscreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                [class]="isMobile ? 'w-full h-auto min-h-[400px] rounded-t-3xl' : 'w-full h-auto min-h-[500px] rounded-t-3xl'"
+                style="aspect-ratio: 9/16;"
+              ></iframe>
+            </div>
 
-          <!-- <div class="flex items-center">
-            <img [src]="card.provider?.logo?.secure_url" alt="Logo" class="max-w-full h-7" />
-          </div> -->
-
-          <div class="flex flex-col justify-start bg-[#EDF6F6] p-4 rounded-b-3xl min-h-32 text-wrap">
-            <p class="text-xs 2xl:text-sm font-semibold text-[#476F77]">{{ truncateText(card.category.name, 60) }}</p>
-            <h2 class="text-sm 2xl:text-lg font-semibold text-[#19272A]">{{ truncateText(card.title, 60) }}</h2>            
+            <!-- Text section -->
+            <div class="bg-[#EDF6F6] p-4 rounded-b-3xl flex-shrink-0">
+              <p class="text-xs 2xl:text-sm font-semibold text-[#476F77] mb-2">
+                {{ truncateText(card.category?.name || '', 60) }}
+              </p>
+              <h2 class="text-sm 2xl:text-lg font-semibold text-[#19272A]">
+                {{ truncateText(card.title || '', 60) }}
+              </h2>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
+    <!-- Mobile Navigation Dots -->
+    <div *ngIf="isMobile && transformedCards.length > 1" class="flex justify-center mt-4 space-x-2">
+      <button *ngFor="let card of transformedCards; let i = index"
+              (click)="goToCard(i)"
+              class="w-2 h-2 rounded-full transition-all duration-300"
+              [class.bg-[#1B9198]]="i === currentIndex"
+              [class.bg-gray-300]="i !== currentIndex"
+              [class.w-4]="i === currentIndex"
+              [class.w-2]="i !== currentIndex"
+              >
+      </button>
+    </div>
 
-  <div *ngIf="cards.length > 4">
-    <button *ngIf="style" (mouseover)="isHoveringPrev = true" (mouseleave)="isHoveringPrev = false"
-            (click)="prevCard()"
-            class="h-[93%] hidden md:block absolute left-[19px] rounded-tl-3xl rounded-bl-3xl w-1/12 top-2 bg-transparent border-none "
-            [ngClass]="{'custom-bg' : prevStatus}"
-            [disabled]="currentIndex === 0">
-            <svg class="ml-4" width="40" height="40" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M17.5 23.3334L8.16667 14.0001L17.5 4.66675"
-                    [attr.stroke]="isHoveringPrev && currentIndex > 0 ? '#ffffff' : '#A4CECE'" stroke-width="1.75"
-                    stroke-linecap="round" stroke-linejoin="round" class="transition-colors duration-300" />
-            </svg>
-        </button>
-        <button *ngIf="style && nextStatus" (mouseover)="isHoveringNext = true" (mouseleave)="isHoveringNext = false"
-            (click)="nextCard()"
-            class="h-[93%] hidden md:block absolute right-[19px] rounded-tl-3xl rounded-bl-3xl w-1/12 top-2 bg-transparent border-none"
-            [ngClass]="{'custom-bg-rev' : nextStatus}"
-            [disabled]="currentIndex >= cards.length - cardsToShow">
-            <svg class="ml-4" width="40" height="40" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M17.5 23.3334L8.16667 14.0001L17.5 4.66675"
-                    [attr.stroke]="isHoveringNext && currentIndex < cards.length - cardsToShow ? '#ffffff' : '#A4CECE'" stroke-width="1.75"
-                    stroke-linecap="round" stroke-linejoin="round" class="transition-colors duration-300" />
-            </svg>
-        </button>
-    <!-- <button *ngIf="style" (mouseover)="isHoveringPrev = true" (mouseleave)="isHoveringPrev = false" (click)="prevCard()"
-      class="hidden md:block absolute top-1/2 left-0 transform -translate-y-1/2 bg-[#A4CECE] text-white p-4 rounded-full transition-colors duration-300 hover:bg-[#23BAC4] hover:text-white"
-      [ngClass]="{'!bg-[#A4CECE]': currentIndex === 0}" [disabled]="currentIndex === 0">
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M17.5 23.3334L8.16667 14.0001L17.5 4.66675"
-          [attr.stroke]="isHoveringPrev &&  currentIndex > 0 ? '#EDF6F6' : '#366464'" stroke-width="1.75"
-          stroke-linecap="round" stroke-linejoin="round" class="transition-colors duration-300" />
-      </svg>
-    </button>
-    <button *ngIf="style" (mouseover)="isHoveringNext = true" (mouseleave)="isHoveringNext = false" (click)="nextCard()"
-      class="hidden md:block absolute top-1/2 right-0 transform -translate-y-1/2 bg-[#A4CECE] text-white p-4 rounded-full transition-colors duration-300 hover:bg-[#23BAC4] hover:text-white"
-      [ngClass]="{'!bg-[#A4CECE]': currentIndex >= cards.length - cardsToShow}"
-      [disabled]="currentIndex >= cards.length - cardsToShow">
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M10.5 23.3334L19.8333 14.0001L10.5 4.66675"
-          [attr.stroke]="isHoveringNext && currentIndex < cards.length - cardsToShow ? '#EDF6F6' : '#366464'"
-          stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="transition-colors duration-300" />
-      </svg>
-    </button> -->
-  </div>
-</ng-container>
-<ng-template #noCapsules>
+    <!-- Mobile Navigation Arrows -->
+    <div *ngIf="isMobile && transformedCards.length > 1" class="flex justify-between items-center mt-4 px-4">
+      <button (click)="prevCard()"
+              [disabled]="currentIndex === 0"
+              class="p-3 rounded-full bg-[#EDF6F6] hover:bg-[#DCECEC] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-300">
+        <svg class="w-6 h-6 text-[#1B9198]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+      </button>
+
+      <span class="text-sm text-[#476F77] font-medium">
+        {{ currentIndex + 1 }} / {{ transformedCards.length }}
+      </span>
+
+      <button (click)="nextCard()"
+              [disabled]="currentIndex === transformedCards.length - 1"
+              class="p-3 rounded-full bg-[#EDF6F6] hover:bg-[#DCECEC] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-300">
+        <svg class="w-6 h-6 text-[#1B9198]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Desktop Navigation Buttons -->
+    <div *ngIf="!isMobile && transformedCards.length > 4">
+      <button *ngIf="style"
+              (mouseover)="isHoveringPrev = true"
+              (mouseleave)="isHoveringPrev = false"
+              (click)="prevCard()"
+              class="h-[calc(100%-4rem)] hidden md:block absolute left-[19px] rounded-tl-3xl rounded-bl-3xl w-1/12 top-2 bg-transparent border-none"
+              [ngClass]="{'custom-bg' : prevStatus}"
+              [disabled]="currentIndex === 0">
+        <svg class="ml-4" width="40" height="40" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.5 23.3334L8.16667 14.0001L17.5 4.66675"
+            [attr.stroke]="isHoveringPrev && currentIndex > 0 ? '#ffffff' : '#A4CECE'"
+            stroke-width="1.75"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="transition-colors duration-300" />
+        </svg>
+      </button>
+
+      <button *ngIf="style && nextStatus"
+              (mouseover)="isHoveringNext = true"
+              (mouseleave)="isHoveringNext = false"
+              (click)="nextCard()"
+              class="h-[calc(100%-4rem)] hidden md:block absolute right-[19px] rounded-tr-3xl rounded-br-3xl w-1/12 top-2 bg-transparent border-none"
+              [ngClass]="{'custom-bg-rev' : nextStatus}"
+              [disabled]="currentIndex >= transformedCards.length - cardsToShow">
+        <svg class="ml-4 transform rotate-180" width="40" height="40" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.5 23.3334L8.16667 14.0001L17.5 4.66675"
+            [attr.stroke]="isHoveringNext && currentIndex < transformedCards.length - cardsToShow ? '#ffffff' : '#A4CECE'"
+            stroke-width="1.75"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="transition-colors duration-300" />
+        </svg>
+      </button>
+    </div>
+  </ng-container>
+
+  <ng-template #noCapsules>
     <p class="text-secondaryfontColor pl-8 text-xl">Les capsules en cours de préparation seront bientôt disponibles.</p>
-</ng-template>
+  </ng-template>
 </div>
-

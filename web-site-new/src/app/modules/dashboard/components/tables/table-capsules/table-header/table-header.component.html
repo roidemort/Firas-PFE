@@ -1,0 +1,20 @@
+<ng-container>
+  <th class="min-w-[200px] cursor-pointer hover:bg-card" (click)="setSortColumn('title')">
+    <p
+      class="flex items-center justify-between gap-2 leading-none">
+      Titre
+      <app-sortable name="title" [sortConfig]="sortConfig"></app-sortable>
+    </p>
+  </th>
+  <th class="min-w-[50px]">Statut</th>
+  <th class="min-w-[250px]">Catégorie</th>
+  <th class="min-w-[250px]">Fournisseur</th>
+  <th class="min-w-[150px] cursor-pointer hover:bg-card" (click)="setSortColumn('createdAt')">
+    <p
+      class="flex items-center justify-between gap-2 leading-none">
+      Créé à
+      <app-sortable name="createdAt" [sortConfig]="sortConfig"></app-sortable>
+    </p>
+  </th>
+  <th class="w-[60px]"></th>
+</ng-container>

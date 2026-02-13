@@ -82,7 +82,7 @@ export const getDetailsCourse = async (req: Request, res: Response, next: NextFu
   }
 };
 export const addCourse = async (req: Request, res: Response, next: NextFunction) => {
-  const { title, details, previewVideo, points, expiration, duration, language, level, roles, paid, price, discountPrice, comingSoon, messageComingSoon, endTimeComingSoon, preview, category, provider, team, objectives, includes, faqs, requirements, sections, certificate } = req.body;
+  const { title, details, previewVideo, points, expiration, duration, language, level, roles, paid,free, price, discountPrice, comingSoon, messageComingSoon, endTimeComingSoon, preview, category, provider, team, objectives, includes, faqs, requirements, sections, certificate } = req.body;
   try {
     let slug = slugify(title,
       {
@@ -110,7 +110,7 @@ export const addCourse = async (req: Request, res: Response, next: NextFunction)
     if(!Category || !Provider || !Certificate || !Team.length) return  res.customSuccess(200, 'Error', {}, false);
 
     const course = await createCourse({
-      title, details, previewVideo, slug, points, expiration, duration, roles, language, level, paid, price, discountPrice, comingSoon, messageComingSoon, endTimeComingSoon, preview: Preview, category: Category, provider: Provider, trainers: Team, certificate: Certificate
+      title, details, previewVideo, slug, points, expiration, duration, roles, language, level, paid,free, price, discountPrice, comingSoon, messageComingSoon, endTimeComingSoon, preview: Preview, category: Category, provider: Provider, trainers: Team, certificate: Certificate
     });
     await RedisService.incCreateIfNotExist('courses', 1)
     await Promise.all([
@@ -142,7 +142,7 @@ export const addCourse = async (req: Request, res: Response, next: NextFunction)
   }
 };
 export const updateCourse = async (req: Request, res: Response, next: NextFunction) => {
-  const { title, details, previewVideo, points, expiration, duration, language, level, paid, price, discountPrice, comingSoon, messageComingSoon, endTimeComingSoon, preview, category, provider, team, status, roles, objectives, includes, faqs, requirements, sections, certificate }  = req.body;
+  const { title, details, previewVideo, points, expiration, duration, language, level, paid,free, price, discountPrice, comingSoon, messageComingSoon, endTimeComingSoon, preview, category, provider, team, status, roles, objectives, includes, faqs, requirements, sections, certificate }  = req.body;
   const courseId = req.params.id;
 
   try {
@@ -161,7 +161,7 @@ export const updateCourse = async (req: Request, res: Response, next: NextFuncti
     if (language) Course.language = language;
     if (level) Course.level = level;
     Course.paid = paid || false;
-
+    Course.free = free !== undefined ? free : false;
     if (paid && price) Course.price = price;
     else Course.price = null
 

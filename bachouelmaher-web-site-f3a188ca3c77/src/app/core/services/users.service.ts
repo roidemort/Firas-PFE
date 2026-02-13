@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
-import {BehaviorSubject, map} from "rxjs";
+import {BehaviorSubject, map, Observable} from "rxjs";
 import {SortConfig} from "../models/config.model";
 
 @Injectable({
@@ -186,6 +186,38 @@ export class UsersService {
         return response;
       }));
   }
+
+
+
+  // Ajoutez ces méthodes à votre UsersService existant
+getUserRankingByRole(): Observable<any> {
+  return this.http.get<any>(`${environment.apiEndpoint}/user/ranking/role`)
+    .pipe(map(response => {
+      return response;
+    }));
+}
+
+getUserRankingByPharmacy(): Observable<any> {
+  return this.http.get<any>(`${environment.apiEndpoint}/user/ranking/pharmacy`)
+    .pipe(map(response => {
+      return response;
+    }));
+}
+
+getUserRankingStats(): Observable<any> {
+  return this.http.get<any>(`${environment.apiEndpoint}/user/ranking/stats`)
+    .pipe(map(response => {
+      return response;
+    }));
+}
+
+// Ou pour tout récupérer en une seule requête:
+getAllRankings(): Observable<any> {
+  return this.http.get<any>(`${environment.apiEndpoint}/user/ranking/all`)
+    .pipe(map(response => {
+      return response;
+    }));
+}
 
 
 }

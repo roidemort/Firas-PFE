@@ -1,0 +1,21 @@
+<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-[#edf6f6] p-6 rounded-lg shadow-lg w-[90%] md:w-[500px]">
+      <h2 class="text-xl text-center font-bold text-[#3f6168]">Accès limité</h2>
+      <div *ngIf="loggedUser.role == 'PHARMACIST_HOLDER'">
+        <p class="mt-2 text-gray-700 text-center">Votre abonnement actuel ne permet pas d’accéder à cette formation.</p>
+        <p class="mt-1 text-gray-700 text-center">Pour débloquer l’intégralité du contenu, vous pouvez choisir un plan dans la section <a class="text-blue-500 underline" [routerLink]="['/abonnement']">Tarifs</a> depuis la page d’accueil ou via votre profil.</p>
+      </div>
+      <div *ngIf="loggedUser.role != 'PHARMACIST_HOLDER'">
+        <p class="mt-2 text-gray-700 text-center">Votre abonnement actuel ne permet pas d’accéder à cette formation.</p>
+        <p class="mt-1 text-gray-700 text-center">Seul le titulaire du compte peut modifier l’abonnement. Nous vous invitons à lui demander d’accéder à la section <a class="text-blue-500 underline" [routerLink]="['/abonnement']">Tarifs</a>, soit depuis la page d’accueil, soit via son profil..</p>
+      </div>
+
+      <div class="mt-4 flex justify-end">
+        <button
+          (click)="close()"
+          class="border-2 border-fontColor bg-fontColor rounded-[40px] text-sm text-center py-2 px-6 text-secondaryColor">
+          Fermer
+        </button>
+      </div>
+    </div>
+  </div>

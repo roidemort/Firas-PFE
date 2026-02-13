@@ -1,0 +1,235 @@
+<div class="mx-auto px-4 py-4 sm:px-8" #actions>
+  <div class="mb-4 flex justify-between">
+    <div class="inline-block">
+      <h3 class="font-semibold text-foreground" *ngIf="type == 'add'">Ajouté une question</h3>
+      <h3 class="font-semibold text-foreground" *ngIf="type == 'edit'"> Modifié la question</h3>
+      <div class="space-x-1 text-xs font-medium text-night-400 dark:text-night-300">
+      </div>
+    </div>
+  </div>
+  <div class="flex min-w-full flex-col rounded-xl border border-muted/20 bg-background p-2">
+    <div class="overflow-x-auto">
+      <div class="inline-block min-w-full w-full py-2 sm:px-6 lg:px-8">
+        @if(manageQuestionForm) {
+          <form [formGroup]="manageQuestionForm">
+            <div class="px-12">
+              <div class="my-6 space-y-2 flex flex-col">
+                <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="course">Formation</label>
+
+                <mat-select id="course" formControlName="course" (selectionChange)="onSelectCourse($event)"
+                            [ngClass]="{'!border-[#f74350] !border-2': manageQuestionForm.get('course')?.invalid && manageQuestionForm.get('course')!.touched}"
+                            class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+                  <mat-option *ngFor="let course of courses" value="{{ course.id }}">{{ course.title }}</mat-option>
+                </mat-select>
+
+                <div *ngIf="manageQuestionForm.get('course')!.hasError('required') && manageQuestionForm.get('course')!.touched"
+                     class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                  Ce champ est obligatoire.
+                </div>
+              </div>
+            </div>
+            @if (selectedCourse) {
+              <div class="px-12">
+                <div class="my-6 space-y-2 flex flex-col">
+                  <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="section">Section</label>
+
+                  <mat-select id="section" formControlName="section" (selectionChange)="onSelectSection($event)"
+                              [ngClass]="{'!border-[#f74350] !border-2': manageQuestionForm.get('section')?.invalid && manageQuestionForm.get('section')!.touched}"
+                              class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+                    <mat-option *ngFor="let section of selectedCourse.sections" value="{{ section.id }}">{{ section.title }}</mat-option>
+                  </mat-select>
+
+                  <div *ngIf="manageQuestionForm.get('section')!.hasError('required') && manageQuestionForm.get('section')!.touched"
+                       class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                    Ce champ est obligatoire.
+                  </div>
+                </div>
+              </div>
+            }
+            <div class="px-12">
+              <div class="my-6 space-y-2 flex flex-col">
+                <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="text">Question</label>
+                <input id="text" formControlName="text" type="text" placeholder="" required
+                       [ngClass]="{'!border-[#f74350] !border-2': manageQuestionForm.get('text')?.invalid && manageQuestionForm.get('text')!.touched}"
+                       class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor"          >
+                <div *ngIf="manageQuestionForm.get('text')!.hasError('required') && manageQuestionForm.get('text')!.touched"
+                     class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                  Ce champ est obligatoire.
+                </div>
+              </div>
+            </div>
+            <div class="px-12">
+              <div class="my-6 space-y-2 flex flex-col">
+                <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="topic">Sujet</label>
+                <input id="topic" formControlName="topic" type="text" placeholder="" required
+                       [ngClass]="{'!border-[#f74350] !border-2': manageQuestionForm.get('topic')?.invalid && manageQuestionForm.get('topic')!.touched}"
+                       class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor"          >
+                <div *ngIf="manageQuestionForm.get('topic')!.hasError('required') && manageQuestionForm.get('topic')!.touched"
+                     class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                  Ce champ est obligatoire.
+                </div>
+              </div>
+            </div>
+            <div class="px-12">
+              <div class="my-6 space-y-2 flex flex-col">
+                <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="points">Points</label>
+                <input id="points" formControlName="points" type="number" placeholder="" required min="0"
+                       [ngClass]="{'!border-[#f74350] !border-2': manageQuestionForm.get('points')?.invalid && manageQuestionForm.get('points')!.touched}"
+                       class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor"          >
+                <div *ngIf="manageQuestionForm.get('points')!.hasError('required') && manageQuestionForm.get('points')!.touched"
+                     class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                  Ce champ est obligatoire.
+                </div>
+              </div>
+            </div>
+            <div class="px-12">
+              <div class="my-6 space-y-2 flex flex-col">
+                <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="details">Détails</label>
+                <textarea id="details" formControlName="details" type="text" placeholder="" rows="5"
+                          class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor"> </textarea>
+              </div>
+            </div>
+            <div class="px-12">
+              <div class="my-6 space-y-2 flex flex-col">
+                <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="type">Type</label>
+
+                <mat-select id="type" formControlName="type" (selectionChange)="onSelectType($event)"
+                            [ngClass]="{'!border-[#f74350] !border-2': manageQuestionForm.get('type')?.invalid && manageQuestionForm.get('type')!.touched}"
+                            class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+                  <mat-option *ngFor="let type of questionTypes" value="{{ type.value }}">{{ type.label }}</mat-option>
+                </mat-select>
+
+                <div *ngIf="manageQuestionForm.get('type')!.hasError('required') && manageQuestionForm.get('type')!.touched"
+                     class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                  Ce champ est obligatoire.
+                </div>
+              </div>
+            </div>
+            <div class="px-12" *ngIf="selectedType == 'CM' || selectedType == 'CU'">
+              <div class="my-6 space-y-2 flex flex-col">
+                <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="a">A Option</label>
+                <input id="a" formControlName="a" type="text" placeholder="" required
+                       [ngClass]="{'!border-[#f74350] !border-2': manageQuestionForm.get('a')?.invalid && manageQuestionForm.get('a')!.touched}"
+                       class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+                <div *ngIf="manageQuestionForm.get('a')!.hasError('required') && manageQuestionForm.get('a')!.touched"
+                     class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                  Ce champ est obligatoire.
+                </div>
+              </div>
+            </div>
+            <div class="px-12" *ngIf="selectedType == 'CM' || selectedType == 'CU'">
+              <div class="my-6 space-y-2 flex flex-col">
+                <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="b">B Option</label>
+                <input id="b" formControlName="b" type="text" placeholder="" required
+                       [ngClass]="{'!border-[#f74350] !border-2': manageQuestionForm.get('b')?.invalid && manageQuestionForm.get('b')!.touched}"
+                       class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+                <div *ngIf="manageQuestionForm.get('b')!.hasError('required') && manageQuestionForm.get('b')!.touched"
+                     class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                  Ce champ est obligatoire.
+                </div>
+              </div>
+            </div>
+            <div class="px-12" *ngIf="selectedType == 'CM' || selectedType == 'CU'">
+              <div class="my-6 space-y-2 flex flex-col">
+                <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="c">C Option</label>
+                <input id="c" formControlName="c" type="text" placeholder="" (change)="fillInput($event,'c')" class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+              </div>
+            </div>
+            <div class="px-12" *ngIf="selectedType == 'CM' || selectedType == 'CU'">
+              <div class="my-6 space-y-2 flex flex-col">
+                <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="d">D Option</label>
+                <input id="d" formControlName="d" type="text" placeholder="" (change)="fillInput($event, 'd')" class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+              </div>
+            </div>
+            <div class="md:px-12 md:flex space-x-4">
+            <div class="my-6 space-x-3 flex flex-row items-center">
+              <label class="font-semibold text-base text-gray-600 dark:text-night-100">Image</label>
+
+              <button (click)="browserMedia()"
+                      class="bg-card font-semibold text-base text-gray-600 dark:text-night-100 p-2 px-4 rounded-md border-b-[3px] border-primary-dark flex items-center"
+                      type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-10 w-10 text-primary mr-2" fill="currentColor">
+                  <path d="M19.906 9c.382 0 .749.057 1.094.162V9a3 3 0 0 0-3-3h-3.879a.75.75 0 0 1-.53-.22L11.47 3.66A2.25 2.25 0 0 0 9.879 3H6a3 3 0 0 0-3 3v3.162A3.756 3.756 0 0 1 4.094 9h15.812ZM4.094 10.5a2.25 2.25 0 0 0-2.227 2.568l.857 6A2.25 2.25 0 0 0 4.951 21H19.05a2.25 2.25 0 0 0 2.227-1.932l.857-6a2.25 2.25 0 0 0-2.227-2.568H4.094Z" />
+                </svg>
+                <span class="max-md:hidden">Parcourir</span>
+              </button>
+
+              <div class="p-2.5 rounded-lg align-bottom bg-slate-300">
+                <div class="m-0 border-2 rounded-lg border-dotted border-borderColor w-[148px] h-[148px] bg-background flex items-center justify-center">
+                  <img *ngIf="selectedImage"
+                       [src]="selectedImage.secure_url"
+                       alt="Question Image"
+                       class="object-cover w-full h-full rounded-lg" />
+
+                  <span *ngIf="!selectedImage" class="text-xs text-gray-400">Aucune image</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+            @if (selectedType == 'VF' || selectedType == 'CM' || selectedType == 'CU') {
+              <div class="px-12">
+                <div class="my-6 space-y-2 flex flex-col">
+                  <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="answer">Réponse correcte</label>
+                  @if (selectedType =='VF') {
+                    <mat-select id="answer" formControlName="answer"
+                                [ngClass]="{'!border-[#f74350] !border-2': manageQuestionForm.get('answer')?.invalid && manageQuestionForm.get('answer')!.touched}"
+                                class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+                      <mat-option value="true">Vrai</mat-option>
+                      <mat-option value="false">Faux</mat-option>
+                    </mat-select>
+                  }
+                  @if (selectedType == 'CM') {
+                    <mat-select id="answer01" formControlName="answer" multiple
+                                [ngClass]="{'!border-[#f74350] !border-2': manageQuestionForm.get('answer')?.invalid && manageQuestionForm.get('answer')!.touched}"
+                                class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+                      <mat-option value="a">A</mat-option>
+                      <mat-option value="b">B</mat-option>
+                      <mat-option value="c" *ngIf="showOptionC">C</mat-option>
+                      <mat-option value="d" *ngIf="showOptionD">D</mat-option>
+                    </mat-select>
+                  }
+                  @if (selectedType == 'CU') {
+                    <mat-select id="answer02" formControlName="answer"
+                                [ngClass]="{'!border-[#f74350] !border-2': manageQuestionForm.get('answer')?.invalid && manageQuestionForm.get('answer')!.touched}"
+                                class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+                      <mat-option value="a">A</mat-option>
+                      <mat-option value="b">B</mat-option>
+                      <mat-option value="c" *ngIf="showOptionC">C</mat-option>
+                      <mat-option value="d" *ngIf="showOptionD">D</mat-option>
+                    </mat-select>
+                  }
+                  <div *ngIf="manageQuestionForm.get('answer')!.hasError('required') && manageQuestionForm.get('answer')!.touched"
+                       class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                    Ce champ est obligatoire.
+                  </div>
+                </div>
+              </div>
+            }
+            <div class="px-12">
+              <div class="my-6 space-y-2 flex flex-col">
+                <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="justification">Justification</label>
+                <textarea id="justification" formControlName="justification" type="text" placeholder="" rows="5"
+                          class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor"> </textarea>
+              </div>
+            </div>
+          </form>
+        }
+      </div>
+      <div class="flex items-center justify-end p-6 rounded-b space-x-2">
+        <button class="font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:translate-y-px disabled:pointer-events-none disabled:opacity-50 bg-transparent text-primary hover:bg-primary/10 focus-visible:ring-primary p-2 px-4 rounded-lg" type="button" (click)="bachToList()">
+          Annuler</button>
+        <button (click)="manageQuestion()" [disabled]="isLoading"
+                class="bg-primary text-white p-2 px-4 rounded-md border-b-[3px] border-primary-dark flex items-center" type="button">
+          <svg *ngIf="isLoading" class="-ml-1 mr-3 h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg"
+               fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+            </path>
+          </svg>
+          Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>

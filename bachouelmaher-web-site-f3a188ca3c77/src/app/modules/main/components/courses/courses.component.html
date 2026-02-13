@@ -15,8 +15,8 @@
         <app-card-carousel [cards]="newCourses"></app-card-carousel>
     </div>
 
-    <!-- Toutes les Formations Section -->
-    <div *ngIf="!isLoading && showAllCourses">
+    <!-- Toutes les Formations Section - ALWAYS show when filtered, even if empty -->
+    <div *ngIf="!isLoading && (showAllCourses || currentFilter)">
         <div class="w-full p-4 sm:px-8 sm:pt-12 flex justify-between items-center">
             <div>
                 <h1 class="font-semibold text-2xl text-titleColor">{{ sectionTitle }}</h1>
@@ -35,8 +35,61 @@
                     </button>
                 </div>
             </div>
+            <!-- ADD THIS "Voir plus" BUTTON -->
+        <button
+            [routerLink]="['/notre-plateforme/courses/list']"
+            *ngIf="allCourses.length > 0 && !currentFilter"
+            class="flex items-center text-[#1B9198] hover:text-[#147980] font-medium transition-colors"
+        >
+            Voir plus
+            <svg class="w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+        </button>
         </div>
-        <app-card-carousel [cards]="allCourses"></app-card-carousel>
+
+        <!-- Show message if no courses found -->
+        <div *ngIf="allCourses.length === 0"
+             class="flex flex-col items-center justify-center p-8 bg-gray-50 rounded-lg mx-4 mb-8">
+            <svg class="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <h3 class="text-lg font-semibold text-gray-700 mb-2">
+                Aucune formation disponible
+            </h3>
+            <p class="text-gray-500 text-center mb-4">
+                <span *ngIf="currentFilter">
+                    Aucune formation n'a été trouvée avec les filtres actuels.
+                    <span *ngIf="currentFilter.categoryName && currentFilter.providerName">
+                        <br>
+                        Catégorie: <span class="font-medium">{{ currentFilter.categoryName }}</span>
+                        <br>
+                        Fournisseur: <span class="font-medium">{{ currentFilter.providerName }}</span>
+                    </span>
+                    <span *ngIf="currentFilter.categoryName && !currentFilter.providerName">
+                        <br>
+                        Catégorie: <span class="font-medium">{{ currentFilter.categoryName }}</span>
+                    </span>
+                    <span *ngIf="!currentFilter.categoryName && currentFilter.providerName">
+                        <br>
+                        Fournisseur: <span class="font-medium">{{ currentFilter.providerName }}</span>
+                    </span>
+                </span>
+                <span *ngIf="!currentFilter">
+                    Il n'y a actuellement aucune formation disponible.
+                    <br>
+                    Revenez plus tard pour découvrir nos nouvelles formations.
+                </span>
+            </p>
+            <button *ngIf="currentFilter" (click)="clearFilters()"
+                    class="px-4 py-2 bg-[#1B9198] text-white rounded-lg hover:bg-[#147980] transition duration-300">
+                Voir toutes les formations
+            </button>
+        </div>
+
+        <!-- Only show carousel if there are courses -->
+        <app-card-carousel *ngIf="allCourses.length > 0" [cards]="allCourses"></app-card-carousel>
     </div>
 
     <!-- Capsules Section -->
@@ -47,8 +100,27 @@
         <app-card-shorts [cards]="capsules"></app-card-shorts>
     </div>
 
-    <!-- No Courses Message -->
-    <div *ngIf="!isLoading && !showNewCourses && !showAllCourses && capsules?.length === 0"
+    <!-- Empty capsules message when filtered -->
+    <div *ngIf="!isLoading && currentFilter && capsules.length === 0"
+         class="flex flex-col items-center justify-center p-8 bg-gray-50 rounded-lg mx-4 mb-8">
+        <svg class="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <h3 class="text-lg font-semibold text-gray-700 mb-2">
+            Aucune capsule disponible
+        </h3>
+        <p class="text-gray-500 text-center mb-4">
+            Aucune capsule n'a été trouvée avec les filtres actuels.
+        </p>
+        <button (click)="clearFilters()"
+                class="px-4 py-2 bg-[#1B9198] text-white rounded-lg hover:bg-[#147980] transition duration-300">
+            Effacer les filtres
+        </button>
+    </div>
+
+    <!-- Global empty state (only when nothing at all exists) -->
+    <div *ngIf="!isLoading && !showNewCourses && !showAllCourses && !currentFilter && capsules?.length === 0"
          class="flex flex-col items-center justify-center h-64">
         <svg class="w-16 h-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -56,6 +128,14 @@
         </svg>
         <h3 class="text-lg font-semibold text-gray-700 mb-2">Aucune formation disponible</h3>
         <p class="text-gray-500 text-center">Revenez plus tard pour découvrir nos nouvelles formations.</p>
+    </div>
+
+    <!-- Message when there are no new courses -->
+    <div *ngIf="!isLoading && !showNewCourses && showAllCourses && !currentFilter && allCourses.length > 0"
+         class="text-center py-4 px-4">
+        <p class="text-gray-500 text-sm italic">
+            Aucune nouvelle formation cette semaine. Découvrez toutes nos formations disponibles.
+        </p>
     </div>
 </section>
 

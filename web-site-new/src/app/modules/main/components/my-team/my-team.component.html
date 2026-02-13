@@ -1,0 +1,176 @@
+<section class="relative h-[82vh]">
+    <div
+        class="w-full flex flex-col items-start gap-y-4 pb-4 border-b border-[#88BFBF] sm:-mt-4">
+        <h1 class="font-semibold text-2xl text-secondaryfontColor">Mon Équipe</h1>
+        <!-- <button type="button"
+            class="border-2 flex items-center gap-4 hover:bg-[#23BAC4] hover:text-[#e8fbfb] border-[#23BAC4] rounded-[40px] text-sm text-center px-[30px] py-[10px] text-[#23BAC4] transition duration-300 ease-in-out cursor-pointer group">
+            <div class="relative">
+                <img class="relative z-[2]" src="assets/images/add.svg" alt="icon-add">
+                <img class="absolute top-0 transition duration-300 ease-in-out group-hover:z-[3]"
+                    src="assets/images/add-2.svg" alt="icon-add-2">
+            </div>
+            Ajouter un nouvel employé
+        </button> -->
+        <!-- <p *ngIf="maxUsers == 1 && !isLoading" class="text-red-500">NB : Si vous ajoutez un membre à l'abonnement, vous ne pourrez pas le retirer de cet abonnement. Merci de bien vérifier avant d'ajouter un membre.</p> -->
+        <p *ngIf="maxUsers > 1" class="w-full text-red-500 pl-6 pr-6 py-4 bg-[#05989f47] border-l-4 border-[#05989f] rounded-lg text-sm md:text-base flex items-center gap-2">
+            <img src="assets/images/warning-icon.svg" alt="Warning" class="w-5 h-5 font-bold">
+            <span>Si vous ajoutez un membre à l'abonnement, vous ne pourrez pas le retirer. Merci de bien vérifier avant d'ajouter un membre.</span>
+        </p>
+    </div>
+    <div *ngIf="maxUsers > 1 && !isMaxUsersSubscribed()" class="mt-4 text-sm md:text-base text-white p-4 bg-[#d1fa9469] rounded-lg border-l-4 border-secondaryfontColor">
+        <p>Il reste encore <span class="font-bold text-secondaryfontColor">{{maxUsers - checkedMembers.size}}</span> places disponibles.</p>
+    </div>
+    <div *ngIf="isMaxUsersSubscribed()" (click)="goToSubscription()" class="group cursor-pointer mt-4 text-sm md:text-base text-[#774747] bg-[#f9f1f1] p-4 rounded-lg border-l-4 border-[#e36161]">
+        <p>La limite de <strong> {{ maxUsers }}</strong> membres atteinte. <span *ngIf="myTeam.length > checkedMembers.size"> Vous avez <strong>  {{ myTeam?.length - maxUsers }} </strong>  membres sans accès. <span class="group-hover:underline"> Cliquez ici pour mettre à niveau votre abonnement et en ajouter d'autres. </span> </span> </p>
+    </div>
+    <div class="mt-8">
+        <form class="space-y-4" [formGroup]="filterForm" (ngSubmit)="onSubmit()">
+            <div class="w-full">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 2xl:grid-cols-8 gap-4">
+                    <div class="relative">
+                        <div class="absolute top-3 left-4 cursor-pointer">
+                            <img src="assets/images/calendar.png" alt="calendar">
+                        </div>
+                        <select id="month"
+                            class="custom-select z-[2] text-[#88BFBF] relative w-full peer transition duration-200 ease-linear bg-transparent outline-none border border-[#88BFBF] placeholder:font-medium placeholder:leading-7 placeholder:text-base text-base placeholder:text-[#88BFBF] focus:ring-fontColor focus:border-[#88BFBF] focus:outline-none rounded-xl py-[10px] pl-12"
+                            formControlName="month" (click)="isMonthOpen = !isMonthOpen" (blur)="isMonthOpen = false"
+                            (change)="onSubmit()" [ngClass]="{'!cursor-not-allowed' : maxUsers == 1}">
+                            <option class="text-[#88BFBF] font-medium" value="0" selected disabled>Ce mois-ci</option>
+                            <option *ngFor="let month of months" [value]="month.value">{{ month.name }}</option>
+                        </select>
+                        <div class="absolute top-[12px] right-[14px] z-[1] transition-transform duration-300"
+                            [ngClass]="{'rotate-180': isMonthOpen, 'rotate-0': !isMonthOpen}">
+                            <img src="assets/images/arrow-solid-Down.png" alt="select icon" />
+                        </div>
+                    </div>
+                    <!-- <div class="relative">
+                        <div class="absolute top-[10px] left-4 cursor-pointer">
+                            <img src="assets/images/company.png" alt="company">
+                        </div>
+                        <select id="laboratory"
+                            class="custom-select z-[2] text-fontColor relative w-full peer transition duration-200 ease-linear bg-transparent outline-none border border-[#88BFBF] placeholder:font-medium placeholder:leading-7 placeholder:text-base text-base placeholder:text-[#274848] focus:ring-fontColor focus:border-fontColor focus:outline-none rounded-xl py-[10px] pl-12"
+                            formControlName="laboratory" (click)="isLaboratoryOpen = !isLaboratoryOpen"
+                            (blur)="isLaboratoryOpen = false" (change)="onSubmit()" [ngClass]="{'cursor-not-allowed' :  maxUsers == 1}">
+                            <option class="text-[#476F77] font-medium" value="0" selected disabled>Laboratoire</option>
+                            <option *ngFor="let laboratory of filterLaboratories" [value]="laboratory.value">{{ laboratory.name }}</option>
+                        </select>
+                        <div class="absolute top-[12px] right-[14px] z-[1] transition-transform duration-300"
+                            [ngClass]="{'rotate-180': isLaboratoryOpen, 'rotate-0': !isLaboratoryOpen}">
+                            <img src="assets/images/arrow-solid-Down.png" alt="select icon" />
+                        </div>
+                    </div> -->
+                    <div *ngIf="isFilter" (click)="resetFilter()" class="flex items-center gap-2 text-[#88BFBF] hover:text-[#366464] cursor-pointer">
+                        <p class="underline">Reset Filter</p>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="w-full mt-8 pb-8">
+        <div class="relative overflow-x-auto">
+            <table *ngIf="!isLoading" class="w-full text-sm text-left border border-[#366464] table-auto">
+                <thead class="text-xs font-normal text-white bg-[#366464]">
+                    <tr>
+                        <th scope="col" class="pl-10 pr-6 py-8 md:px-6 md:py-4 xl:w-2/5">
+                            <div class="flex items-center gap-x-2">
+                                <input *ngIf="count > 0 && maxUsers > 1" class="!ring-transparent cursor-pointer has-subscription"
+                                    [ngClass]="{'!cursor-not-allowed': getAllMembresSubscribed() && (isMaxUsersReached() || areAllMembersSubscribed() || areAllMembers())}" type="checkbox"
+                                    [(ngModel)]="selectAll" [disabled]="getAllMembresSubscribed() && (isMaxUsersReached() || areAllMembersSubscribed() || areAllMembers())"
+                                    [checked]="areAllMembersSubscribed() || areAllMembers()" (change)="toggleAll()" />
+                                <p class="">Nom et profession</p>
+                            </div>
+                        </th>
+                        <th scope="col" class="cursor-pointer select-none py-1 px-6 sm:py-4" (click)="sortByCours()">Cours
+                            <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="{'rotate-180': !sortCours, 'rotate-0': sortCours}"
+                                width="16" height="16" fill="currentColor" class="inline-block" viewBox="0 0 16 16">
+                                <path d="M4.646 6.646a.5.5 0 0 1 .708 0L8 9.293l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z" />
+                            </svg>
+                        </th>
+                        
+                        <th scope="col" class="select-none cursor-pointer py-1 px-1 sm:py-4 md:flex items-center gap-x-2" (click)="sortByQuiz()">Score<img src="assets/images/help-circle.svg" alt="help">
+                            <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="{'rotate-180': !sortOuiz, 'rotate-0': sortOuiz}"
+                                width="16" height="16" fill="currentColor" class="inline-block" viewBox="0 0 16 16">
+                                <path d="M4.646 6.646a.5.5 0 0 1 .708 0L8 9.293l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z" />
+                            </svg>
+                        </th>
+                        <!-- <th scope="col" class="py-1 px-1 sm:py-4">Indice de réussite du quiz</th> -->
+                        <th scope="col" class="py-1 px-1 sm:py-4">Points gagnés</th>
+                        <th scope="col" class="py-1 px-6 sm:py-4 md:w-20"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container *ngIf="count > 0 && maxUsers > 1 else noUsers">
+                        <tr *ngFor="let membre of myTeam;let i = index"
+                            class="bg-transparent border-b border-[#366464]">
+                            <th scope="row" class="pl-10 pr-20 py-8 md:px-6 md:py-4 font-medium whitespace-nowrap">
+                                <div class="flex items-center gap-x-4">
+                                    <input class="!ring-transparent cursor-pointer" [ngClass]="{'has-subscription': hasSubscription(membre),
+                                        '!cursor-not-allowed': (isMaxUsersReached() && !isChecked(membre)) || hasSubscription(membre)}" type="checkbox"
+                                        [checked]="isChecked(membre)" (change)="toggleMembre(membre)"
+                                        [disabled]="(isMaxUsersReached() && !isChecked(membre)) || hasSubscription(membre)" />
+                                    <div class="flex items-end gap-x-4">
+                                        <img *ngIf="membre?.img_link"
+                                            class="cursor-pointer rounded-full relative w-11 h-11 border border-secondaryfontColor object-contain"
+                                            [src]="membre?.img_link" alt="avatar" />
+                                        <img *ngIf="!membre?.img_link"
+                                            class="cursor-pointer rounded-full relative w-11 h-11 border border-secondaryfontColor object-contain"
+                                            src="assets/images/default-img.png" alt="avatar" />
+                                        <!-- <img *ngIf="!currentUser?.img_link"
+                                    class="cursor-pointer rounded-full relative w-11 h-11 border border-[#EDF6F6] object-contain"
+                                    [src]="'https://i.pravatar.cc/100?img=' + i" alt="avatar" /> -->
+                                        <div class="text-sm">
+                                            <p class="text-white font-normal">{{ membre.firstName }} {{
+                                                membre.lastName }}</p>
+                                            <p class="text-[#366464]">{{ getRoleDisplayName(membre.role) }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th>
+                            <td class="px-10 py-8 md:px-6 md:py-4 text-white text-right md:text-left">{{
+                                membre.numberCourses ?? '0' }}
+                            </td>
+                            <td class="pl-1 pr-32 py-8 md:pr-6 md:py-4"><span
+                                    class="bg-[#19272A] px-[10px] py-[5px] text-white rounded-2xl">{{
+                                    membre.scoreQuiz ? membre.scoreQuiz + ' %' : '0 %' }}</span></td>
+                            <td class="pl-1 pr-20 py-8 md:pr-6 md:py-4"><span
+                                    class="text-[#B98407] font-bold text-xs flex gap-2 items-center"><img
+                                        src="assets/images/Medals.svg" alt="medals"> {{ membre.totalPoints }}
+                                    points</span>
+                            </td>
+                            <td class="pl-3 pr-1 md:px-6 md:py-4">
+                                <a [routerLink]="['/profil/parcours-apprentissage/'+ membre.id]"
+                                    (click)="viewMembre(membre.id)">
+                                    <img class="cursor-pointer" src="assets/images/eye-open.svg" alt="eye">
+                                </a>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <ng-template #noUsers>
+                        <p class="w-48 sm:w-auto text-[#476F77] pl-10 pr-6 py-8 md:px-6 md:py-4">Aucun membre trouvé</p>
+                    </ng-template>
+                </tbody>
+            </table>
+            <p (click)="goToSubscription()" *ngIf="maxUsers == 1 && !isLoading" class="cursor-pointer underline text-red-600 pl-10 pr-6 py-8 md:px-6 md:py-4">Votre abonnement est gratuit. Vous devez souscrire à un abonnement payant pour pouvoir ajouter des membres à cet abonnement.</p>
+        </div>
+    </div>
+    <div class="w-full flex justify-end py-4">
+        <button type="button" (click)="addMembers()" *ngIf="canShowAddButton()"
+            class="border-2 flex items-center gap-4 hover:bg-[#23BAC4] hover:text-[#e8fbfb] border-[#23BAC4] rounded-[40px] text-sm text-center px-[30px] py-[10px] text-[#23BAC4] transition duration-300 ease-in-out cursor-pointer group">
+            <div class="relative">
+                <img class="relative z-[2]" src="assets/images/save-2.svg" alt="icon-add">
+                <img class="absolute top-0 transition duration-300 ease-in-out group-hover:z-[3]"
+                    src="assets/images/save-3.svg" alt="icon-save-2">
+            </div>
+            Enregistrer les modifications
+        </button>
+    </div>
+
+
+  
+
+    <app-alert [handleError]="handleError" [handleResponse]="handleResponse" [handleErrorResponse]="handleErrorResponse"
+        [alertMessage]="alertMessage"></app-alert>
+</section>
+
+<app-loader-main *ngIf="isLoading"></app-loader-main>

@@ -1,0 +1,97 @@
+:host {
+  display: block;
+}
+
+// Animation de spin
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+// Effets de hover simples
+.hover-lift {
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+// Styles pour les médailles
+.medal-gold {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+}
+
+.medal-silver {
+  background: linear-gradient(135deg, #C0C0C0, #A9A9A9);
+}
+
+.medal-bronze {
+  background: linear-gradient(135deg, #CD7F32, #8B4513);
+}
+
+// Transition douce pour les changements d'onglet
+.tab-content {
+  transition: opacity 0.3s ease;
+}
+
+// Scrollbar personnalisée
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1A2C3D;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4ADE80;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #22C55E;
+}
+
+// Animation subtile pour le badge "Vous"
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.9; }
+}
+
+.badge-current-user {
+  animation: pulse-subtle 2s infinite;
+}
+
+// Styles responsive
+@media (max-width: 640px) {
+  .table-responsive {
+    font-size: 0.875rem;
+
+    td, th {
+      padding: 0.75rem 0.5rem;
+    }
+  }
+
+  .user-avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 0.875rem;
+  }
+}
+
+// Effet de fade in pour le contenu
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

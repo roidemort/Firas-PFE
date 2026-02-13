@@ -4,6 +4,7 @@ import {  pricingPlansProfile } from '../../../../core/constants/pricing-plans';
 import { PackagesService } from 'src/app/core/services/packages.service';
 import { UsersService } from 'src/app/core/services/users.service';
 import { MainLoaderComponent } from "../loader/loader.component";
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-subscription-management',
   standalone: true,
@@ -19,8 +20,8 @@ export class SubscriptionManagementComponent {
   otherPlans: any
   isLoading = false
   usersSubscribed: any
-  constructor(private packageService: PackagesService, private userService: UsersService){
-    
+  constructor(private packageService: PackagesService, private userService: UsersService ,private router: Router){
+
   }
   ngOnInit() {
     this.isLoading = true
@@ -29,6 +30,12 @@ export class SubscriptionManagementComponent {
     this.getPlanDetails()
 
   }
+
+  goToPayment(packageId: string) {
+  this.router.navigate(['/profil/payment'], {
+    queryParams: { packageId }
+  });
+}
 
   getFeaturesFromDescription(description: string): any[] {
     const liMatches = description.match(/<p>(.*?)<\/p>/g);
@@ -64,7 +71,7 @@ export class SubscriptionManagementComponent {
       }
     });
   }
-  
+
   getData(){
     this.packageService.getAllActivePackages("1").subscribe({
       next: (res) => {
@@ -75,7 +82,7 @@ export class SubscriptionManagementComponent {
             this.pricingPlans.forEach(plan => {
               this.features[plan?.id] = this.getFeaturesFromDescription(plan.description);
             });
-            
+
             // Trier les plans restants par position
             this.pricingPlans.sort((a, b) => a.position - b.position);
           }
@@ -99,12 +106,12 @@ export class SubscriptionManagementComponent {
     if (!endedAt) {
       return null;
     }
-  
+
     const date = new Date(endedAt);
     date.setDate(date.getDate() - 1);
     return date;
   }
-  
+
   goToSubscriptions() {
     const element = document.getElementById('subscriptions');
     if (element) {

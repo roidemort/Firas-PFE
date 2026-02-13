@@ -1,0 +1,49 @@
+
+<div class="mx-auto px-4 py-4 sm:px-8" #actions>
+<div class="mb-4 flex justify-between">
+  <div class="inline-block">
+    <h3 class="font-semibold text-foreground">Liste des utilisateurs</h3>
+    <div class="space-x-1 text-xs font-medium text-muted-foreground">
+      <a href="" class="hover:text-primary">Tous les membres:</a>
+      <span class="text-foreground">{{allUsersCount}}</span>
+    </div>
+  </div>
+  <div class="inline-block space-x-4">
+    <!--<button
+      class="flex-none rounded-md bg-muted px-4 py-2.5 text-xs font-semibold text-muted-foreground hover:text-foreground">
+      Import CSV
+    </button>-->
+    <button (click)="manageUser('add')"
+            class="flex items-center justify-center bg-primary text-white p-2 rounded-md border-b-[3px] border-primary-dark flex items-center" type="button">
+      <svg-icon src="assets/icons/heroicons/outline/plus.svg" [svgClass]="'h-5 w-5'"> </svg-icon>
+      Ajouter un utilisateur</button>
+  </div>
+</div>
+
+<div class="flex min-w-full flex-col rounded-xl border border-muted/20 bg-background p-2">
+  <app-loader *ngIf="isLoading"></app-loader>
+  <app-table-user-action class="mb-10" (changeRole)="onChangeRole($event)" (changeStatus)="onChangeStatus($event)" (changeGender)="onChangeGender($event)" (changeText)="onChangeText($event)"></app-table-user-action>
+  <div class="overflow-x-auto">
+    <table
+      class="table w-full table-auto border-collapse border-0 text-left align-middle leading-5 text-muted-foreground">
+      <thead class="border border-muted/20 text-xs text-muted-foreground">
+        <tr app-table-user-header class="h-20" (onSort)="sortUsers($event)"></tr>
+      </thead>
+      <tbody>
+        @for (user of users(); track $index) {
+        <tr class="hover:bg-card/50" app-table-user-row (updateUser)="manageUser('edit', $event)" [user]="user"></tr>
+        } @empty {
+        <tr>
+          <td class="py-4 text-center text-sm" colspan="7">Aucun utilisateur trouvé</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <app-table-user-footer class="mt-10" (changeItemsPerPage)="onChangeItemsPerPage($event)"
+                    [currentPage]="currentPage"
+                    [itemsPerPage]="itemsPerPage"
+                    [totalItems]="allUsersCount"
+                    (pageChanged)="onPageChange($event)"></app-table-user-footer>
+</div>
+</div>

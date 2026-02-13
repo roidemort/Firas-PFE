@@ -1,28 +1,102 @@
 <div class="w-full">
     <div class="w-auto">
         <div class="py-6 px-4 bg-[#EDF6F6] rounded-3xl space-y-4">
-            <h1 class="font-semibold text-xs text-[#476F77] ml-6 lg:ml-3">Cours</h1>
+            <h1 class="font-semibold text-xs text-[#476F77] ml-6 lg:ml-3">Formation</h1>
             <div class="w-11/12 mx-auto space-y-4">
-                <p *ngIf="cours.discountPrice && cours.price" class="font-semibold text-base text-[#19272A]">TND {{ cours?.discountPrice?.split('.')[0] }} 
-                    <span class="text-[#9BBCC3] font-normal text-base line-through ml-2">TND {{ cours?.price?.split('.')[0] }}</span>
-                </p>
-                <p *ngIf="!cours.discountPrice && cours.price" class="font-semibold text-base text-[#19272A]">TND {{ cours?.price?.split('.')[0] }} </p>
-                <p *ngIf="!cours.price" class="font-semibold text-base text-[#19272A]">Gratuit</p>
-                <h1 class="font-semibold text-xs text-[#476F77]">Le cours comprend</h1>
+                <!-- Price section with FREE/PREMIUM indicator -->
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p *ngIf="cours.discountPrice && cours.price" class="font-semibold text-base text-[#19272A]">
+                            TND {{ cours?.discountPrice?.split('.')[0] }}
+                            <span class="text-[#9BBCC3] font-normal text-base line-through ml-2">TND {{ cours?.price?.split('.')[0] }}</span>
+                        </p>
+                        <p *ngIf="!cours.discountPrice && cours.price" class="font-semibold text-base text-[#19272A]">
+                            TND {{ cours?.price?.split('.')[0] }}
+                        </p>
+                        <p *ngIf="!cours.price" class="font-semibold text-base text-[#19272A]">
+                            Gratuit
+                        </p>
+                    </div>
+                    <div *ngIf="isFreeCourse()" class="bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full">
+                        GRATUIT
+                    </div>
+                    <div *ngIf="isPaidCourse()" class="bg-yellow-100 text-yellow-800 text-xs font-semibold px-3 py-1 rounded-full">
+                        PREMIUM
+                    </div>
+                </div>
+
+                <h1 class="font-semibold text-xs text-[#476F77]">La formation comprend</h1>
                 <div *ngFor="let includ of cours?.includes" class="flex gap-x-2 items-center text-fontColor">
                     <svg-icon [src]="includ.icon" [svgClass]="'h-6 w-6'"></svg-icon>
                     <p class="text-sm text-[#294045]">{{ includ.text }}</p>
                 </div>
             </div>
-            <div class="w-full flex justify-start md:justify-center gap-x-4 gap-y-4 ml-5 sm:ml-0">
-                <button type="button" (click)="startLearning()" [disabled]="!hasAccess" [ngClass]="{'hover:bg-transparent hover:text-fontColor cursor-pointer' : hasAccess}"
-                    class="border-2 w-11/12 border-fontColor bg-fontColor rounded-[40px] text-sm text-center px-8 sm:px-12 lg:px-5 xl:px-8 2xl:px-12 py-3 text-secondaryColor transition duration-300 ease-in-out cursor-not-allowed">
-                    Commencer
-                </button>
 
-                <!--w-3/4 <button class="p-3 w-auto border-2 border-fontColor rounded-full" [disabled]="!hasAccess">
-                    <img src="assets/images/heart-courses.svg" class="w-5 h-5" alt="heart">
-                </button> -->
+            <!-- Access Messages -->
+            <div *ngIf="!isCheckingAccess && !isFreeCourse() && isAuthenticated()" class="w-11/12 mx-auto">
+                <!-- Pharmacist holder without subscription -->
+                <div *ngIf="isPharmacistHolder() && accessStatus === 'upgrade_needed'"
+                     class="mt-2 p-3 bg-yellow-100 border border-yellow-300 rounded-lg">
+                    <p class="text-xs text-yellow-700 text-center">
+                        <strong>Abonnement requis</strong><br>
+                        {{ getAccessMessage() }}
+                    </p>
+                </div>
+
+                <!-- Non-holder with access (subscription active) -->
+                <div *ngIf="!isPharmacistHolder() && accessStatus === 'subscribed'"
+                     class="mt-2 p-3 bg-green-100 border border-green-300 rounded-lg">
+                    <p class="text-xs text-green-700 text-center">
+                        <strong>Accès autorisé</strong><br>
+                        {{ getAccessMessage() }}
+                    </p>
+                </div>
+
+                <!-- Non-holder without access -->
+                <div *ngIf="!isPharmacistHolder() && accessStatus === 'no_access'"
+                     class="mt-2 p-3 bg-red-100 border border-red-300 rounded-lg">
+                    <p class="text-xs text-red-700 text-center">
+                        <strong>Accès restreint</strong><br>
+                        {{ getAccessMessage() }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Not authenticated message -->
+            <div *ngIf="!isFreeCourse() && !isAuthenticated()" class="w-11/12 mx-auto mt-2 p-3 bg-blue-100 border border-blue-300 rounded-lg">
+                <p class="text-xs text-blue-700 text-center">
+                    <strong>Connexion requise</strong><br>
+                    Veuillez vous connecter pour accéder à ce cours.
+                </p>
+            </div>
+
+            <!-- Loading state -->
+            <div *ngIf="isCheckingAccess" class="w-11/12 mx-auto mt-2 p-3 bg-gray-100 border border-gray-300 rounded-lg">
+                <p class="text-xs text-gray-700 text-center flex items-center justify-center">
+                    <svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-gray-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Vérification de vos accès...
+                </p>
+            </div>
+
+            <!-- Action button -->
+            <div class="w-full flex flex-col items-center gap-y-4">
+                <button
+                    type="button"
+                    (click)="startLearning()"
+                    [disabled]="isButtonDisabled()"
+                    [ngClass]="getButtonClass()">
+                    <span *ngIf="!isLoading && !isCheckingAccess">{{ getButtonText() }}</span>
+                    <span *ngIf="isLoading || isCheckingAccess" class="flex items-center justify-center">
+                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        {{ isLoading ? 'Inscription...' : 'Vérification...' }}
+                    </span>
+                </button>
             </div>
         </div>
     </div>

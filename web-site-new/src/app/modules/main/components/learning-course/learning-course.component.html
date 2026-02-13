@@ -1,0 +1,64 @@
+<section class="h-[89vh] relative">
+  <div class="transition-all duration-300 ease-in-out p-5 w-full">
+    <div class="relative w-[95%]" [ngClass]="{'xl:min-h-[31rem]' : currentLesson}">
+      <!-- <ng-container *ngIf="!currentLesson">
+        <app-vimeo-player [time]="null" [id]="null" (videoEvent)="handleVideoEvent($event)" class="w-full"></app-vimeo-player>
+      </ng-container> -->
+      <div *ngIf="currentLesson?.lesson?.lesson?.type != 'pdf'">
+        <ng-container *ngIf="currentLesson && key">
+          <app-vimeo-player *ngIf="key" [id]="currentLesson?.lesson?.lesson?.details"
+            [time]="currentLesson?.lesson.pause" (videoEvent)="handleVideoEvent($event)" class="w-full">
+          </app-vimeo-player>
+          <div class="w-full h-96 flex justify-center items-center" *ngIf="key && !currentLesson?.lesson?.lesson?.details">
+            <p class="text-gray-500 text-center ">
+              Aucune vidéo disponible pour le moment. Merci de revenir plus tard.
+            </p>
+          </div>
+        </ng-container>
+      </div>
+
+      <div *ngIf="currentLesson?.lesson?.lesson?.type == 'pdf' && key">
+        <app-file-overview class="block h-[89vh]" [url]="currentLesson?.lesson?.lesson?.details"></app-file-overview>
+        <button *ngIf="currentLesson?.lesson?.status != 2 && !clicked" type="button" (click)="markAsFinished()"
+          class="absolute bottom-3 right-5 flex items-center gap-x-2 border-2 bg-secondaryfontColor hover:bg-transparent border-secondaryfontColor rounded-[40px] text-sm text-center px-4 xs:px-5 lg:px-8 py-3 text-[[#101E2D] transition duration-300 ease-in-out cursor-pointer">
+          Lecture terminée
+        </button>
+      </div>
+
+      <button *ngIf="!isLoading && currentLesson" type="button" (click)="toggleChat()"
+        class="absolute top-3 right-5 flex items-center gap-x-2 border-2 bg-secondaryfontColor hover:bg-transparent border-secondaryfontColor rounded-[40px] text-sm text-center px-4 xs:px-5 lg:px-8 py-3 text-[#101E2D] transition duration-300 ease-in-out cursor-pointer group">
+        <svg class="stroke-current text-[#101E2D] group-hover:text-[#101E2D]" width="24" height="24" fill="none"
+          xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M12 11H12.01M8 11H8.01M16 11H16.01M12.2896 17.9984C18.0965 17.9343 21 15.9189 21 11C21 6 18 4 12 4C6 4 3 6 3 11C3 14.0771 4.13623 16.018 6.40868 17.0557L5 21L12.2896 17.9984Z"
+            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        Ouvrir le chat
+      </button>
+    </div>
+
+    <div *ngIf="!isLoading && !currentLesson" class="w-full pb-4 pt-6 space-y-4">
+      <h1 class="text-secondaryfontColor font-semibold">{{ cours.sections[currentChapterIndex] ?
+        cours.sections[currentChapterIndex].title : cours.sections[currentChapterIndex - 1].title }}</h1>
+      <p class="text-white text-sm">{{ cours.sections[currentChapterIndex] ?
+        cours.sections[currentChapterIndex].details : cours.sections[currentChapterIndex - 1].details }}</p>
+    </div>
+
+    <div *ngIf="!isLoading && currentLesson" class="w-full pb-4 pt-6 space-y-4">
+      <h1 class="text-secondaryfontColor font-semibold">{{ currentLesson.lesson.lesson.title }}</h1>
+      <!-- <p class="text-[#476F77] text-sm">{{ getTextFromHtml(currentLesson.lesson.lesson.details) }}</p> -->
+    </div>
+
+    <div *ngIf="!isLoading && !currentLesson && currentChapterIndex < cours.sections.length - 1"
+      class="pt-4 pb-12 absolute bottom-0 right-8">
+      <button type="button" (click)="goToNextChapter()" [disabled]="endOfCourses && !access"
+        [ngClass]="{'!cursor-pointer hover:text-secondaryfontColor hover:bg-transparent' : !endOfCourses && access}"
+        class="cursor-not-allowed border-2 border-secondaryfontColor bg-secondaryfontColor rounded-[40px] text-sm text-center px-4 xs:px-5 lg:px-8 py-3 text-[#101E2D] transition duration-300 ease-in-out">
+        Chapitre suivant
+      </button>
+    </div>
+  </div>
+
+  <app-chat-sidebar [isChatOpen]="isChatOpen" (isChatClose)="toggleChat()" [coursId]="cours.id"></app-chat-sidebar>
+  <app-loader-main *ngIf="isLoading"></app-loader-main>
+</section>

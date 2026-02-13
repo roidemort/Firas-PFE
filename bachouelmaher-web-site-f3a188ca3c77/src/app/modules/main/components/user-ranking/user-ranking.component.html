@@ -1,0 +1,308 @@
+<!-- Container principal avec thème vert professionnel -->
+<div class="p-4 sm:p-6 bg-[#0b1b29] rounded-xl">
+  <!-- Header élégant -->
+  <div class="mb-8">
+    <div class="flex items-center mb-4">
+      <div class="mr-4 p-3 rounded-lg bg-[#1A2C3D]">
+        <svg class="w-6 h-6 text-[#4ADE80]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-bold text-white">Classement</h1>
+        <p class="text-[#94A3B8] mt-1 text-sm">
+          Votre position parmi les {{ activeTab === 'role' ? getRoleDisplayName(user?.role) + 's' : 'membres de votre pharmacie' }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error State discret -->
+  <div *ngIf="hasError && !isLoading" class="mb-6 p-4 bg-[#2A1B29] border-l-4 border-[#F87171] rounded-r-lg">
+    <div class="flex items-center">
+      <svg class="w-5 h-5 text-[#F87171] mr-3" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+      </svg>
+      <div class="flex-1">
+        <p class="text-[#FCA5A5]">{{ errorMessage }}</p>
+        <button (click)="refreshRanking()" class="mt-1 text-sm text-[#F87171] hover:text-[#FCA5A5] font-medium">
+          Réessayer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State simple -->
+  <div *ngIf="isLoading" class="text-center py-12">
+    <div class="inline-flex items-center justify-center">
+      <div class="w-10 h-10 border-3 border-[#1A2C3D] border-t-[#4ADE80] rounded-full animate-spin"></div>
+    </div>
+    <p class="mt-4 text-[#94A3B8]">Chargement du classement...</p>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!isLoading && !hasError">
+    <!-- User Stats Card - Design sobre et professionnel -->
+    <div class="mb-8 p-6 bg-[#1A2C3D] rounded-xl">
+      <div class="flex flex-col lg:flex-row items-center justify-between">
+        <div class="mb-6 lg:mb-0 lg:mr-6">
+          <div class="flex items-center">
+            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-[#0EA5E9] to-[#4ADE80] flex items-center justify-center text-white font-bold text-xl shadow-lg">
+              {{ user?.firstName?.charAt(0) }}{{ user?.lastName?.charAt(0) }}
+            </div>
+            <div class="ml-4">
+              <h2 class="text-xl font-bold text-white">{{ user?.firstName }} {{ user?.lastName }}</h2>
+              <div class="flex items-center mt-1">
+                <span class="text-sm text-[#94A3B8]">{{ getRoleDisplayName(user?.role) }}</span>
+                <span *ngIf="userStats.pharmacyName" class="ml-3 text-xs text-[#CBD5E1] bg-[#0b1b29] px-3 py-1 rounded-full">
+                  {{ userStats.pharmacyName }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center">
+          <div class="text-3xl lg:text-4xl font-bold text-[#4ADE80]">
+            {{ formatPoints(userStats.totalPoints) }} pts
+          </div>
+          <p class="text-sm text-[#94A3B8] mt-1">Score total</p>
+        </div>
+      </div>
+
+      <!-- Stats Grid - Simple et élégant -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
+        <div class="p-4 bg-[#0b1b29] rounded-lg">
+          <div class="text-center">
+            <div class="text-2xl font-bold text-white">
+              {{ getUserPosition() > 0 ? getUserPosition() : 'N/A' }}
+              <span *ngIf="getUserPosition() > 0" class="text-sm">{{ getOrdinalSuffix(getUserPosition()) }}</span>
+            </div>
+            <p class="text-xs text-[#94A3B8] mt-2">Position {{ activeTab === 'role' ? 'globale' : 'pharmacie' }}</p>
+          </div>
+        </div>
+
+        <div class="p-4 bg-[#0b1b29] rounded-lg">
+          <div class="text-center">
+            <div class="text-2xl font-bold text-white">{{ userStats.completedCourses }}</div>
+            <p class="text-xs text-[#94A3B8] mt-2">Formations terminées</p>
+          </div>
+        </div>
+
+        <div class="p-4 bg-[#0b1b29] rounded-lg">
+          <div class="text-center">
+            <div class="text-2xl font-bold text-white">{{ formatPoints(userStats.quizPoints) }}</div>
+            <p class="text-xs text-[#94A3B8] mt-2">Points quiz</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs élégants -->
+    <div class="mb-8">
+      <div class="flex bg-[#1A2C3D] p-1 rounded-lg">
+        <button
+          (click)="setActiveTab('role')"
+          [class]="activeTab === 'role'
+            ? 'flex-1 py-3 px-4 text-sm font-medium rounded-md bg-[#4ADE80] text-white transition-all duration-200'
+            : 'flex-1 py-3 px-4 text-sm font-medium rounded-md text-[#94A3B8] hover:text-white hover:bg-[#0b1b29] transition-all duration-200'">
+          <div class="flex items-center justify-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <span>Globale</span>
+            <span class="ml-2 bg-white/20 text-white px-2 py-0.5 rounded-full text-xs">
+              {{ totalUsersInRole }}
+            </span>
+          </div>
+        </button>
+
+        <button
+          (click)="setActiveTab('pharmacy')"
+          [class]="activeTab === 'pharmacy'
+            ? 'flex-1 py-3 px-4 text-sm font-medium rounded-md bg-[#4ADE80] text-white transition-all duration-200'
+            : 'flex-1 py-3 px-4 text-sm font-medium rounded-md text-[#94A3B8] hover:text-white hover:bg-[#0b1b29] transition-all duration-200'">
+          <div class="flex items-center justify-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+            <span>Pharmacie</span>
+            <span class="ml-2 bg-white/20 text-white px-2 py-0.5 rounded-full text-xs">
+              {{ totalUsersInPharmacy }}
+            </span>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- No Data Message sobre -->
+    <div *ngIf="!hasRankingData()" class="text-center py-16 bg-[#1A2C3D] rounded-xl">
+      <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-[#0b1b29] flex items-center justify-center">
+        <svg class="w-10 h-10 text-[#64748B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="text-xl font-bold text-white mb-2">Aucun classement disponible</h3>
+      <p class="text-[#94A3B8] max-w-md mx-auto">
+        {{ activeTab === 'role' ?
+          'Commencez vos formations pour apparaître dans le classement.' :
+          'Soyez le premier de votre pharmacie à terminer des formations.'
+        }}
+      </p>
+    </div>
+
+    <!-- Ranking Table professionnelle -->
+    <div *ngIf="hasRankingData()" class="overflow-hidden rounded-xl bg-[#1A2C3D]">
+      <div class="overflow-x-auto">
+        <table class="min-w-full">
+          <thead>
+            <tr class="bg-[#0b1b29]">
+              <th class="px-6 py-4 text-left">
+                <span class="text-xs font-semibold uppercase tracking-wider text-[#94A3B8]">Position</span>
+              </th>
+              <th class="px-6 py-4 text-left">
+                <span class="text-xs font-semibold uppercase tracking-wider text-[#94A3B8]">Utilisateur</span>
+              </th>
+              <th class="px-6 py-4 text-left">
+                <span class="text-xs font-semibold uppercase tracking-wider text-[#94A3B8]">Points</span>
+              </th>
+              <th class="px-6 py-4 text-left">
+                <span class="text-xs font-semibold uppercase tracking-wider text-[#94A3B8]">Formations</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of getCurrentRanking(); let i = index"
+                [class]="user.isCurrentUser
+                  ? 'bg-[#0b1b29]'
+                  : 'hover:bg-[#0b1b29] transition-colors duration-150'">
+              <td class="px-6 py-5 whitespace-nowrap">
+                <div class="flex items-center">
+                  <div [class]="user.position <= 3
+                    ? 'w-10 h-10 rounded-full flex items-center justify-center ' +
+                       (user.position === 1 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600' :
+                        user.position === 2 ? 'bg-gradient-to-br from-gray-300 to-gray-500' :
+                        'bg-gradient-to-br from-amber-600 to-amber-800')
+                    : 'w-8 h-8 rounded-full bg-[#0b1b29] flex items-center justify-center'">
+                    <span [class]="user.position <= 3 ? 'font-bold text-white' : 'text-[#94A3B8]'">
+                      {{ user.position }}
+                    </span>
+                  </div>
+                  <div class="ml-3">
+                    <div *ngIf="user.position <= 3" class="text-lg">
+                      {{ getMedalEmoji(user.position) }}
+                    </div>
+                    <div *ngIf="user.isCurrentUser" class="mt-1">
+                      <span class="text-xs font-bold bg-[#4ADE80] text-white px-3 py-1 rounded-full">
+                        Vous
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-5">
+                <div class="flex items-center">
+                  <div class="flex-shrink-0">
+                    <div *ngIf="user.img_link" class="w-12 h-12 rounded-full overflow-hidden">
+                      <img [src]="user.img_link" [alt]="user.displayName" class="w-full h-full object-cover">
+                    </div>
+                    <div *ngIf="!user.img_link" class="w-12 h-12 rounded-full bg-gradient-to-br from-[#0EA5E9] to-[#4ADE80] flex items-center justify-center text-white font-bold text-lg">
+                      {{ user.firstName?.charAt(0) }}{{ user.lastName?.charAt(0) }}
+                    </div>
+                  </div>
+                  <div class="ml-4">
+                    <div class="text-sm font-semibold text-white">{{ user.displayName }}</div>
+                    <div class="text-xs text-[#94A3B8] mt-1">
+                      {{ activeTab === 'pharmacy' ? getRoleDisplayName(user.role) : getPharmacyName(user) }}
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-5 whitespace-nowrap">
+                <div>
+                  <div class="text-lg font-bold text-white">{{ formatPoints(user.totalPoints) }} pts</div>
+                  <div class="text-xs text-[#94A3B8] mt-1">Quiz: {{ formatPoints(user.quizPoints || 0) }} pts</div>
+                </div>
+              </td>
+              <td class="px-6 py-5 whitespace-nowrap">
+                <div class="flex items-center">
+                  <span class="text-lg font-semibold text-white">{{ user.completedCourses }}</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Info & Refresh simple -->
+    <div *ngIf="hasRankingData()" class="mt-8 flex flex-col lg:flex-row items-center justify-between">
+      <div class="mb-6 lg:mb-0 lg:mr-6">
+        <div class="p-4 bg-[#1A2C3D] rounded-lg">
+          <div class="text-sm text-[#94A3B8]">Votre performance</div>
+          <div class="text-white font-bold mt-1">
+            {{ getFormattedRank() }} position sur {{ getTotalUsers() }}
+          </div>
+          <div class="text-sm text-[#94A3B8] mt-1">
+            Vous êtes dans les <span class="font-bold text-[#4ADE80]">{{ getPercentage() }}</span> meilleurs
+          </div>
+        </div>
+      </div>
+
+      <button
+        (click)="refreshRanking()"
+        class="px-5 py-2.5 text-sm font-medium rounded-lg bg-[#4ADE80] text-white hover:bg-[#22C55E] transition-colors duration-200">
+        <div class="flex items-center">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Actualiser
+        </div>
+      </button>
+    </div>
+
+    <!-- Legend discrète -->
+    <div *ngIf="hasRankingData()" class="mt-8 pt-8 border-t border-[#1A2C3D]">
+      <div class="p-4 bg-[#1A2C3D] rounded-lg">
+        <h3 class="text-lg font-bold text-white mb-4">Comment est calculé le classement</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="p-3 bg-[#0b1b29] rounded-lg">
+            <div class="flex items-center mb-2">
+              <div class="w-6 h-6 rounded-full bg-[#4ADE80]/20 flex items-center justify-center mr-3">
+                <svg class="w-4 h-4 text-[#4ADE80]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <span class="font-medium text-[#CBD5E1]">Points totaux</span>
+            </div>
+            <p class="text-sm text-[#94A3B8]">Somme des points des formations terminées</p>
+          </div>
+
+          <div class="p-3 bg-[#0b1b29] rounded-lg">
+            <div class="flex items-center mb-2">
+              <div class="w-6 h-6 rounded-full bg-[#4ADE80]/20 flex items-center justify-center mr-3">
+                <svg class="w-4 h-4 text-[#4ADE80]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+              <span class="font-medium text-[#CBD5E1]">Points quiz</span>
+            </div>
+            <p class="text-sm text-[#94A3B8]">Points obtenus aux quiz</p>
+          </div>
+
+          <div class="p-3 bg-[#0b1b29] rounded-lg">
+            <div class="flex items-center mb-2">
+              <div class="w-6 h-6 rounded-full bg-[#4ADE80]/20 flex items-center justify-center mr-3">
+                <svg class="w-4 h-4 text-[#4ADE80]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+              </div>
+              <span class="font-medium text-[#CBD5E1]">Formations</span>
+            </div>
+            <p class="text-sm text-[#94A3B8]">Nombre de cours terminés</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

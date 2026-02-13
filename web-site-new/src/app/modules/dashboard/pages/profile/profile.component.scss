@@ -1,0 +1,15 @@
+$background: hsl(var(--card));
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  color: rgba(0, 0, 0, 0);
+  opacity: 1;
+  display: block;
+  background-color: $background;
+  background-image: url('/assets/icons/calendar_icon.png');
+  background-size: auto 100%;
+  background-repeat: no-repeat;
+  background-position: left top;
+  width: 20px;
+  height: 20px;
+  border-width: thin;
+}

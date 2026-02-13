@@ -1,0 +1,109 @@
+<!-- Nav Principal -->
+<nav [ngClass]="menu ? 'w-60 lg:w-[300px]' : 'w-0'"
+  class="overflow-auto max-h-[90vh] hidden h-full flex-col bg-[#0b1b29] pt-3 transition-all duration-300 lg:flex">
+  <ng-container *ngTemplateOutlet="navContent"></ng-container>
+</nav>
+
+<!-- Nav Mobile -->
+<nav *ngIf="mobileMenu"
+  class="absolute bg-[#0b1b29] top-0 lg:top-24 left-0 w-full p-6 flex lg:hidden items-center z-10 max-h-[31rem] overflow-y-scroll">
+  <ng-container *ngTemplateOutlet="navContent"></ng-container>
+</nav>
+
+<ng-template #navContent>
+  <div *ngIf="showContent" class="w-full sm:p-4 space-y-6 max-h-[31rem]">
+    <a class="w-max flex items-center gap-x-2 mb-4 cursor-pointer"
+      [routerLink]="'/notre-plateforme/details-cours/' + cours?.id">
+      <img src="assets/images/arrow-back-simple.png" alt="arrow-back">
+      <h6 class="text-titleColor font-semibold text-xs">Retour aux cours</h6>
+    </a>
+
+    <div>
+      <p class="text-xs text-white font-semibold mb-2">Course</p>
+      <h2 class="text-base font-semibold text-secondaryfontColor">{{ cours?.title }}</h2>
+    </div>
+
+    <div *ngIf="enrollCours && cours">
+      <div *ngFor="let chapter of enrollCours?.sections; let i = index" class="mt-4">
+        <!-- Section Header -->
+        <div class="flex justify-between items-center cursor-pointer"
+          [ngClass]="{'!cursor-not-allowed': !canAccessSection(i)}"
+          (click)="(i < 1 || canAccessSection(i)) && toggleSection(i)">
+          <h1 class="font-semibold text-sm text-white  w-[90%] select-none" [ngClass]="{'!text-[#1B9198]': showModules[i]}">{{ chapter.section.title }}</h1>
+          <img src="assets/images/arrow-solid-Down.png" alt="arrow"
+            class="transition-transform duration-300 h-10 w-10 lg:!h-auto lg:!w-8"
+            [ngClass]="{'-rotate-90': !showModules[i]}">
+        </div>
+
+        <!-- Lessons -->
+        <div *ngIf="showModules[i]" class="pl-6 mt-2 mr-1 relative space-y-6">
+          <div class="absolute h-[calc(100%-22px)] lg:h-[calc(100%-35px)] w-[1.5px] left-[2px] bg-[#24222029]"></div>
+
+          <div *ngFor="let lesson of chapter.lessons; let j = index" class="relative">
+            <div class="flex items-start space-x-2 cursor-pointer"
+              [ngClass]="{'!cursor-not-allowed': !canAccessLesson(i, j)}"
+              (click)="selectLesson(lesson, cours.sections[i]?.lessons[j]?.id, enrollCours.sections[i]?.section?.id, i, j)">
+              <div
+                class="absolute h-5 w-5 left-[-1.35rem] top-1 border-l-[1px] border-b-[2px] border-[#24222029] rounded-bl-[10px]">
+              </div>
+              <span class="w-7 h-7 flex items-center justify-center border rounded-full z-10 bg-transparent"
+                [ngClass]="lessonStatusClass(i, j)">{{ j + 1 }}</span>
+              <div class="flex-1">
+                <p class="text-sm text-[#23BAC4] select-none mb-2" [ngClass]="lessonStatusClass(i, j)">
+                  {{ lesson.lesson.title }}
+                </p>
+                <!-- <p class="text-xs text-white flex items-center gap-x-1 select-none">
+                  <img src="assets/images/videocam.svg" alt="cam">Video course {{ cours.duration }} min
+                </p> -->
+              </div>
+              <svg-icon *ngIf="isLessonComplete(i,j)" src="assets/images/check-circle.svg"
+                [svgClass]="'h-5 w-5'"></svg-icon>
+              <svg-icon *ngIf="isLessonStarted(i,j)" src="assets/images/hourglass-empty.svg"
+                [svgClass]="'h-5 w-5'"></svg-icon>
+            </div>
+          </div>
+
+          <!-- Quiz -->
+          <div class="flex items-center relative space-x-2 mt-4 cursor-pointer"
+            [ngClass]="{'!cursor-not-allowed': !areAllLessonsComplete(i) || isQuizComlete(i)}"
+            (click)="!isQuizComlete(i) && goToQuiz(i)">
+            <div
+              class="absolute h-5 w-5 left-[-1.35rem] -top-1 border-l-[1px] border-b-[2px] border-[#24222029] rounded-bl-[10px]">
+            </div>
+            <svg-icon [src]="areAllLessonsComplete(i) ? 'assets/images/list-m-active.svg' : 'assets/images/list-m.svg'"
+              [svgClass]="'h-5 w-5'"></svg-icon>
+            <p class="text-sm text-[#9BBCC3] select-none" [ngClass]="{'!text-[#1B9198]': areAllLessonsComplete(i)}">Quiz
+              :
+              {{ cours.sections[i].quiz.title }}
+            </p>
+            <svg-icon *ngIf="isQuizComlete(i)" src="assets/images/check-circle.svg" [svgClass]="'h-5 w-5'"></svg-icon>
+            <svg-icon *ngIf="isQuizStarted(i)" src="assets/images/hourglass-empty.svg"
+              [svgClass]="'h-5 w-5'"></svg-icon>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="areAllSectionsComplete()" class="flex justify-between items-center mt-5 cursor-pointer select-none"
+        (click)="getCertifcate()">
+        <h1 class="text-sm font-semibold text-white">
+          Obtenez votre certificat
+        </h1>
+        <img src="assets/images/arrow-solid-Down.png" alt="arrow"
+          class="h-10 w-10 lg:!h-auto lg:!w-8 transition-transform duration-300 -rotate-90">
+      </div>
+
+      <!-- Feedback -->
+      <div class="flex justify-between items-center mt-5 cursor-pointer select-none pb-8 md:pb-0"
+        [ngClass]="{'!cursor-not-allowed': !areAllSectionsComplete()}" (click)="goToFeedback()">
+        <h1 class="text-sm font-semibold"
+          [ngClass]="{'text-[#1B9198] font-bold': isFeedbackPage, 'text-white': !isFeedbackPage}">
+          Commentaires sur le cours
+        </h1>
+        <img src="assets/images/arrow-solid-Down.png" alt="arrow"
+          class="h-10 w-10 lg:!h-auto lg:!w-8 transition-transform duration-300 -rotate-90">
+      </div>
+
+
+    </div>
+  </div>
+</ng-template>

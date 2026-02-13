@@ -1,0 +1,146 @@
+<app-loader *ngIf="isLoading"></app-loader>
+<div class="mx-auto px-4 py-4 sm:px-8" #actions>
+  <div class="mb-4 flex justify-between">
+    <div class="inline-block">
+      <h3 class="font-semibold text-foreground">Détails de la pharmacie</h3>
+    </div>
+  </div>
+  <div class=" mx-auto p-5">
+  <div class="md:flex no-wrap md:-mx-2 ">
+    <!-- Left Side -->
+    <div class="w-full md:w-[35%] md:mx-2">
+      <!-- Profile Card -->
+      <div class="bg-background p-3 border-t-4 " [ngClass]="{'border-green-400': pharmacyDetails?.status === 1, 'border-red-400' : pharmacyDetails?.status === 2 }">
+        <h1 class="text-foreground font-bold text-xl leading-8 my-1">{{pharmacyDetails?.name}}</h1>
+        <ul
+          class="bg-card text-foreground hover:text-foreground hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
+          <li class="flex items-center py-3">
+            <span class="text-foreground">Statut</span>
+            <span class="ml-auto">
+              <span *ngIf="pharmacyDetails?.status === 1" class="bg-green-500 py-1 px-2 rounded text-white text-sm">Active</span>
+              <span *ngIf="pharmacyDetails?.status === 2" class="bg-red-500 py-1 px-2 rounded text-white text-sm">Inactive</span>
+            </span>
+          </li>
+          <li class="flex items-center py-3">
+            <span class="text-foreground">Membre depuis</span>
+            <span class="text-foreground ml-auto">{{ pharmacyDetails?.createdAt | date:"dd-MM-yyyy" }}</span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+    <!-- Right Side -->
+    <div class="w-full md:w-9/12">
+      <!-- Profile tab -->
+      <!-- About Section -->
+      <div class="bg-background p-3 shadow-sm rounded-sm">
+        <div class="flex items-center space-x-2 font-semibold text-foreground leading-8">
+                        <span class="text-green-500">
+                            <svg-icon src="assets/icons/heroicons/outline/building-storefront.svg" [svgClass]="'h-5 w-5'"> </svg-icon>
+                        </span>
+          <span class="tracking-wide">À propos</span>
+        </div>
+        <div class="text-foreground">
+          <div class="grid md:grid-cols-1 text-sm">
+            <div class="grid grid-cols-2">
+              <div class="px-4 py-2 font-semibold">Id</div>
+              <div class="px-4 py-2">{{ pharmacyDetails?.id }}</div>
+            </div>
+            <div class="grid grid-cols-2">
+              <div class="px-4 py-2 font-semibold">Nom</div>
+              <div class="px-4 py-2">{{ pharmacyDetails?.name }}</div>
+            </div>
+            <div class="grid grid-cols-2">
+              <div class="px-4 py-2 font-semibold">Numéro de contact</div>
+              <div class="px-4 py-2">{{ pharmacyDetails?.tel }}</div>
+            </div>
+            <div class="grid grid-cols-2">
+              <div class="px-4 py-2 font-semibold">Ville</div>
+              <div class="px-4 py-2">{{ pharmacyDetails?.city }}</div>
+            </div>
+            <div class="grid grid-cols-2">
+              <div class="px-4 py-2 font-semibold">Code postal</div>
+              <div class="px-4 py-2">{{ pharmacyDetails?.zipCode }}</div>
+            </div>
+            <div class="grid grid-cols-2">
+              <div class="px-4 py-2 font-semibold">Adresse actuelle</div>
+              <div class="px-4 py-2">{{ pharmacyDetails?.address }}</div>
+            </div>
+            <div class="grid grid-cols-2">
+              <div class="px-4 py-2 font-semibold">Adresse email</div>
+              <div class="px-4 py-2">
+                <a class="text-blue-800" href="mailto:{{ pharmacyDetails?.email }}">{{ pharmacyDetails?.email }}</a>
+              </div>
+            </div>
+            <div class="grid grid-cols-2">
+              <div class="px-4 py-2 font-semibold">Mis à jour à</div>
+              <div class="px-4 py-2">{{ pharmacyDetails?.updatedAt | date:'long' }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  <div class="mx-auto mt-5 px-4 py-4 sm:px-8">
+  <div class="mb-4 flex justify-between">
+    <div class="inline-block">
+      <h3 class="font-semibold text-foreground">Liste de toutes les clés</h3>
+      <div class="space-x-1 text-xs font-medium text-muted-foreground">
+        <span class="hover:text-primary">Tous les clés:</span>
+        <span class="text-foreground">{{allKeysCount}}</span>
+      </div>
+    </div>
+    <div class="flex items-center space-x-3">
+
+
+      <button (click)="generateMultipleKeys()"
+          class="flex items-center justify-center bg-amber-500 text-white p-2 rounded-md border-b-[3px] border-amber-600 hover:bg-amber-600 transition-colors"
+          type="button">
+    <svg-icon src="assets/icons/heroicons/outline/document-duplicate.svg" [svgClass]="'h-5 w-5 mr-2'"></svg-icon>
+    Générer plusieurs clés
+  </button>
+  
+  <button (click)="sendEmailWithKeys()"
+          class="flex items-center justify-center bg-blue-600 text-white p-2 rounded-md border-b-[3px] border-blue-700 hover:bg-blue-700 transition-colors"
+          type="button"
+          [disabled]="unusedKeys?.length === 0">
+    <svg-icon src="assets/icons/heroicons/outline/envelope.svg" [svgClass]="'h-5 w-5 mr-2'"></svg-icon>
+    Envoyer les clés par email
+  </button>
+
+  <button (click)="generateNewKey()"
+          class="flex items-center justify-center bg-primary text-white p-2 rounded-md border-b-[3px] border-primary-dark hover:bg-primary-dark transition-colors"
+          type="button">
+    <svg-icon src="assets/icons/heroicons/outline/plus.svg" [svgClass]="'h-5 w-5 mr-2'"></svg-icon>
+    Ajouter une nouvelle clé
+  </button>
+</div>
+  </div>
+<div class="flex min-w-full flex-col rounded-xl border border-muted/20 bg-background p-2">
+  <app-table-pharmacy-user-action class="mb-10" (changeStatus)="onChangeStatus($event)" (changeText)="onChangeText($event)"></app-table-pharmacy-user-action>
+  <div class="overflow-x-auto">
+    <table
+      class="table w-full table-auto border-collapse border-0 text-left align-middle leading-5 text-muted-foreground">
+      <thead class="border border-muted/20 text-xs text-muted-foreground">
+      <tr app-table-pharmacy-user-header class="h-20" (onSort)="sortKeys($event)"></tr>
+      </thead>
+      <tbody>
+        @for (key of allKeys(); track $index) {
+          <tr class="hover:bg-card/50" app-table-pharmacy-user-row [key]="key"></tr>
+        } @empty {
+          <tr>
+            <td class="py-4 text-center text-sm" colspan="7">Aucun clé trouvé</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <app-table-pharmacy-user-footer class="mt-10" (changeItemsPerPage)="onChangeItemsPerPage($event)"
+                    [currentPage]="currentPage"
+                    [itemsPerPage]="itemsPerPage"
+                    [totalItems]="allKeysCount"
+                    (pageChanged)="onPageChange($event)"></app-table-pharmacy-user-footer>
+</div>
+</div>
+</div>

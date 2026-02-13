@@ -1,0 +1,29 @@
+<ng-container>
+  <th class="w-[50px]">
+    <input *ngIf="selectedType && selectedType =='multiple'" (change)="toggle($event)" class="checkbox checkbox-sm" data-datatable-check="true" type="checkbox" />
+  </th>
+  <th class="min-w-[50px]">Vignette</th>
+  <th class="min-w-[150px] cursor-pointer hover:bg-card" (click)="setSortColumn('filename')">
+    <p
+      class="flex items-center justify-between gap-2 leading-none">
+      Nom de fichier
+      <app-sortable name="filename" [sortConfig]="sortConfig"></app-sortable>
+    </p>
+  </th>
+  <th class="min-w-[150px] cursor-pointer hover:bg-card" (click)="setSortColumn('size')">
+    <p
+      class="flex items-center justify-between gap-2 leading-none">
+      Taille
+      <app-sortable name="size" [sortConfig]="sortConfig"></app-sortable>
+    </p>
+  </th>
+  <th class="min-w-[50px]">Dimension</th>
+  <th class="min-w-[150px] cursor-pointer hover:bg-card" (click)="setSortColumn('createdAt')">
+    <p
+      class="flex items-center justify-between gap-2 leading-none">
+      Créé à
+      <app-sortable name="createdAt" [sortConfig]="sortConfig"></app-sortable>
+    </p>
+  </th>
+
+</ng-container>

@@ -14,6 +14,7 @@ import { QuizEntity } from "@/orm/entities/quiz.entity"
 import { LessonEntity } from "@/orm/entities/lesson.entity"
 import {MIN_QUESTION_QUIZ} from "@/core/config";
 import {countQuestions} from "@/services/question.service";
+import firebaseNotificationService from "./firebase-notification.service";
 
 const courseRepository = AppDataSource.getRepository(CourseEntity);
 
@@ -27,7 +28,14 @@ const quizRepository = AppDataSource.getRepository(QuizEntity);
 const lessonRepository = AppDataSource.getRepository(LessonEntity);
 
 export const createCourse = async (input: Partial<CourseEntity>) => {
-  return await courseRepository.save(courseRepository.create(input));
+  const course = await courseRepository.save(courseRepository.create(input));
+  
+  // ✅ ADD THIS - Fire and forget, won't affect course creation
+  // Send notification in background (non-blocking)
+  firebaseNotificationService.sendNewCourseNotification(course.title, course.id)
+    .catch(err => console.error('Background notification failed:', err));
+  
+  return course;
 };
 export const saveCourse = async (course: CourseEntity) => {
   return await courseRepository.save(course);

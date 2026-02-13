@@ -22,6 +22,7 @@ import conversation from "./conversation"
 import trends from "./trends"
 import contact from "./contact"
 import home from "./home"
+import payment from './payment';
 
 const router = Router();
 
@@ -47,5 +48,6 @@ router.use('/conversation', conversation);
 router.use('/trends', trends);
 router.use('/contact', contact);
 router.use('/home', home);
+router.use('/payment', payment);
 
 export default router;

@@ -1,224 +1,109 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
-import { FormGroup, FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 import { SvgIconComponent } from 'angular-svg-icon';
-import { Validators } from 'ngx-editor';
-import { Category } from 'src/app/core/models/category.model';
-import { Provider } from 'src/app/core/models/provider.model';
 import { CapsulesEventService } from 'src/app/core/services/capsules-event.service';
-import { CapsulesService } from 'src/app/core/services/capsules.service';
 import { CategoriesCapsulesService } from 'src/app/core/services/categories-capsules.service';
 import { CategoriesService } from 'src/app/core/services/categories.service';
 import { CoursesEventService } from 'src/app/core/services/courses-event.service';
 import { CoursesService } from 'src/app/core/services/courses.service';
 import { LoadingService } from 'src/app/core/services/loading.service';
-import { PharmaciesService } from 'src/app/core/services/pharmacies.service';
-import { ProvidersService } from 'src/app/core/services/providers.service';
 
 @Component({
   selector: 'app-courses-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, SvgIconComponent],
+  imports: [CommonModule, RouterModule, FormsModule, SvgIconComponent],
   templateUrl: './courses-sidebar.component.html',
   styleUrl: './courses-sidebar.component.scss'
 })
 export class CoursesSidebarComponent {
-  @Input() menu! : boolean;
-  @Input() mobileMenu! : boolean;
+  @Input() menu!: boolean;
+  @Input() mobileMenu!: boolean;
   @Output() data = new EventEmitter<any>();
+
   categories: any[] = [];
   capsules: any[] = [];
-  providers: Provider[] = [];
-  selectedCategories: string[] = [];
-  selectedProviderIds: string[] = [];
-  // searchForm: FormGroup;
-  showContent = true
-  showCategories = true;
-  showProviders = false;
-  //courses : any
 
+  showContent = true;
 
-  filteredCategories: any[] = [];
-  courses: any[] = [];
+  // Selected values
+  selectedCategoryId: string = '';
+  selectedCategoryName: string = '';
+  selectedProviderId: string = '';
+  selectedProviderName: string = '';
 
-  constructor(private fb: FormBuilder, private coursesService: CoursesService, private coursesEventService: CoursesEventService, private categoriesService: CategoriesService, private pharmaciesService: PharmaciesService, private providersService: ProvidersService, private categorieCapsulesService: CategoriesCapsulesService, private capsulesEventService: CapsulesEventService, private loadingService: LoadingService) {
-    // this.searchForm = this.fb.group({
-    //   search: [null, Validators.required]
-    // });
-  }
+  selectedCapsuleId: string = '';
+  selectedCapsuleName: string = '';
+  selectedCapsuleProviderId: string = '';
+  selectedCapsuleProviderName: string = '';
+
+  // Store providers per category
+  categoryProvidersMap: Map<string, any[]> = new Map();
+  capsuleProvidersMap: Map<string, any[]> = new Map();
+
+  constructor(
+    private coursesService: CoursesService,
+    private coursesEventService: CoursesEventService,
+    private categoriesService: CategoriesService,
+    private categorieCapsulesService: CategoriesCapsulesService,
+    private capsulesEventService: CapsulesEventService,
+    private loadingService: LoadingService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    /*this.getCategoriesWithProviders()
-    this.getCapsulesCategoriesWithProviders()
-    // this.getProviders()
-    this.mobileMenu = false*/
-
-
-    this.getAllCourses();
-    this.getCapsulesCategoriesWithProviders();
+    this.getCategories();
+    this.getCapsules();
     this.mobileMenu = false;
   }
 
-
-   getAllCourses(): void {
-    this.coursesService.getAllActiveCourses().subscribe({
-      next: (result) => {
-        this.courses = result.data.courses || [];
-        // Now get categories with providers
-        this.getCategoriesWithProviders();
-      },
-      error: (error) => {
-        console.error('Error fetching courses:', error);
-        this.courses = [];
-        this.getCategoriesWithProviders();
-      }
-    });
-  }
-
-  // Method to check if a category has courses
-  private categoryHasCourses(categoryId: string): boolean {
-    if (!this.courses || this.courses.length === 0) return false;
-
-    return this.courses.some(course =>
-      course.category?.id === categoryId || course.categoryId === categoryId
-    );
-  }
-
-  private categoryOrItsProvidersHaveCourses(category: any): boolean {
-    // Check if the category itself has courses
-    if (this.categoryHasCourses(category.id)) {
-      return true;
-    }
-
-    // Check if any provider in this category has courses
-    if (category.providers && category.providers.length > 0) {
-      return category.providers.some((provider: any) =>
-        this.providerHasCourses(provider.id, category.id)
-      );
-    }
-
-    return false;
-  }
-
-  // Method to check if a provider has courses in a specific category
-  private providerHasCourses(providerId: string, categoryId: string): boolean {
-    if (!this.courses || this.courses.length === 0) return false;
-
-    return this.courses.some(course =>
-      (course.provider?.id === providerId || course.providerId === providerId) &&
-      (course.category?.id === categoryId || course.categoryId === categoryId)
-    );
-  }
-
-  // Method to filter providers that have courses in a category
-  private filterProvidersWithCourses(providers: any[], categoryId: string): any[] {
-    if (!providers || providers.length === 0) return [];
-
-    return providers.filter(provider =>
-      this.providerHasCourses(provider.id, categoryId)
-    );
-  }
-
   ngOnChanges(changes: SimpleChanges) {
-    if(this.menu){
+    if (this.menu) {
       setTimeout(() => {
         this.showContent = this.menu
       }, 250);
-    } else{
+    } else {
       this.showContent = false
     }
   }
 
-  resetFilters(){
-    // this.capsulesEventService.setFilter({
-    //   categoryId: undefined,
-    //   providerId: undefined,
-    //   // searchText: undefined
-    // });
-    // this.capsulesEventService.setFilter({
-    //   categoryId: undefined,
-    //   providerId: undefined,
-    //   // searchText: undefined
-    // });
-
-
-    this.capsulesEventService.clearFilter();
-    this.coursesEventService.clearFilter();
-    this.toggleMobileMenu();
-  }
-
-  // getProviders() {
-  //   this.providersService.getAllActiveProviders(1).subscribe({
-  //     next: (result) => {
-  //       this.providers = result.data.providers
-  //     },
-  //     error: (error) => {
-  //       console.error(error)
-  //     }
-  //   });
-  // }
-
-  getCategoriesWithProviders() {
+  getCategories() {
     this.categoriesService.getAllWithProviders().subscribe({
       next: (result) => {
-        const allCategories = result.data.categories || [];
+        this.categories = result.data.categories || [];
 
-        // Fix: Add type annotation for 'category' parameter
-        this.categories = allCategories.filter((category: any) =>
-          this.categoryOrItsProvidersHaveCourses(category)
-        );
-
-        // Ensure providers array exists for each category
+        // Build providers map
         this.categories.forEach((category: any) => {
-          if (!category.providers) {
-            category.providers = [];
-          }
-
-          if (category.providers.length > 0) {
-            category.providers = this.filterProvidersWithCourses(category.providers, category.id);
-            category.providers = this.removeDuplicateProviders(category.providers);
+          if (category.providers && category.providers.length > 0) {
+            const uniqueProviders = this.removeDuplicates(category.providers);
+            this.categoryProvidersMap.set(category.id, uniqueProviders);
+          } else {
+            this.categoryProvidersMap.set(category.id, []);
           }
         });
-
-        this.filteredCategories = this.categories.filter((category: any) =>
-          category.providers && category.providers.length > 0
-        );
-
-        console.log('Filtered categories with courses:', this.categories);
       },
       error: (error) => {
         console.error('Error fetching categories:', error);
         this.categories = [];
-        this.filteredCategories = [];
       }
     });
   }
 
-  private removeDuplicateProviders(providers: any[]): any[] {
-    if (!providers || providers.length === 0) return [];
-
-    const uniqueProviders: any[] = [];
-    const seenNames = new Set();
-
-    providers.forEach(provider => {
-      if (!seenNames.has(provider.name)) {
-        seenNames.add(provider.name);
-        uniqueProviders.push(provider);
-      }
-    });
-
-    return uniqueProviders;
-  }
-
-  getCapsulesCategoriesWithProviders() {
+  getCapsules() {
     this.categorieCapsulesService.getAllWithProviders().subscribe({
       next: (result) => {
         this.capsules = result.data.categories || [];
 
-        // For capsules, you might want to filter similarly if needed
-        // For now, we'll keep all capsules categories
-        console.log('Capsules categories:', this.capsules);
+        // Build providers map for capsules
+        this.capsules.forEach((capsule: any) => {
+          if (capsule.providers && capsule.providers.length > 0) {
+            const uniqueProviders = this.removeDuplicates(capsule.providers);
+            this.capsuleProvidersMap.set(capsule.id, uniqueProviders);
+          } else {
+            this.capsuleProvidersMap.set(capsule.id, []);
+          }
+        });
       },
       error: (error) => {
         console.error(error);
@@ -227,101 +112,139 @@ export class CoursesSidebarComponent {
     });
   }
 
-  // getCategories() {
-  //   this.categoriesService.getAllCategories().subscribe({
-  //     next: (result) => {
-  //         this.categories = result.data.categories
-  //     },
-  //     error: (error) => {
-  //       console.error(error)
-  //     }
-  //   });
-  // }
+  getProvidersForSelectedCategory(): any[] {
+    if (!this.selectedCategoryId) return [];
+    return this.categoryProvidersMap.get(this.selectedCategoryId) || [];
+  }
+
+  getProvidersForSelectedCapsule(): any[] {
+    if (!this.selectedCapsuleId) return [];
+    return this.capsuleProvidersMap.get(this.selectedCapsuleId) || [];
+  }
+
+  onCategoryChange() {
+    // Reset provider when category changes
+    this.selectedProviderId = '';
+    this.selectedProviderName = '';
+
+    // Find selected category name
+    const category = this.categories.find(c => c.id === this.selectedCategoryId);
+    this.selectedCategoryName = category?.name || '';
+
+    // Apply filter
+    this.applyCourseFilter();
+  }
+
+  onProviderChange() {
+    // Find selected provider name
+    const providers = this.getProvidersForSelectedCategory();
+    const provider = providers.find(p => p.id === this.selectedProviderId);
+    this.selectedProviderName = provider?.name || '';
+
+    // Apply filter
+    this.applyCourseFilter();
+  }
+
+  applyCourseFilter() {
+    this.coursesEventService.setFilter({
+      categoryId: this.selectedCategoryId || undefined,
+      categoryName: this.selectedCategoryName || undefined,
+      providerId: this.selectedProviderId || undefined,
+      providerName: this.selectedProviderName || undefined
+    });
+
+    // Close mobile menu if open
+    if (this.mobileMenu) {
+      this.toggleMobileMenu();
+    }
+  }
+
+  onCapsuleChange() {
+    // Reset capsule provider
+    this.selectedCapsuleProviderId = '';
+    this.selectedCapsuleProviderName = '';
+
+    // Find selected capsule name
+    const capsule = this.capsules.find(c => c.id === this.selectedCapsuleId);
+    this.selectedCapsuleName = capsule?.name || '';
+
+    // Apply filter
+    this.applyCapsuleFilter();
+  }
+
+  onCapsuleProviderChange() {
+    // Find selected provider name
+    const providers = this.getProvidersForSelectedCapsule();
+    const provider = providers.find(p => p.id === this.selectedCapsuleProviderId);
+    this.selectedCapsuleProviderName = provider?.name || '';
+
+    // Apply filter
+    this.applyCapsuleFilter();
+  }
+
+  applyCapsuleFilter() {
+    this.capsulesEventService.setFilter({
+      categoryId: this.selectedCapsuleId || undefined,
+      categoryName: this.selectedCapsuleName || undefined,
+      providerId: this.selectedCapsuleProviderId || undefined,
+      providerName: this.selectedCapsuleProviderName || undefined
+    });
+
+    // Close mobile menu if open
+    if (this.mobileMenu) {
+      this.toggleMobileMenu();
+    }
+  }
+
+  clearCategoryFilter() {
+    this.selectedCategoryId = '';
+    this.selectedCategoryName = '';
+    this.selectedProviderId = '';
+    this.selectedProviderName = '';
+    this.applyCourseFilter();
+  }
+
+  clearProviderFilter() {
+    this.selectedProviderId = '';
+    this.selectedProviderName = '';
+    this.applyCourseFilter();
+  }
+
+  removeDuplicates(providers: any[]): any[] {
+    if (!providers || providers.length === 0) return [];
+
+    const unique = new Map();
+    providers.forEach(provider => {
+      unique.set(provider.id, provider);
+    });
+
+    return Array.from(unique.values());
+  }
+
+  resetFilters() {
+    // Reset all selections
+    this.selectedCategoryId = '';
+    this.selectedCategoryName = '';
+    this.selectedProviderId = '';
+    this.selectedProviderName = '';
+    this.selectedCapsuleId = '';
+    this.selectedCapsuleName = '';
+    this.selectedCapsuleProviderId = '';
+    this.selectedCapsuleProviderName = '';
+
+    // Clear filters
+    this.capsulesEventService.clearFilter();
+    this.coursesEventService.clearFilter();
+
+    this.router.navigate(['/notre-plateforme/cours'], {
+      queryParams: {}
+    });
+
+    this.toggleMobileMenu();
+  }
 
   toggleMobileMenu() {
     this.mobileMenu = !this.mobileMenu;
     this.loadingService.setMobileMenu(false);
   }
-
-  toggleCategories() {
-    this.showCategories = !this.showCategories;
-  }
-
-  toggleProviders() {
-    this.showProviders = !this.showProviders;
-  }
-
-  // onCategoryChange(categoryId: string, event: Event) {
-  //   const target = event.target as HTMLInputElement;
-  //   const isChecked = target.checked;
-
-  //   if (isChecked) {
-  //     this.selectedCategories.push(categoryId);
-  //   } else {
-  //     this.selectedCategories = this.selectedCategories.filter(id => id !== categoryId);
-  //   }
-  //   console.log('Selected Categories:', this.selectedCategories);
-  // }
-
-  // onProviderClick(providerId: string) {
-  //   const index = this.selectedProviderIds.indexOf(providerId);
-  //   if (index === -1) {
-  //     this.selectedProviderIds.push(providerId);
-  //   } else {
-  //     this.selectedProviderIds.splice(index, 1);
-  //   }
-  //   console.log('Selected Provider IDs:', this.selectedProviderIds);
-  // }
-
-  // isSelected(providerId: string): boolean {
-  //   return this.selectedProviderIds.includes(providerId);
-  // }
-
-
-  // onSubmit(){
-  //   if (this.searchForm.invalid) return;
-  //   console.log('Search:', this.searchForm.value)
-  // }
-
-  onCategorieSelected(categorie: any): void {
-  this.coursesEventService.setFilter({
-    categoryId: categorie.id,
-    categoryName: categorie.name,
-    providerId: undefined,
-    providerName: undefined
-  });
-  this.toggleMobileMenu();
-}
-
-  onProviderSelected(provider: any, categorie: any, event: MouseEvent): void {
-  event.stopPropagation();
-  this.coursesEventService.setFilter({
-    categoryId: categorie.id,
-    categoryName: categorie.name, // ADD THIS
-    providerId: provider.id,
-    providerName: provider.name // ADD THIS
-  });
-  this.toggleMobileMenu();
-}
-
-  onCategorieCapsulesSelected(capsule: any): void {
-  this.capsulesEventService.setFilter({
-    categoryId: capsule.id,
-    categoryName: capsule.name, // ADD THIS
-    providerId: undefined,
-    providerName: undefined
-  });
-  this.toggleMobileMenu();
-}
-
-onProviderCapsulesSelected(provider: any, capsule: any, event: MouseEvent): void {
-  event.stopPropagation();
-  this.capsulesEventService.setFilter({
-    categoryId: capsule.id,
-    categoryName: capsule.name, // ADD THIS
-    providerId: provider.id,
-    providerName: provider.name // ADD THIS
-  });
-  this.toggleMobileMenu();
-}
 }

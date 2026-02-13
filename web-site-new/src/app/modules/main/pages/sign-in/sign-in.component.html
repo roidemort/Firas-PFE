@@ -1,0 +1,153 @@
+<section>
+    <div class="relative w-full h-full flex items-center">
+        <div class="flex w-full h-screen">
+            <div class="hidden md:flex w-[50%] bg-[#101E1F] flex-col items-center justify-center">
+                    <video class="h-auto rounded-[40px] w-[100%]" autoplay muted playsinline loop>
+                        <source src="assets/video/video-inscription.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                               <!-- <div class="md:flex flex-col lg:flex-row lg:items-start gap-4 lg:gap-8 w-full hidden">
+                    <div
+                        class="bg-[#d1fa94] px-6 py-10 lg:py-16 xl:py-14 xl:px-10 2xl:py-20 rounded-[50px] w-full 2xl:w-1/2">
+                        <h1
+                            class="text-5xl lg:text-[5.5rem] xl:text-9xl xl:leading-[150px] tracking-[-3px] text-fontColor">
+                            +75</h1>
+                        <h3
+                            class="mt-2 mb-2 xl:mt-8 xl:mb-6 text-xl xl:text-2xl leading-[24px] font-semibold text-[#13676D]">
+                            Cours dirigés par des experts</h3>
+                        <p class="text-sm lg:leading-[24px] text-[#13676D]">Apprenez auprès de professionnels de pointe
+                            et de formateurs possédant une expérience pratique des soins médicaux et de beauté.</p>
+                    </div>
+                    <div
+                        class="bg-fontColor px-6 py-10 lg:py-16 xl:py-14 xl:px-10 2xl:py-20 rounded-[50px] w-full 2xl:w-1/2">
+                        <h1
+                            class="text-5xl lg:text-[5.5rem] xl:text-9xl xl:leading-[150px] tracking-[-3px] text-secondaryColor">
+                            +75</h1>
+                        <h3
+                            class="mt-2 mb-2 xl:mt-8 xl:mb-6 text-xl xl:text-2xl leading-[24px] font-semibold text-white">
+                            Cours dirigés par des experts</h3>
+                        <p class="text-sm lg:leading-[24px] text-secondaryColor">Apprenez auprès de professionnels de
+                            pointe et de formateurs possédant une expérience pratique des soins médicaux et de beauté.
+                        </p>
+                    </div>
+                </div> -->
+            </div>
+
+            <div class="w-full h-screen px-8 lg:px-2 md:w-[50%] lg:h-auto custom-background">
+                <div class="flex flex-col justify-center items-center h-full lg:px-11">
+                    <div class="w-full xl:w-4/5 2xl:w-1/2 2xl:-ml-48">
+                        <a class="flex items-center justify-start gap-x-4 my-4 cursor-pointer w-[45%]" routerLink="/">
+                            <img src="assets/images/arrow-back-simple.png" alt="arrow-back">
+                            <h6 class="text-titleColor font-semibold text-xs">Retour au site</h6>
+                        </a>
+                        <div class="flex space-x-3 pb-4">
+                            <p
+                                class="basis-0 grow py-3 px-2 inline-flex justify-center items-center gap-2 text-lg font-bold capitalize bg-white text-center text-primary rounded-lg dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-slate-600">
+                                Connexion </p>
+                            <a class="basis-0 grow py-3 px-2 inline-flex justify-center items-center gap-2 bg-fiord-400 capitalize text-lg font-bold text-center text-white rounded-lg hover:text-[#61dbe3] bg-primary dark:hover:text-gray-400 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+                                [routerLink]="'/inscription'"> Inscription </a>
+                        </div>
+                        <div class="mb-6">
+                            <h2
+                                class="font-medium text-3xl xs:text-[40px] 2xl:text-5xl xs:leading-10 text-secondaryfontColor mb-3">
+                                Connectez-vous
+                            </h2>
+                            <p class="font-normal text-sm leading-6 tracking-[-3%] text-titleColor">Commençons avec
+                                votre compte Galiocare</p>
+                        </div>
+
+                        <div *ngIf="handleResponse || handleErrorResponse || handleError">
+                            <div class="flex items-center p-3 mb-6 rounded-xl shadow-lg animate-fadeIn border"
+                                [ngClass]="{
+                                'bg-red-100 border-red-400 text-red-700': handleError || handleResponse,
+                                'bg-yellow-100 border-yellow-400 text-yellow-700': handleErrorResponse
+                              }">
+                                <svg (click)="closeAlert()" class="cursor-pointer w-6 h-6 mr-2" [ngClass]="{
+                                  'text-red-500': handleError || handleResponse,
+                                  'text-yellow-500': handleErrorResponse
+                                }" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M18.364 5.636l-12.728 12.728M5.636 5.636l12.728 12.728">
+                                    </path>
+                                </svg>
+                                <p class="font-semibold text-sm">
+                                    {{ getAlertMessage() }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <form class="space-y-7" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                                <div class="relative w-full">
+                                    <input type="email" formControlName="email" id="email" placeholder="" required
+                                        class="peer transition duration-200 ease-linear bg-[#e8fafb] outline-none border border-[#88BFBF] placeholder:font-medium placeholder:leading-7 placeholder:text-base text-base placeholder:text-[#274848] text-[#274848] focus:ring-fontColor focus:border-fontColor focus:outline-none rounded-2xl pt-5 pb-[10px] pr-4 pl-12" />
+                                    <label for="email"
+                                        class="pt-[15px] text-[#476F77] font-medium pointer-events-none absolute left-0 top-0 origin-[0_0] border border-solid border-transparent pl-[52px] p-4 transition-[opacity,_transform] duration-200 ease-linear peer-focus:-translate-y-2 peer-focus:translate-x-[0.15rem] peer-focus:scale-[0.85] peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:translate-x-[0.15rem] peer-[:not(:placeholder-shown)]:scale-[0.85]">Email</label>
+                                    <div class="absolute top-[17px] left-4">
+                                        <img src="assets/images/mail.png" alt="mail">
+                                    </div>
+                                </div>
+                                <div *ngIf="loginForm.get('email')!.hasError('required') && loginForm.get('email')!.touched"
+                                    class="text-red-500 text-left !mt-1 text-sm ml-1">
+                                    Le champ e-mail n’est pas complet
+                                </div>
+                                <div *ngIf="loginForm.get('email')!.hasError('email') && loginForm.get('email')!.touched"
+                                    class="text-red-500 text-left !mt-1 text-sm ml-1">
+                                    L'email saisi n'est pas valide.
+                                </div>
+
+                                <div class="relative w-full">
+                                  <input #passwordInput type="password" formControlName="password" id="password" placeholder="" required
+                                      class="peer transition duration-200 ease-linear bg-[#e8fafb] outline-none border border-[#88BFBF] placeholder:font-medium placeholder:leading-7 placeholder:text-base text-base placeholder:text-[#274848] text-[#274848] focus:ring-fontColor focus:border-fontColor focus:outline-none rounded-2xl pt-5 pb-[10px] pr-12 pl-12" />
+                                  <label for="password"
+                                      class="pt-[15px] text-[#476F77] font-medium pointer-events-none absolute left-0 top-0 origin-[0_0] border border-solid border-transparent pl-[52px] p-4 transition-[opacity,_transform] duration-200 ease-linear peer-focus:-translate-y-2 peer-focus:translate-x-[0.15rem] peer-focus:scale-[0.85] peer-[:not(:placeholder-shown)]:-translate-y-2 peer-[:not(:placeholder-shown)]:translate-x-[0.15rem] peer-[:not(:placeholder-shown)]:scale-[0.85]">Mot
+                                      de passe</label>
+                                  <div class="absolute top-[17px] left-4">
+                                      <img src="assets/images/lock.png" alt="lock">
+                                  </div>
+                                  <!-- Toggle button without TypeScript -->
+                                  <button type="button" (click)="passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password'"
+                                      class="absolute top-[17px] right-4 focus:outline-none">
+                                      <img [src]="passwordInput.type === 'password' ? 'assets/images/eye-close.png' : 'assets/images/eye-open.png'"
+                                          [alt]="passwordInput.type === 'password' ? 'Show password' : 'Hide password'"
+                                          class="w-6 h-6">
+                                  </button>
+                                </div>
+                                <div *ngIf="loginForm.get('password')!.hasError('required') && loginForm.get('password')!.touched"
+                                    class="text-red-500 text-left !mt-1 text-sm ml-1">
+                                    Le champ est obligatoire.
+                                </div>
+
+                                <div class="text-left !mt-3 ml-1">
+                                    <a [routerLink]="'/mot-de-passe-oublier'" class="text-base text-titleColor">Mot de
+                                        passe oublié ?</a>
+                                </div>
+
+                                <!-- <div class="flex items-center gap-x-2">
+                                    <input class="!ring-fontColor" type="checkbox" formControlName="remember"
+                                        [value]="true" name="remember" id="remember" />
+                                    <p class="text-base leading-7 font-medium text-fontColor">Se souvenir de moi</p>
+                                </div> -->
+
+                                <div class="w-full">
+                                    <button type="submit"
+                                        class="border-2 w-full border-fontColor bg-fontColor rounded-[40px] text-sm text-center px-11 py-3 mb-6 !mt-2 text-secondaryColor">
+                                        Se connecter
+                                    </button>
+                                </div>
+                                <!-- <a [routerLink]="'/inscription'"
+                                    class="text-titleColor font-light text-sm tracking-[-3%] ml-1 select-none">Vous
+                                    n'avez pas de compte ?
+                                    <span class="text-secondaryColor font-light text-sm tracking-[-3%] cursor-pointer">
+                                        Inscrivez-vous</span>
+                                </a> -->
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <app-loader-main *ngIf="isLoading"></app-loader-main>
+    </div>
+</section>

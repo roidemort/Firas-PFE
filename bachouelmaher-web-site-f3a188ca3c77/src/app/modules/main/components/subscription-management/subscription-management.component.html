@@ -90,14 +90,22 @@
                         </ul>
                     </div>
 
-                    <div class="bg-[#EDF6F6] p-5 w-full flex justify-center rounded-b-3xl border-t border-[#EAECF0]">
+                    <!--<div class="bg-[#EDF6F6] p-5 w-full flex justify-center rounded-b-3xl border-t border-[#EAECF0]">
                         <a class="w-full" href="/contactez-nous">
                             <button type="button"
                                 class="border-2 w-5/6 hover:bg-transparent bg-[#23BAC4] hover:text-[#23BAC4] border-[#23BAC4] rounded-[40px] text-sm text-center px-10 py-3 text-white transition duration-300 ease-in-out cursor-pointer">
                                 Contactez-nous
                             </button>
                         </a>
-                    </div>
+                    </div>-->
+                    <!-- Replace the contact button with payment button -->
+                  <div class="bg-[#EDF6F6] p-5 w-full flex justify-center rounded-b-3xl border-t border-[#EAECF0]">
+                    <button type="button"
+                      (click)="goToPayment(plan.id)"
+                      class="border-2 w-5/6 hover:bg-transparent bg-[#23BAC4] hover:text-[#23BAC4] border-[#23BAC4] rounded-[40px] text-sm text-center px-10 py-3 text-white transition duration-300 ease-in-out cursor-pointer">
+                      Souscrire
+                    </button>
+                  </div>
                 </div>
             </div>
         </div>

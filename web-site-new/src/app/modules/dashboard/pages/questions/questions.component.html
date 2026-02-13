@@ -1,0 +1,50 @@
+<div class="mx-auto px-4 py-4 sm:px-8" #actions>
+  <div class="mb-4 flex justify-between">
+    <div class="inline-block">
+      <h3 class="font-semibold text-foreground">Liste des questions</h3>
+      <div class="space-x-1 text-xs font-medium text-muted-foreground">
+        <a href="" class="hover:text-primary">Tous les questions:</a>
+        <span class="text-foreground">{{allQuestionsCount}}</span>
+      </div>
+    </div>
+    <div class="inline-block space-x-4">
+      <!--
+      <button
+        class="flex-none rounded-md bg-muted px-4 py-2.5 text-xs font-semibold text-muted-foreground hover:text-foreground">
+        Import CSV
+      </button>
+      -->
+      <button (click)="manageQuestion('new')"
+              class="flex items-center justify-center bg-primary text-white p-2 rounded-md border-b-[3px] border-primary-dark flex items-center" type="button">
+        <svg-icon src="assets/icons/heroicons/outline/plus.svg" [svgClass]="'h-5 w-5'"> </svg-icon>
+        Ajouter un question</button>
+    </div>
+  </div>
+
+  <div class="flex min-w-full flex-col rounded-xl border border-muted/20 bg-background p-2">
+    <app-loader *ngIf="isLoading"></app-loader>
+    <app-table-question-action class="mb-10" (changeStatus)="onChangeStatus($event)" (changeText)="onChangeText($event)" (changeCourse)="onChangeCourse($event)" (changeSection)="onChangeSection($event)"></app-table-question-action>
+    <div class="overflow-x-auto">
+      <table
+        class="table w-full table-auto border-collapse border-0 text-left align-middle leading-5 text-muted-foreground">
+        <thead class="border border-muted/20 text-xs text-muted-foreground">
+        <tr app-table-question-header class="h-20" (onSort)="sortQuestions($event)"></tr>
+        </thead>
+        <tbody>
+          @for (question of questions(); track $index) {
+            <tr class="hover:bg-card/50" app-table-question-row (updateQuestion)="manageQuestion('edit', $event)" [question]="question"></tr>
+          } @empty {
+            <tr>
+              <td class="py-4 text-center text-sm" colspan="7">Aucun question trouvé</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <app-table-question-footer class="mt-10" (changeItemsPerPage)="onChangeItemsPerPage($event)"
+                              [currentPage]="currentPage"
+                              [itemsPerPage]="itemsPerPage"
+                              [totalItems]="allQuestionsCount"
+                              (pageChanged)="onPageChange($event)"></app-table-question-footer>
+  </div>
+</div>

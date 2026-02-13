@@ -35,6 +35,7 @@ export interface Course {
   includes: Include[]
   objectives: Objective[]
   sections: Section[]
+  free: boolean;
 }
 export interface Requirement {
   id: string;

@@ -7,7 +7,11 @@ import {
   resetPassword,
   editPassword,
   getMyPlan,
-  getMyTeam, getMyPlanDetails, addToTeam, getMyUserDetails, getProgression, getMyCertificate
+  getMyTeam, getMyPlanDetails, addToTeam, getMyUserDetails, getProgression, getMyCertificate,
+  getRankingByRole,
+  getRankingByPharmacy,
+  getRankingStats,
+  getAllRankings
 } from "@/controllers/users"
 import { checkJwt } from "@/middleware/checkJwt"
 import {
@@ -36,4 +40,9 @@ router.get('/getMyCertificate/:id', [checkJwt], getMyCertificate);
 
 router.delete('/profile', [checkJwt], deleteProfile);
 
+
+router.get('/ranking/role', [checkJwt], getRankingByRole);
+router.get('/ranking/pharmacy', [checkJwt], getRankingByPharmacy);
+router.get('/ranking/stats', [checkJwt], getRankingStats);
+router.get('/ranking/all', [checkJwt], getAllRankings);
 export default router;

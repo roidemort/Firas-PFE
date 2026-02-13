@@ -100,11 +100,11 @@
     <svg-icon src="assets/icons/heroicons/outline/document-duplicate.svg" [svgClass]="'h-5 w-5 mr-2'"></svg-icon>
     Générer plusieurs clés
   </button>
-  
+
   <button (click)="sendEmailWithKeys()"
           class="flex items-center justify-center bg-blue-600 text-white p-2 rounded-md border-b-[3px] border-blue-700 hover:bg-blue-700 transition-colors"
           type="button"
-          [disabled]="unusedKeys?.length === 0">
+          [disabled]="unusedKeys.length === 0">
     <svg-icon src="assets/icons/heroicons/outline/envelope.svg" [svgClass]="'h-5 w-5 mr-2'"></svg-icon>
     Envoyer les clés par email
   </button>

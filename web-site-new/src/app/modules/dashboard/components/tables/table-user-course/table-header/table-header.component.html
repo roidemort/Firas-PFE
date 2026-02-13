@@ -1,0 +1,26 @@
+<ng-container>
+  <th class="min-w-[200px] cursor-pointer hover:bg-card" (click)="setSortColumn('course')">
+    <p
+      class="flex items-center justify-between gap-2 leading-none">
+      Formation
+      <app-sortable name="course" [sortConfig]="sortConfig"></app-sortable>
+    </p>
+  </th>
+  <th class="min-w-[150px]">Progression</th>
+  <th class="min-w-[100px]">Score des quiz</th>
+  <th class="min-w-[100px] cursor-pointer hover:bg-card" (click)="setSortColumn('points')">
+    <p
+      class="flex items-center justify-between gap-2 leading-none">
+      Points gagnés
+      <app-sortable name="points" [sortConfig]="sortConfig"></app-sortable>
+    </p>
+  </th>
+  <th class="min-w-[50px]">Statut</th>
+  <th class="min-w-[150px] cursor-pointer hover:bg-card" (click)="setSortColumn('createdAt')">
+    <p
+      class="flex items-center justify-between gap-2 leading-none">
+      Créé à
+      <app-sortable name="createdAt" [sortConfig]="sortConfig"></app-sortable>
+    </p>
+  </th>
+</ng-container>

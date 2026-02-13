@@ -6,9 +6,9 @@
 //     height: 25px;
 //     border-radius: 15px;
 //     color: #366464;
-  
+
 //     background-image: url('../../../../../assets/images/Checkbox.png') !important;
-  
+
 //     &:checked {
 //       background-image: url('../../../../../assets/images/Checkbox-active.png') !important;
 //     }
@@ -17,3 +17,55 @@
 .custom-background {
     background: linear-gradient(170deg, rgb(13, 27, 42) 46%, rgb(209, 250, 148) 180%);
   }
+
+
+  // Custom scrollbar for dropdowns
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #476F77 #1a2c3a;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #1a2c3a;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #476F77;
+    border-radius: 10px;
+
+    &:hover {
+      background: #5a8f99;
+    }
+  }
+}
+
+// Rotate animation for dropdown arrows
+.rotate-0 {
+  transform: rotate(0deg);
+}
+
+.rotate-90 {
+  transform: rotate(90deg);
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
+}
+
+// Transitions
+.transition {
+  transition: all 0.2s ease;
+}
+
+// Search input styling
+input::placeholder {
+  color: #9ca3af;
+  font-size: 0.875rem;
+}
+
+
+

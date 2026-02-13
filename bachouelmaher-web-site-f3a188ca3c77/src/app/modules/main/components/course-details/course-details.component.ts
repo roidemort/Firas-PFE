@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ProfileHeaderComponent } from "../profile-header/profile-header.component";
 import { CommonModule } from '@angular/common';
 import { CardCarouselComponent } from "../card-carousel/card-carousel.component";
@@ -20,6 +20,8 @@ import { RatingsService } from 'src/app/core/services/ratings.service';
 import { AlertComponent } from "../alert/alert.component";
 import { CoursesEventService } from 'src/app/core/services/courses-event.service';
 import { AccessDeniedPopupComponent } from "../access-denied-popup/access-denied-popup.component";
+import { AuthService } from 'src/app/core/services/auth.service';
+import { UsersService } from 'src/app/core/services/users.service';
 
 
 @Component({
@@ -31,7 +33,7 @@ import { AccessDeniedPopupComponent } from "../access-denied-popup/access-denied
 })
 
 export class CourseDetailsComponent {
-  isLoading = false
+ isLoading = false
   coursId: any;
   courses: Course[] = [];
   cours: Course | undefined
@@ -48,22 +50,42 @@ export class CourseDetailsComponent {
   status = false
   isPopupVisible = false;
 
+  // User and subscription data
+  currentUser: any;
+  userPlan: any;
+  canAccessCourse: boolean = false;
+  showUpgradePopup: boolean = false;
+  accessDeniedMessage: string = '';
 
-  constructor(private route: ActivatedRoute, private coursesService: CoursesService, private coursesEventService: CoursesEventService) {
+  // Access status
+  accessStatus: 'free' | 'subscribed' | 'no_access' | 'upgrade_needed' = 'no_access';
+
+  constructor(private route: ActivatedRoute,
+              private coursesService: CoursesService,
+              private coursesEventService: CoursesEventService,
+              private authService: AuthService,
+              private usersService: UsersService,
+              private router: Router) {
   }
 
   ngOnInit(): void {
     this.isLoading = true
     this.coursId = this.route.snapshot.paramMap.get('id');
     this.isTextVisible = new Array(this.cours?.faqs.length).fill(false);
-    // console.log(this.coursId)
+
+    // Get current user
+    this.currentUser = this.authService.getUser();
+
+    // Get user's subscription plan only if user is PHARMACIST_HOLDER
+    if (this.currentUser && this.authService.getRole() === 'PHARMACIST_HOLDER') {
+      this.getUserPlan();
+    }
 
     this.coursesService.getAllActiveCourses(3).subscribe({
       next: (result) => {
         if (result.status) {
           this.courses = result.data.courses
         }
-        // console.log(this.courses)
       },
       error: (error) => {
         console.error(error)
@@ -76,14 +98,11 @@ export class CourseDetailsComponent {
           this.cours = result.data
           const sectionWithPositionZero = this.cours?.sections.find(section => section.position === 0);
           this.details = this.cours?.previewVideo;
-          // this.details = sectionWithPositionZero?.lessons[0]?.details;
-          // console.log(this.details)
           this.status = true
+          this.checkCourseAccess();
         } else {
           this.showMessage = true
-          // this.showAlert('handleErrorResponse');
         }
-        // console.log(this.cours)
       },
       error: (error) => {
         console.error(error)
@@ -95,10 +114,98 @@ export class CourseDetailsComponent {
     }, 2000);
   }
 
+  // Get user's subscription plan
+  getUserPlan() {
+    this.usersService.getUserPlan().subscribe({
+      next: (res) => {
+        if (res.status) {
+          this.userPlan = res.data;
+          // Re-check access after getting plan
+          this.checkCourseAccess();
+        }
+      },
+      error: (error) => {
+        console.error('Error getting user plan:', error);
+      }
+    });
+  }
+
+  // Check if user can access the course
+  checkCourseAccess() {
+    if (!this.cours) {
+      this.accessStatus = 'no_access';
+      this.canAccessCourse = false;
+      return;
+    }
+
+    // If course is FREE, everyone can access
+    if (this.cours.free) {
+      this.accessStatus = 'free';
+      this.canAccessCourse = true;
+      return;
+    }
+
+    // If course is PAID/PREMIUM
+    if (!this.cours.free) {
+      // Check if user is authenticated
+      if (!this.authService.isAuthenticated()) {
+        this.accessStatus = 'no_access';
+        this.canAccessCourse = false;
+        this.accessDeniedMessage = 'Veuillez vous connecter pour accÃ©der Ã  ce cours.';
+        return;
+      }
+
+      // Get user role
+      const userRole = this.authService.getRole();
+
+      // PHARMACIST_HOLDER - Only role that can have subscription
+      if (userRole === 'PHARMACIST_HOLDER') {
+        // Check if they have an active subscription
+        if (this.userPlan && this.userPlan.hasActiveSubscription) {
+          this.accessStatus = 'subscribed';
+          this.canAccessCourse = true;
+        } else {
+          // Pharmacist holder without subscription needs to upgrade
+          this.accessStatus = 'upgrade_needed';
+          this.canAccessCourse = false;
+          this.accessDeniedMessage = 'Vous devez souscrire Ã  un abonnement pour accÃ©der aux cours Premium.';
+        }
+      }
+      // Other roles (PHARMACIST, PREPARER, STUDENT) - Cannot have subscription
+      else {
+        // These roles cannot access premium courses at all
+        this.accessStatus = 'no_access';
+        this.canAccessCourse = false;
+        this.accessDeniedMessage = 'Seuls les pharmaciens titulaires peuvent accÃ©der aux cours Premium.';
+      }
+    }
+  }
+
+  startCourse() {
+    if (!this.canAccessCourse) {
+      // Pharmacist holder without subscription - redirect to subscription page
+      if (this.accessStatus === 'upgrade_needed' && this.authService.getRole() === 'PHARMACIST_HOLDER') {
+        this.router.navigate(['/profile/subscription']);
+      } else {
+        // All other access denied cases - show popup
+        this.isPopupVisible = true;
+      }
+      return;
+    }
+
+    // Navigate to course player
+    this.router.navigate([`/notre-plateforme/lecture-cours/${this.coursId}`]);
+  }
+
+  // Navigate to subscription plans
+  goToPlans() {
+    this.router.navigate(['/notre-plateforme/abonnements']);
+    this.showUpgradePopup = false;
+  }
+
   showAlert(alertType: 'handleResponse' | 'handleError' | 'handleErrorResponse') {
     const messages: { [key: string]: string } = {
-      // handleResponse: 'Membres récupéré avec succès.',
-      handleErrorResponse: 'Accès refusé : vous n\'êtes pas autorisé à suivre ce cours.',
+      handleErrorResponse: 'AccÃ¨s refusÃ© : vous n\'Ãªtes pas autorisÃ© Ã  suivre ce cours.',
       handleError: 'Une erreur s\'est produite.'
     };
 
@@ -113,14 +220,10 @@ export class CourseDetailsComponent {
 
   onPlayerReady(source: VgApiService) {
     this.api = source;
-    // console.log("onPlayerReady")
-
     this.api.getDefaultMedia().subscriptions.loadedMetadata.subscribe(this.autoplay.bind(this));
-
   }
 
   autoplay() {
-    // console.log("play")
     // this.api.play();
   }
 
@@ -140,12 +243,10 @@ export class CourseDetailsComponent {
   }
 
   onShowAlert() {
-    //this.showAlert('handleErrorResponse');
     this.isPopupVisible = true;
   }
 
   closePopup() {
     this.isPopupVisible = false;
   }
-
 }

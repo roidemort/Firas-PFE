@@ -10,6 +10,7 @@ import { APP_PREFIX_PATH, FRONT_URL, IS_TEST } from "@/core/config"
 import logger from "@/core/logger"
 import routes from "@/routes"
 import { errorHandler } from "@/middleware/errorHandler"
+import inactivityChecker from '@/services/inactivity-checker.service';
 
 const app: Express = express();
 import './utils/response/customSuccess';
@@ -45,6 +46,17 @@ if (process.env.NODE_ENV === 'development' || process.env.ENABLE_SWAGGER === 'tr
 
 
 app.use(APP_PREFIX_PATH, routes);
+
+app.use((req, res, next) => {
+  // This ensures services are initialized for all requests
+  next();
+});
+if (process.env.NODE_ENV !== 'test') {
+  // Start after a short delay to ensure DB is connected
+  setTimeout(() => {
+    inactivityChecker.start();
+  }, 5000);
+}
 
 try {
   if (!IS_TEST) {

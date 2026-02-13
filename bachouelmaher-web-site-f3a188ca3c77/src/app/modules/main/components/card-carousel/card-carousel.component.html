@@ -23,61 +23,76 @@
                         [ngClass]="{'px-2': style,'sm:pr-4': !style && i < 2}">
 
                         <!-- Card Container -->
-                        <div class="relative" [class.opacity-90]="card.comingSoon">
+                        <div class="card-wrapper" [class.opacity-90]="card.comingSoon">
 
                             <!-- Card Content -->
-                            <div class="cursor-pointer"
+                            <div class="card-container"
                                  (click)="goToCourse(card)"
                                  [class.cursor-pointer]="!card.comingSoon"
                                  [class.cursor-not-allowed]="card.comingSoon">
 
-                                <!-- Card Image -->
-                                <div class="custom-bg-card h-44 bg-[#DCECEC] p-4 rounded-t-3xl relative"
+                                <!-- Card Image - Fixed Height -->
+                                <div class="card-image-section custom-bg-card"
                                      [ngStyle]="{ 'background-image': 'url(' + card.preview?.secure_url + ')' }">
 
                                     <!-- Overlay for coming soon courses -->
-                                    <div *ngIf="card.comingSoon" class="absolute inset-0 bg-black/20 rounded-t-3xl"></div>
+                                    <div *ngIf="card.comingSoon" class="absolute inset-0 bg-black/20 rounded-t-2xl"></div>
 
+                                    <div class="absolute top-3 right-3 z-20">
+                                      <div *ngIf="!card.comingSoon"
+                                          class="px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide shadow-lg"
+                                          [ngClass]="{
+                                              'bg-pink-500 text-white': card.free,
+                                              'bg-gradient-to-r from-purple-600 to-blue-600 text-white': !card.free
+                                          }">
+                                          <span *ngIf="card.free">🎓 GRATUIT</span>
+                                          <span *ngIf="!card.free">⭐ PREMIUM</span>
+                                      </div>
+                                      <!-- For coming soon courses, you might want a different badge -->
+                                      <div *ngIf="card.comingSoon"
+                                          class="px-3 py-1.5 rounded-full text-xs font-bold uppercase bg-amber-500 text-white shadow-lg">
+                                          ⏳ PROCHAINEMENT
+                                      </div>
+                                  </div>
                                     <div class="flex justify-between items-center relative z-10">
                                         <div class="flex items-center">
-                                            <img [src]="card.provider?.logo?.secure_url" alt="Logo" class="max-w-full h-7" />
+                                            <img [src]="card.provider?.logo?.secure_url" alt="Logo" class="max-w-full h-6" />
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Card Info -->
-                                <div class="flex flex-col justify-between bg-[#EDF6F6] p-4 rounded-b-3xl min-h-36 2xl:min-h-40 text-wrap">
-                                    <div class="mt-4">
-                                        <p class="text-xs 2xl:text-sm font-semibold text-[#476F77]">{{ card.category.name }}
-                                        </p>
-                                        <h2 class="text-sm 2xl:text-lg font-semibold text-[#19272A]">{{ card.title }}</h2>
+                                <!-- Card Info - Fixed Height -->
+                                <div class="card-content-section">
+                                    <div class="card-header">
+                                        <p class="card-category">{{ card.category.name }}</p>
+                                        <h2 class="card-title">{{ card.title }}</h2>
                                     </div>
 
                                     <!-- Course Details - Hidden for coming soon courses -->
-                                    <div *ngIf="!card.comingSoon" class="mt-4 flex justify-between text-sm font-normal text-[#294045]">
-                                        <span class="flex items-center">
-                                            <img src="assets/images/list-play.png" class="mr-2" alt="play">
+                                    <div *ngIf="!card.comingSoon" class="card-meta">
+                                        <span class="meta-item">
+                                            <img src="assets/images/list-play.png" class="meta-icon" alt="play">
                                             {{ formatDuration(card.duration) }}
                                         </span>
-                                        <span class="flex items-center">
-                                            <img src="assets/images/list-check.png" class="mr-2" alt="check">
+                                        <span class="meta-item">
+                                            <img src="assets/images/list-check.png" class="meta-icon" alt="check">
                                             {{ card.sections?.length}} Quiz
                                         </span>
-                                        <span class="flex items-center">
-                                            <img src="assets/images/list-check.png" class="mr-2" alt="check">
+                                        <span class="meta-item">
+                                            <img src="assets/images/list-check.png" class="meta-icon" alt="check">
                                             Certificate
                                         </span>
                                     </div>
 
                                     <!-- Coming Soon Message -->
-                                    <div *ngIf="card.comingSoon" class="mt-4 text-center">
-                                        <div class="inline-flex items-center px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 text-sm font-medium">
+                                    <div *ngIf="card.comingSoon" class="coming-soon-section">
+                                        <div class="coming-soon-badge">
                                             <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
                                             </svg>
                                             {{ getComingSoonMessage(card) }}
                                         </div>
-                                        <p *ngIf="card.endTimeComingSoon" class="text-xs text-gray-600 mt-2">
+                                        <p *ngIf="card.endTimeComingSoon" class="coming-soon-date">
                                             Disponible le: {{ card.endTimeComingSoon }}
                                         </p>
                                     </div>
@@ -105,75 +120,69 @@
                     [ngClass]="{'px-2': style,'sm:pr-4': !style && i < 2}">
 
                     <!-- Card Container -->
-                    <div class="relative">
+                    <div class="card-wrapper">
                         <!-- Card Content -->
-                        <div class="cursor-pointer" (click)="goToCourse(course.course)">
-                            <!-- Card Image -->
-                            <div class="custom-bg-card h-44 bg-[#DCECEC] p-4 rounded-t-3xl relative"
+                        <div class="card-container" (click)="goToCourse(course.course)">
+                            <!-- Card Image - Fixed Height -->
+                            <div class="card-image-section custom-bg-card"
                                 [ngStyle]="{ 'background-image': 'url(' + course.course?.preview?.secure_url + ')' }">
 
                                 <div class="flex justify-between items-center relative z-10">
                                     <div class="flex items-center">
-                                        <img [src]="course.course?.provider?.logo?.secure_url" alt="Logo" class="max-w-full h-7" />
+                                        <img [src]="course.course?.provider?.logo?.secure_url" alt="Logo" class="max-w-full h-6" />
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Card Info -->
-                            <div class="flex flex-col justify-between bg-[#EDF6F6] p-4 rounded-b-3xl min-h-36 2xl:min-h-40 text-wrap">
-                                <div class="mt-4">
-                                    <p class="text-xs 2xl:text-sm font-semibold text-[#476F77]">
-                                        {{ course.course?.category?.name }}
-                                    </p>
-                                    <h2 class="text-sm 2xl:text-lg font-semibold text-[#19272A]">
-                                        {{ course.course?.title }}
-                                    </h2>
+                            <!-- Card Info - Fixed Height -->
+                            <div class="card-content-section">
+                                <div class="card-header">
+                                    <p class="card-category">{{ course.course?.category?.name }}</p>
+                                    <h2 class="card-title">{{ course.course?.title }}</h2>
                                 </div>
 
                                 <!-- Progress Bar Section -->
-                                <div *ngIf="courseProgressions[course.id]" class="mt-4">
-                                    <div class="!text-[#1B9198] text-left text-xs">
+                                <div *ngIf="courseProgressions[course.id]" class="progress-section">
+                                    <div class="progress-text">
                                         {{ getRoundedScore(courseProgressions[course.id].progression) }}% terminé
                                     </div>
-                                    <div class="w-full bg-[#B0EDF1] rounded-full h-1.5 mb-4 mt-2">
-                                        <div class="bg-[#1B9198] h-1.5 rounded-full"
+                                    <div class="progress-bar-container">
+                                        <div class="progress-bar-fill"
                                             [style.width]="getRoundedScore(courseProgressions[course.id].progression) + '%'">
                                         </div>
                                     </div>
 
-                                    <!-- Course details (same as regular cards) -->
-                                    <div class="flex justify-between text-sm font-normal text-[#294045] mt-2">
-                                        <span class="flex items-center">
-                                            <img src="assets/images/list-play.png" class="mr-2" alt="play">
+                                    <!-- Course details -->
+                                    <div class="card-meta">
+                                        <span class="meta-item">
+                                            <img src="assets/images/list-play.png" class="meta-icon" alt="play">
                                             {{ formatDuration(course.course?.duration) }}
                                         </span>
-                                        <span class="flex items-center">
-                                            <img src="assets/images/list-check.png" class="mr-2" alt="check">
+                                        <span class="meta-item">
+                                            <img src="assets/images/list-check.png" class="meta-icon" alt="check">
                                             {{ course.course?.sections?.length}} Quiz
                                         </span>
-                                        <span class="flex items-center">
-                                            <img src="assets/images/list-check.png" class="mr-2" alt="check">
+                                        <span class="meta-item">
+                                            <img src="assets/images/list-check.png" class="meta-icon" alt="check">
                                             Certificate
                                         </span>
                                     </div>
                                 </div>
 
                                 <!-- If no progression data yet -->
-                                <div *ngIf="!courseProgressions[course.id]" class="mt-4">
-                                    <div class="flex justify-between text-sm font-normal text-[#294045]">
-                                        <span class="flex items-center">
-                                            <img src="assets/images/list-play.png" class="mr-2" alt="play">
-                                            {{ formatDuration(course.course?.duration) }}
-                                        </span>
-                                        <span class="flex items-center">
-                                            <img src="assets/images/list-check.png" class="mr-2" alt="check">
-                                            {{ course.course?.sections?.length}} Quiz
-                                        </span>
-                                        <span class="flex items-center">
-                                            <img src="assets/images/list-check.png" class="mr-2" alt="check">
-                                            Certificate
-                                        </span>
-                                    </div>
+                                <div *ngIf="!courseProgressions[course.id]" class="card-meta">
+                                    <span class="meta-item">
+                                        <img src="assets/images/list-play.png" class="meta-icon" alt="play">
+                                        {{ formatDuration(course.course?.duration) }}
+                                    </span>
+                                    <span class="meta-item">
+                                        <img src="assets/images/list-check.png" class="meta-icon" alt="check">
+                                        {{ course.course?.sections?.length}} Quiz
+                                    </span>
+                                    <span class="meta-item">
+                                        <img src="assets/images/list-check.png" class="meta-icon" alt="check">
+                                        Certificate
+                                    </span>
                                 </div>
                             </div>
                         </div>

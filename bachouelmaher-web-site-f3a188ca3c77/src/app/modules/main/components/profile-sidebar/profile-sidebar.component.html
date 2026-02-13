@@ -22,10 +22,21 @@
   <li (click)="selectedItem != item.tab && selectTab(item.tab)" class="cursor-pointer flex items-center gap-x-2 select-none"
     [ngClass]="{'active': selectedItem === item.tab}">
 
-    <img 
-    [src]="'assets/images/' + (selectedItem === item.tab ? item.icon_active : item.icon) + '.svg'" 
-    [alt]="item.alt"
-    [ngClass]="{'selected-icon': selectedItem === item.tab}">
+    <!-- Font Awesome CDN icon -->
+    <i *ngIf="item.tab === 'classement'"
+       [ngClass]="selectedItem === item.tab ? 'fas fa-trophy text-[#D1FA94]' : 'fas fa-trophy text-white'">
+    </i>
+
+    <i *ngIf="item.tab === 'marketplace'"
+       [ngClass]="selectedItem === item.tab ? 'fas fa-gift text-[#D1FA94]' : 'fas fa-gift text-white'"
+       class="w-5 h-5 flex items-center justify-center">
+    </i>
+
+    <!-- For other items, use your existing SVG -->
+    <img *ngIf="item.tab !== 'classement' && item.tab !== 'marketplace' "
+         [src]="'assets/images/' + (selectedItem === item.tab ? item.icon_active : item.icon) + '.svg'"
+         [alt]="item.alt"
+         [ngClass]="{'selected-icon': selectedItem === item.tab}">
 
 
     <h1 *ngIf="showContent" class="text-white text-sm transition-slide-in"

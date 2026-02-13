@@ -25,6 +25,8 @@ export class ProfileSidebarComponent {
     { tab: 'details', icon: 'edit-00', icon_active: 'edit-01', alt: 'edit-01', label: 'Informations personnelles' },
     { tab: 'mon-equipe', icon: 'user-group-00', icon_active: 'user-group-01', alt: 'user-group-01', label: 'Mon équipe' },
     { tab: 'parcours-apprentissage', icon: 'flask-00', icon_active: 'flask-01', alt: 'flask-01', label: 'Mon parcours d\'apprentissage' },
+    { tab: 'classement', icon: 'medal-00', icon_active: 'medal', alt: 'trophy', label: 'Classement' },
+    { tab: 'marketplace', icon: 'medal-00', icon_active: 'medal', alt: 'trophy', label: 'Marketplace' },
     { tab: 'confidentialite-securite', icon: 'shield', icon_active: 'shield-01', alt: 'shield', label: 'Confidentialité et sécurité' },
     { tab: 'gestion-abonnements', icon: 'desktop', icon_active: 'desktop-01', alt: 'desktop', label: 'Gestion des abonnements' },
     { tab: 'aide', icon: 'help', alt: 'help', icon_active: 'help', label: 'Demander de l\'aide' },

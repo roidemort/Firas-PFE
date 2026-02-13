@@ -1,0 +1,280 @@
+<app-loader *ngIf="isLoading"></app-loader>
+<div class="mx-auto px-4 py-4 sm:px-8" #actions>
+  <div class="mb-4 flex justify-between">
+    <div class="inline-block">
+      <h3 class="font-semibold text-foreground">Détails de la formation</h3>
+    </div>
+  </div>
+  <div class="mx-auto mt-5">
+    <div class="md:flex no-wrap md:-mx-2 ">
+      <!-- Left Side -->
+      <div class="w-full md:w-[35%] md:mx-2">
+        <!-- Profile Card -->
+        <div class="bg-background p-3 border-t-4 " [ngClass]="{'border-green-400': courseDetails?.status === 1, 'border-red-400' : courseDetails?.status === 2 }">
+          <div class="image overflow-hidden">
+            <img class="h-auto w-full mx-auto"
+                 [src]="courseDetails?.preview.secure_url"
+                 alt="">
+          </div>
+          <h1 class="text-foreground font-bold text-xl leading-8 my-1">{{courseDetails?.title}}</h1>
+          <p class="text-sm text-gray-500 hover:text-gray-600 leading-6">
+            {{courseDetails?.details}}
+          </p>
+          <ul
+            class="bg-card text-foreground hover:text-foreground hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
+            <li class="flex items-center py-3">
+              <span class="text-foreground">Statut</span>
+              <span class="ml-auto">
+              <span *ngIf="courseDetails?.status === 1" class="bg-green-500 py-1 px-2 rounded text-white text-sm">Active</span>
+              <span *ngIf="courseDetails?.status === 2" class="bg-red-500 py-1 px-2 rounded text-white text-sm">Inactive</span>
+            </span>
+            </li>
+            <li class="flex items-center py-3">
+              <span class="text-foreground">Ajouté depuis</span>
+              <span class="text-foreground ml-auto">{{ courseDetails?.createdAt | date:"dd-MM-yyyy" }}</span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+      <!-- Right Side -->
+      <div class="w-full md:w-9/12">
+        <!-- Profile tab -->
+        <!-- About Section -->
+        <div class="bg-background p-3 shadow-sm rounded-sm">
+          <div class="flex items-center space-x-2 font-semibold text-foreground leading-8">
+                        <span class="text-green-500">
+                            <svg-icon src="assets/icons/heroicons/outline/building-storefront.svg" [svgClass]="'h-5 w-5'"> </svg-icon>
+                        </span>
+            <span class="tracking-wide">À propos</span>
+          </div>
+          <div class="text-foreground">
+            <div class="grid md:grid-cols-1 text-sm">
+              <div class="grid grid-cols-2">
+                <div class="px-4 py-2 font-semibold">Id</div>
+                <div class="px-4 py-2">{{ courseDetails?.id }}</div>
+              </div>
+              <div class="grid grid-cols-2">
+                <div class="px-4 py-2 font-semibold">Points</div>
+                <div class="px-4 py-2">{{ courseDetails?.points }}</div>
+              </div>
+              <div class="grid grid-cols-2">
+                <div class="px-4 py-2 font-semibold">Expiration (mois)</div>
+                <div class="px-4 py-2">{{ courseDetails?.expiration }}</div>
+              </div>
+              <div class="grid grid-cols-2">
+                <div class="px-4 py-2 font-semibold">Durée</div>
+                <div class="px-4 py-2">{{ courseDetails?.duration }}</div>
+              </div>
+              <div class="grid grid-cols-2">
+                <div class="px-4 py-2 font-semibold">Langue</div>
+                <div class="px-4 py-2">{{ courseDetails?.language | uppercase }}</div>
+              </div>
+              <div class="grid grid-cols-2">
+                <div class="px-4 py-2 font-semibold">Niveau</div>
+                <div class="px-4 py-2">{{ courseDetails?.level | titlecase }}</div>
+              </div>
+              <div class="grid grid-cols-2">
+                <div class="px-4 py-2 font-semibold">Payé</div>
+                <div class="px-4 py-2" *ngIf="courseDetails?.paid">{{ courseDetails?.price }}</div>
+                <div class="px-4 py-2" *ngIf="!courseDetails?.paid">Gratuit</div>
+              </div>
+              @if (courseDetails?.paid) {
+                <div class="grid grid-cols-2">
+                  <div class="px-4 py-2 font-semibold">Prix Réduit</div>
+                  <div class="px-4 py-2">{{ courseDetails?.discountPrice }}</div>
+                </div>
+              }
+              <div class="grid grid-cols-2">
+                <div class="px-4 py-2 font-semibold">Coming Soon</div>
+                <div class="px-4 py-2" *ngIf="courseDetails?.comingSoon">Oui</div>
+                <div class="px-4 py-2" *ngIf="!courseDetails?.comingSoon">Non</div>
+              </div>
+
+              @if (courseDetails?.comingSoon) {
+                <div class="grid grid-cols-2">
+                  <div class="px-4 py-2 font-semibold">Message à venir</div>
+                  <div class="px-4 py-2">{{ courseDetails?.messageComingSoon }}</div>
+                </div>
+                <div class="grid grid-cols-2">
+                  <div class="px-4 py-2 font-semibold">La fin des temps arrive bientôt</div>
+                  <div class="px-4 py-2">{{ courseDetails?.endTimeComingSoon }}</div>
+                </div>
+              }
+              <div class="grid grid-cols-2">
+                <div class="px-4 py-2 font-semibold">Rôles</div>
+                <div class="px-4 py-2" >
+                  <span *ngFor="let role of courseDetails?.roles; let i = index">
+                    <span *ngIf="i > 0">, </span>
+                    {{ getRoleDisplayName(role) }}</span>
+                  </div>
+              </div>
+              <div class="grid grid-cols-2">
+                <div class="px-4 py-2 font-semibold">Catégorie</div>
+                <div class="px-4 py-2">{{ courseDetails?.category.name }}</div>
+              </div>
+              <div class="grid grid-cols-2">
+                <div class="px-4 py-2 font-semibold">Fournisseur</div>
+                <div class="px-4 py-2">{{ courseDetails?.provider.name }}</div>
+              </div>
+              <div class="grid grid-cols-2">
+                <div class="px-4 py-2 font-semibold">Formateurs</div>
+                <div class="px-4 py-2" >
+                  <p *ngFor="let trainer of courseDetails?.trainers; let i = index">
+                    {{ trainer.name }}</p>
+                </div>
+              </div>
+              <div class="grid grid-cols-2">
+                <div class="px-4 py-2 font-semibold">Mis à jour à</div>
+                <div class="px-4 py-2">{{ courseDetails?.updatedAt | date:'long' }}</div>
+              </div>
+              <div class="bg-white p-3 hover:shadow">
+                <details class="group">
+                  <summary class="flex justify-between font-semibold leading-8 cursor-pointer">
+                    <div class="flex items-center space-x-3">
+                      <span>Requirements</span>
+                    </div>
+                    <span class="transition group-open:rotate-180">
+                <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor"
+                     stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path
+                  d="M6 9l6 6 6-6"></path>
+                </svg>
+              </span>
+                  </summary>
+                  <div class="grid grid-cols-1">
+                    <div class="px-4 py-2" >
+                      <div *ngFor="let requirement of courseDetails?.requirements; let i = index">
+                        <div class="bg-gray-100 rounded flex p-4 h-full items-center">
+                          <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                               class="text-indigo-500 w-6 h-6 flex-shrink-0 mr-4" viewBox="0 0 24 24">
+                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
+                            <path d="M22 4L12 14.01l-3-3"></path>
+                          </svg>
+                          <span class="font-medium">{{ requirement.value }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </details>
+              </div>
+              <div class="bg-white p-3 hover:shadow">
+                <details class="group">
+                  <summary class="flex justify-between font-semibold leading-8 cursor-pointer">
+                    <div class="flex items-center space-x-3">
+                      <span>Objectives</span>
+                    </div>
+                    <span class="transition group-open:rotate-180">
+                <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor"
+                     stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path
+                  d="M6 9l6 6 6-6"></path>
+                </svg>
+              </span>
+                  </summary>
+                  <div class="grid grid-cols-1">
+                    <div class="px-4 py-2" >
+                      <div *ngFor="let objective of courseDetails?.objectives; let i = index">
+                        <div class="bg-gray-100 rounded flex p-4 h-full items-center">
+                          <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                               class="text-indigo-500 w-6 h-6 flex-shrink-0 mr-4" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.042 21.672 13.684 16.6m0 0-2.51 2.225.569-9.47 5.227 7.917-3.286-.672ZM12 2.25V4.5m5.834.166-1.591 1.591M20.25 10.5H18M7.757 14.743l-1.59 1.59M6 10.5H3.75m4.007-4.243-1.59-1.59" />
+                          </svg>
+                          <span class="font-medium">{{ objective.value }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </details>
+              </div>
+              <div class="bg-white p-3 hover:shadow">
+                <details class="group">
+                  <summary class="flex justify-between font-semibold leading-8 cursor-pointer">
+                    <div class="flex items-center space-x-3">
+                      <span>Includes</span>
+                    </div>
+                    <span class="transition group-open:rotate-180">
+                <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor"
+                     stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path
+                  d="M6 9l6 6 6-6"></path>
+                </svg>
+              </span>
+                  </summary>
+                  <div class="grid grid-cols-1">
+                    <div class="px-4 py-2" >
+                      <div *ngFor="let include of courseDetails?.includes; let i = index">
+                        <div class="bg-gray-100 rounded flex p-4 h-full items-center">
+                          <svg-icon src="{{include.icon}}" [svgClass]="'h-5 w-5'"> </svg-icon>
+                          <span class="font-medium">{{ include.text }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </details>
+              </div>
+              <div class="bg-white p-3 hover:shadow">
+                <details class="group">
+                  <summary class="flex justify-between font-semibold leading-8 cursor-pointer">
+                    <div class="flex items-center space-x-3">
+                      <span>Faqs</span>
+                    </div>
+                    <span class="transition group-open:rotate-180">
+                <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor"
+                     stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path
+                  d="M6 9l6 6 6-6"></path>
+                </svg>
+              </span>
+                  </summary>
+                  <div class="grid grid-cols-1">
+                    <div class="px-4 py-2" >
+                      <div *ngFor="let faq of courseDetails?.faqs; let i = index">
+                        <div class="bg-gray-100 rounded p-4 h-full items-center">
+                          <p class="font-bold">{{ faq.title }}</p>
+                          <p class="font-medium">{{ faq.content }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </details>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mx-auto mt-5">
+    <div class="mb-4 flex justify-between">
+      <div class="inline-block">
+        <h3 class="font-semibold text-foreground">Liste des utilisateurs</h3>
+        <div class="space-x-1 text-xs font-medium text-muted-foreground">
+          <span class="hover:text-primary">Tous les utilisateurs:</span>
+          <span class="text-foreground">{{allUsersCount}}</span>
+        </div>
+      </div>
+    </div>
+    <div class="flex min-w-full flex-col rounded-xl border border-muted/20 bg-background p-2">
+      <app-table-course-user-action class="mb-10" (changePharmacy)="onChangePharmacy($event)"></app-table-course-user-action>
+      <div class="overflow-x-auto">
+        <table
+          class="table w-full table-auto border-collapse border-0 text-left align-middle leading-5 text-muted-foreground">
+          <thead class="border border-muted/20 text-xs text-muted-foreground">
+          <tr app-table-course-user-header class="h-20" (onSort)="sortCourses($event)"></tr>
+          </thead>
+          <tbody>
+            @for (userCourse of allUsers; track $index) {
+              <tr class="hover:bg-card/50" app-table-course-user-row [userCourse]="userCourse"></tr>
+            } @empty {
+              <tr>
+                <td class="py-4 text-center text-sm" colspan="7">Aucun utilisateur trouvé</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <app-table-course-user-footer class="mt-10" (changeItemsPerPage)="onChangeItemsPerPage($event)"
+                                    [currentPage]="currentPage"
+                                    [itemsPerPage]="itemsPerPage"
+                                    [totalItems]="allUsersCount"
+                                    (pageChanged)="onPageChange($event)"></app-table-course-user-footer>
+    </div>
+  </div>
+</div>

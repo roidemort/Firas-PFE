@@ -1,0 +1,145 @@
+<div class="h-screen overflow-y-auto bg-[#0b1b29]">
+  <div class="min-h-full p-4 md:p-6">
+    <!-- Header with Title and Stats -->
+    <div class="mb-6 md:mb-8">
+      <h1 class="text-2xl md:text-3xl font-bold text-white">Toutes les Formations</h1>
+      <p class="text-[#B0EDF1] mt-2">
+        {{ filteredCourses.length }} formation{{ filteredCourses.length !== 1 ? 's' : '' }} disponible{{ filteredCourses.length !== 1 ? 's' : '' }}
+      </p>
+    </div>
+
+    <!-- Filter Section - UPDATED FOR DARK THEME -->
+    <div class="bg-[#1a2d3e] rounded-xl shadow-lg p-4 md:p-6 mb-6 md:mb-8">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6">
+        <!-- Search Bar -->
+        <div class="flex-1">
+          <div class="relative">
+            <input
+              type="text"
+              [formControl]="searchControl"
+              placeholder="Rechercher une formation..."
+              class="w-full px-4 py-3 pl-12 bg-[#2a3e50] border border-[#3a5066] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1B9198] focus:border-transparent text-white placeholder:text-[#88BFBF]"
+            />
+            <svg class="absolute left-4 top-3.5 h-5 w-5 text-[#88BFBF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Filters Row -->
+        <div class="flex flex-col md:flex-row gap-4">
+          <!-- Category Filter -->
+          <div class="relative">
+            <button
+              (click)="toggleCategoryDropdown($event)"
+              class="category-button flex items-center justify-between w-full md:w-56 px-4 py-3 bg-[#2a3e50] border border-[#3a5066] rounded-lg hover:bg-[#32465a] focus:outline-none focus:ring-2 focus:ring-[#1B9198] text-white"
+            >
+              <span class="truncate text-left">
+                {{ selectedCategory ? selectedCategory.name : 'Toutes les catégories' }}
+              </span>
+              <svg class="w-5 h-5 ml-3 text-[#88BFBF] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+
+            <!-- Category Dropdown -->
+            <div *ngIf="showCategoryDropdown" class="category-dropdown absolute z-50 mt-2 w-full md:w-56 bg-[#2a3e50] border border-[#3a5066] rounded-lg shadow-lg max-h-64 overflow-y-auto">
+              <div class="py-2">
+                <button
+                  (click)="selectCategory(null, $event)"
+                  class="w-full text-left px-4 py-3 hover:bg-[#32465a] text-white"
+                  [class.bg-[#1B9198]]="!selectedCategory"
+                >
+                  Toutes les catégories
+                </button>
+                <div *ngFor="let category of allCategories" class="border-t border-[#3a5066]">
+                  <button
+                    (click)="selectCategory(category, $event)"
+                    class="w-full text-left px-4 py-3 hover:bg-[#32465a] text-white"
+                    [class.bg-[#1B9198]]="selectedCategory?.id === category.id"
+                  >
+                    {{ category.name }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Provider Filter -->
+          <div class="relative">
+            <button
+              (click)="toggleProviderDropdown($event)"
+              class="provider-button flex items-center justify-between w-full md:w-56 px-4 py-3 bg-[#2a3e50] border border-[#3a5066] rounded-lg hover:bg-[#32465a] focus:outline-none focus:ring-2 focus:ring-[#1B9198] text-white"
+            >
+              <span class="truncate text-left">
+                {{ selectedProvider ? selectedProvider.name : 'Tous les Laboratoires' }}
+              </span>
+              <svg class="w-5 h-5 ml-3 text-[#88BFBF] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+
+            <!-- Provider Dropdown -->
+            <div *ngIf="showProviderDropdown" class="provider-dropdown absolute z-50 mt-2 w-full md:w-56 bg-[#2a3e50] border border-[#3a5066] rounded-lg shadow-lg max-h-64 overflow-y-auto">
+              <div class="py-2">
+                <button
+                  (click)="selectProvider(null, $event)"
+                  class="w-full text-left px-4 py-3 hover:bg-[#32465a] text-white"
+                  [class.bg-[#1B9198]]="!selectedProvider"
+                >
+                  Tous les Laboratoire
+                </button>
+                <div *ngFor="let provider of filteredProviders" class="border-t border-[#3a5066]">
+                  <button
+                    (click)="selectProvider(provider, $event)"
+                    class="w-full text-left px-4 py-3 hover:bg-[#32465a] text-white"
+                    [class.bg-[#1B9198]]="selectedProvider?.id === provider.id"
+                  >
+                    {{ provider.name }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Clear Filters Button -->
+          <button
+            *ngIf="selectedCategory || selectedProvider || searchControl.value"
+            (click)="clearFilters()"
+            class="px-4 py-3 text-sm font-medium text-white border border-[#1B9198] rounded-lg bg-[#1B9198] hover:bg-[#147980] hover:border-[#147980] transition"
+          >
+            Effacer les filtres
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Courses List -->
+    <div *ngIf="!isLoading" class="mt-6">
+      <app-card-carousel
+        [cards]="filteredCourses"
+        [style]="true"
+      ></app-card-carousel>
+
+      <!-- No Results Message -->
+      <div *ngIf="filteredCourses.length === 0" class="text-center py-12 md:py-16">
+        <svg class="w-16 h-16 md:w-20 md:h-20 text-[#88BFBF] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <h3 class="text-lg md:text-xl font-semibold text-white mb-3">Aucune formation trouvée</h3>
+        <p class="text-[#B0EDF1] max-w-md mx-auto">
+          Aucune formation ne correspond à vos critères de recherche.
+          <span *ngIf="selectedCategory || selectedProvider || searchControl.value" class="block mt-2">
+            Essayez de modifier vos filtres.
+          </span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center py-12 md:py-16">
+      <div class="inline-block animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-[#1B9198]"></div>
+      <p class="mt-3 md:mt-4 text-[#B0EDF1]">Chargement des formations...</p>
+    </div>
+  </div>
+</div>

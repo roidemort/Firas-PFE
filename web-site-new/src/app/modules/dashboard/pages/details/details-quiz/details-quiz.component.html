@@ -1,0 +1,117 @@
+<app-loader *ngIf="isLoading"></app-loader>
+<div class="mx-auto px-4 py-4 sm:px-8" #actions>
+  <div class="mb-4 flex justify-between">
+    <div class="inline-block">
+      <h3 class="font-semibold text-foreground">Détails de la quiz</h3>
+    </div>
+  </div>
+  @if (quizDetails) {
+    <div class=" mx-auto p-5">
+      <div class="md:flex no-wrap md:-mx-2 ">
+        <!-- Left Side -->
+        <div class="w-full md:w-[35%] md:mx-2">
+          <!-- Profile Card -->
+          <div class="bg-background p-3 border-t-4 " [ngClass]="{'border-green-400': quizDetails.status === 1, 'border-red-400' : quizDetails.status === 0 }">
+            <h1 class="text-foreground font-bold text-xl leading-8 my-1">{{quizDetails.title}}</h1>
+            <ul
+              class="bg-card text-foreground hover:text-foreground hover:shadow py-2 px-3 mt-3 divide-y rounded shadow-sm">
+              <li class="flex items-center py-3">
+                <span class="text-foreground">Statut</span>
+                <span class="ml-auto">
+              <span *ngIf="quizDetails.status === 1" class="bg-green-500 py-1 px-2 rounded text-white text-sm">Active</span>
+              <span *ngIf="quizDetails.status === 0" class="bg-red-500 py-1 px-2 rounded text-white text-sm">Inactive</span>
+            </span>
+              </li>
+              <li class="flex items-center py-3">
+                <span class="text-foreground">Date de création</span>
+                <span class="text-foreground ml-auto">{{ quizDetails.createdAt | date:"dd-MM-yyyy" }}</span>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+        <!-- Right Side -->
+        <div class="w-full md:w-9/12">
+          <!-- Profile tab -->
+          <!-- About Section -->
+          <div class="bg-background p-3 shadow-sm rounded-sm">
+            <div class="flex items-center space-x-2 font-semibold text-foreground leading-8">
+                        <span class="text-green-500">
+                            <svg-icon src="assets/icons/heroicons/outline/building-storefront.svg" [svgClass]="'h-5 w-5'"> </svg-icon>
+                        </span>
+              <span class="tracking-wide">À propos</span>
+            </div>
+            <div class="text-foreground">
+              <div class="grid md:grid-cols-1 text-sm">
+                <div class="grid grid-cols-2">
+                  <div class="px-4 py-2 font-semibold">Id</div>
+                  <div class="px-4 py-2">{{ quizDetails.id }}</div>
+                </div>
+                <div class="grid grid-cols-2">
+                  <div class="px-4 py-2 font-semibold">Titre</div>
+                  <div class="px-4 py-2">{{ quizDetails.title }}</div>
+                </div>
+                <div class="grid grid-cols-2">
+                  <div class="px-4 py-2 font-semibold">Note de passage</div>
+                  <div class="px-4 py-2">{{ quizDetails.passingGrade }}</div>
+                </div>
+                <div class="grid grid-cols-2">
+                  <div class="px-4 py-2 font-semibold">Détails</div>
+                  <div class="px-4 py-2">{{ quizDetails.details }}</div>
+                </div>
+                <div class="grid grid-cols-2">
+                  <div class="px-4 py-2 font-semibold">Formation</div>
+                  <div class="px-4 py-2">{{ quizDetails.section?.course?.title }}</div>
+                </div>
+                <div class="grid grid-cols-2">
+                  <div class="px-4 py-2 font-semibold">Section</div>
+                  <div class="px-4 py-2">{{ quizDetails.section?.title }}</div>
+                </div>
+                <div class="grid grid-cols-2">
+                  <div class="px-4 py-2 font-semibold">Mis à jour à</div>
+                  <div class="px-4 py-2">{{ quizDetails.updatedAt | date:'long' }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mx-auto mt-5 px-4 py-4 sm:px-8">
+      <div class="mb-4 flex justify-between">
+        <div class="inline-block">
+          <h3 class="font-semibold text-foreground">Liste de toutes les questions</h3>
+          <div class="space-x-1 text-xs font-medium text-muted-foreground">
+            <span class="hover:text-primary">Tous les questions:</span>
+            <span class="text-foreground">{{quizDetails.questions?.length || 0}}</span>
+          </div>
+        </div>
+        <div class="inline-block space-x-4">
+          <button (click)="manageQuestion('add')"
+                  class="flex items-center justify-center bg-primary text-white p-2 rounded-md border-b-[3px] border-primary-dark flex items-center" type="button">
+            <svg-icon src="assets/icons/heroicons/outline/plus.svg" [svgClass]="'h-5 w-5'"> </svg-icon>
+            Ajouté une nouvelle question</button>
+        </div>
+      </div>
+      <div class="flex min-w-full flex-col rounded-xl border border-muted/20 bg-background p-2">
+        <div class="overflow-x-auto">
+          <table
+            class="table w-full table-auto border-collapse border-0 text-left align-middle leading-5 text-muted-foreground">
+            <thead class="border border-muted/20 text-xs text-muted-foreground">
+            <tr app-table-question-header class="h-20" [sortable]="false"></tr>
+            </thead>
+            <tbody>
+              @for (question of quizDetails.questions; track $index) {
+                <tr class="hover:bg-card/50" app-table-question-row (updateQuestion)="manageQuestion('edit', $event)" (updateQuestionStatus)="updateQuestionStatus($event)" [question]="question"></tr>
+              } @empty {
+                <tr>
+                  <td class="py-4 text-center text-sm" colspan="7">Aucune question trouvé</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  }
+</div>

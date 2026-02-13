@@ -64,6 +64,9 @@ export class CourseEntity {
   @Column()
   comingSoon: boolean;
 
+  @Column({ default: false })
+  free: boolean;
+
   @Column({ nullable: true })
   messageComingSoon: string;
 

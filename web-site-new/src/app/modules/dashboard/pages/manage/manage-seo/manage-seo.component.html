@@ -1,0 +1,130 @@
+<div class="mx-auto px-4 py-4 sm:px-8">
+  <div class="mb-4 flex justify-between">
+    <div class="inline-block">
+      <h3 class="font-semibold text-foreground" *ngIf="type == 'add'">Ajouté une référencement</h3>
+      <h3 class="font-semibold text-foreground" *ngIf="type == 'edit'"> Modifié la référencement</h3>
+      <div class="space-x-1 text-xs font-medium text-night-400 dark:text-night-300">
+      </div>
+    </div>
+  </div>
+  <div class="flex min-w-full flex-col rounded-xl border border-muted/20 bg-background p-2">
+    <div class="overflow-x-auto">
+      <div class="inline-block min-w-full w-full py-2 sm:px-6 lg:px-8">
+        <form [formGroup]="manageSeoForm">
+          <div class="px-12">
+            <div class="my-6 space-y-2 flex flex-col">
+              <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="name">Titre de la page</label>
+              <input id="title" formControlName="title" type="text" placeholder="" required
+                     [ngClass]="{'!border-[#f74350] !border-2': manageSeoForm.get('title')?.invalid && manageSeoForm.get('title')!.touched}"
+                     class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor"          >
+              <div *ngIf="manageSeoForm.get('title')!.hasError('required') && manageSeoForm.get('title')!.touched"
+                   class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                Ce champ est obligatoire.
+              </div>
+            </div>
+          </div>
+          <div class="px-12">
+            <div class="my-6 space-y-2 flex flex-col">
+              <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="permalink">Lien permanent</label>
+              <input id="permalink" formControlName="permalink" type="text" placeholder="" required
+                     [ngClass]="{'!border-[#f74350] !border-2': manageSeoForm.get('permalink')?.invalid && manageSeoForm.get('permalink')!.touched}"
+                     class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor"          >
+              <div *ngIf="manageSeoForm.get('permalink')!.hasError('required') && manageSeoForm.get('permalink')!.touched"
+                   class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                Ce champ est obligatoire.
+              </div>
+            </div>
+          </div>
+          <div class="px-12">
+            <div class="my-6 space-y-2 flex flex-col">
+              <label class="font-semibold text-base text-gray-600 dark:text-night-100" for="robots">Robots</label>
+
+              <select id="robots" formControlName="robots"
+                      [ngClass]="{'!border-[#f74350] !border-2': manageSeoForm.get('robots')?.invalid && manageSeoForm.get('robots')!.touched}"
+                      class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+                <option value="index,follow">index,follow</option>
+                <option value="noindex,follow">noindex,follow</option>
+                <option value="noindex,nofollow">noindex,nofollow</option>
+              </select>
+
+              <div *ngIf="manageSeoForm.get('robots')!.hasError('required') && manageSeoForm.get('robots')!.touched"
+                   class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                Ce champ est obligatoire.
+              </div>
+            </div>
+          </div>
+          <div class="px-12">
+            <div class="my-6 space-y-2 flex flex-col">
+          <div class="" formArrayName='metaTags' *ngFor="let valueForm of metaTags.controls ;let i = index;" >
+            <div class="my-6 space-x-2 flex flex-row" [formGroupName]="i">
+              <div class="my-6 space-y-2 flex flex-col w-full">
+                <select id="validation-name-{{i}}" formControlName="type"
+                        [ngClass]="{'!border-[#f74350] !border-2': valueForm.get('type')!.hasError('required') && valueForm.get('type')!.touched}"
+                        class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor">
+
+                  <option value="name">Name</option>
+                  <option value="property">Property</option>
+                </select>
+                <div *ngIf="valueForm.get('type')!.hasError('required') && valueForm.get('type')!.touched"
+                     class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                  Ce champ est obligatoire.
+                </div>
+
+              </div>
+              <div class="my-6 space-y-2 flex flex-col w-full">
+                <input id="validation-name-{{i}}" formControlName="name" type="text" [ngClass]="{'!border-[#f74350] !border-2': valueForm.get('name')!.hasError('required') && valueForm.get('name')!.touched}" placeholder="Nom" required class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor" >
+                <div *ngIf="valueForm.get('name')!.hasError('required') && valueForm.get('name')!.touched"
+                     class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                  Ce champ est obligatoire.
+                </div>
+
+              </div>
+              <div class="my-6 space-y-2 flex flex-col w-full">
+                <textarea id="validation-content-{{i}}" formControlName="content" type="text" placeholder="Content" required [ngClass]="{'!border-[#f74350] !border-2': valueForm.get('name')!.hasError('required') && valueForm.get('content')!.touched}" class="bg-inputColor text-subtitleColor w-[100%] p-3 rounded-none border-t-0 border-l-0 border-r-0 border-b-2 border-borderColor focus:outline-borderColor" > </textarea>
+
+                <div *ngIf="valueForm.get('content')!.hasError('required') && valueForm.get('content')!.touched"
+                     class="text-red-500 text-left text-sm ml-2 !mb-2.5 !mt-0">
+                  Ce champ est obligatoire.
+                </div>
+
+              </div>
+              <div class="my-6 space-y-2 flex flex-col">
+                <button (click)="removeMetaTag(i)" type="button" class="text-red-700  hover:bg-red-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-2.5 text-center inline-flex items-center mr-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800 dark:hover:bg-blue-500">
+                  <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h16M7 8v8m4-8v8M7 1h4a1 1 0 0 1 1 1v3H6V2a1 1 0 0 1 1-1ZM3 5h12v13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5Z"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+            </div>
+          </div>
+          <div class="px-12">
+            <div class="my-6 space-y-2 flex justify-end">
+              <button (click)=addMetaTag() type="button" class="bg-green-700 text-white p-2 px-4 rounded-md border-b-[3px] border-green-950 flex items-center">
+                <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                </svg>
+                <span class="ml-2">Ajouter Meta</span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="flex items-center justify-end p-6 rounded-b space-x-2">
+        <button class="font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:translate-y-px disabled:pointer-events-none disabled:opacity-50 bg-transparent text-primary hover:bg-primary/10 focus-visible:ring-primary p-2 px-4 rounded-lg" type="button" (click)="bachToList()">
+          Annuler</button>
+        <button (click)="managePharmacy()" [disabled]="isLoading"
+                class="bg-primary text-white p-2 px-4 rounded-md border-b-[3px] border-primary-dark flex items-center" type="button">
+          <svg *ngIf="isLoading" class="-ml-1 mr-3 h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg"
+               fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+            </path>
+          </svg>
+          Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,49 @@
+<app-loader *ngIf="isLoading"></app-loader>
+<div class="fixed inset-0 flex items-center justify-center z-50 backdrop-blur confirm-dialog ">
+  <div class="relative px-4 min-h-screen md:flex md:items-center md:justify-center">
+    <div class=" opacity-25 w-full h-full absolute z-10 inset-0"></div>
+    <div class="bg-white rounded-lg md:max-w-md md:mx-auto p-4 fixed inset-x-0 bottom-0 z-50 mb-4 mx-4 md:relative shadow-lg">
+      <div class="md:flex items-center">
+        <div class="rounded-full border border-gray-300 flex items-center justify-center w-16 h-16 flex-shrink-0 mx-auto">
+          <i class="bx bx-error text-3xl">
+            &#9888;
+          </i>
+        </div>
+        <div class="mt-4 md:mt-0 md:ml-6 text-center md:text-left">
+          <p class="font-bold">Avertissement!</p>
+          <container-element [ngSwitch]="type">
+          <p class="text-sm text-gray-700 mt-1" *ngSwitchCase="'user'">Êtes-vous sûr de vouloir mettre à jour le statut de cet utilisateur ?</p>
+          <p class="text-sm text-gray-700 mt-1" *ngSwitchCase="'seo'">Êtes-vous sûr de vouloir mettre à jour le statut de ce référencement ?</p>
+          <p class="text-sm text-gray-700 mt-1" *ngSwitchCase="'trend'">Êtes-vous sûr de vouloir mettre à jour le statut de cette tendance ?</p>
+          <p class="text-sm text-gray-700 mt-1" *ngSwitchCase="'course'">Êtes-vous sûr de vouloir mettre à jour le statut de ce formation ?</p>
+          <p class="text-sm text-gray-700 mt-1" *ngSwitchCase="'package'">Êtes-vous sûr de vouloir mettre à jour le statut de cet abonnement ?</p>
+          <p class="text-sm text-gray-700 mt-1" *ngSwitchCase="'subscription'">Êtes-vous sûr de vouloir mettre à jour le statut de cet abonnement ?</p>
+          <p class="text-sm text-gray-700 mt-1" *ngSwitchCase="'partner'">Êtes-vous sûr de vouloir mettre à jour le statut de ce partenaire ?</p>
+          <p class="text-sm text-gray-700 mt-1" *ngSwitchCase="'pharmacy'">Êtes-vous sûr de vouloir mettre à jour le statut de ce pharmacie ?</p>
+          <p class="text-sm text-gray-700 mt-1" *ngSwitchCase="'provider'">Êtes-vous sûr de vouloir mettre à jour le statut de ce fournisseur ?</p>
+          <p class="text-sm text-gray-700 mt-1" *ngSwitchCase="'trainer'">Êtes-vous sûr de vouloir mettre à jour le statut de ce formateur ?</p>
+          <p class="text-sm text-gray-700 mt-1" *ngSwitchCase="'userPharmacy'">Êtes-vous sûr de vouloir mettre à jour le statut de cet clé ?</p>
+          <p class="text-sm text-gray-700 mt-1" *ngSwitchCase="'capsule'">Êtes-vous sûr de vouloir mettre à jour le statut de cet capsule ?</p>
+          <p class="text-sm text-gray-700 mt-1" *ngSwitchCase="'advertisement'">Êtes-vous sûr de vouloir mettre à jour le statut de cette publicité ?</p>
+          <p class="text-sm text-gray-700 mt-1" *ngSwitchCase="'question'">Êtes-vous sûr de vouloir mettre à jour le statut de cet question ?</p>
+          <p class="text-sm text-gray-700 mt-1" *ngSwitchCase="'lesson'">Êtes-vous sûr de vouloir mettre à jour le statut de cet leçon ?</p>
+          <p class="text-sm text-gray-700 mt-1" *ngSwitchCase="'quiz'">Êtes-vous sûr de vouloir mettre à jour le statut de cet quiz ?</p>
+          <p class="text-sm text-gray-700 mt-1" *ngSwitchCase="'removeImages'">Êtes-vous sûr de vouloir supprimer ?</p>
+          <p class="text-sm text-gray-700 mt-1" *ngSwitchCase="'remove'">Êtes-vous sûr de vouloir supprimer ?</p>
+          <p class="text-sm text-gray-700 mt-1" *ngSwitchCase="'quit'">Vous avez des modifications non enregistrées qui risquent d’être perdues !</p>
+          </container-element>
+        </div>
+      </div>
+      <div class="text-center md:text-right mt-4 md:flex md:justify-end">
+        <button (click)="onChangeStatus()" class="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-gray-200 rounded-lg font-semibold text-sm mt-4 md:mt-0 md:order-1">
+          Confirmer
+        </button>
+        <button
+           (click)="onCloseActions()"
+           class="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-red-200 text-red-700 rounded-lg font-semibold text-sm md:ml-2 md:order-2">
+          Annuler
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

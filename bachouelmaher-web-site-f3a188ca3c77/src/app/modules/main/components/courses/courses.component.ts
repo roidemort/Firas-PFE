@@ -9,13 +9,14 @@ import { CardShortsComponent } from "../card-shorts/card-shorts.component";
 import { CapsulesService } from 'src/app/core/services/capsules.service';
 import { Capsule } from 'src/app/core/models/capsule.model';
 import { CapsulesEventService } from 'src/app/core/services/capsules-event.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-courses',
   templateUrl: './courses.component.html',
   styleUrls: ['./courses.component.scss'],
   standalone: true,
-  imports: [CommonModule, CardCarouselComponent, MainLoaderComponent, CardShortsComponent]
+  imports: [CommonModule, CardCarouselComponent, MainLoaderComponent, CardShortsComponent, RouterModule]
 })
 export class CoursesComponent {
 
@@ -127,7 +128,7 @@ export class CoursesComponent {
         this.isLoadingCourses = false;
         this.isLoading = this.isLoadingCourses && this.isLoadingCapsules;
 
-        
+
 
         this.cdRef.detectChanges();
       },
