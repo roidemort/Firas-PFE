@@ -1,0 +1,17 @@
+.progress-bar {
+  background-color: #007bff;
+}
+
+.progress-bar.bg-danger {
+  background-color: #dc3545 !important;
+}
+
+.btn-primary:disabled {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.add-staff-form {
+  margin-top: 30px;
+}

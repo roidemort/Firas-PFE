@@ -11,7 +11,9 @@ import {
   getRankingByRole,
   getRankingByPharmacy,
   getRankingStats,
-  getAllRankings
+  getAllRankings,
+  addTeamMember,
+  getTeamLimits
 } from "@/controllers/users"
 import { checkJwt } from "@/middleware/checkJwt"
 import {
@@ -25,7 +27,7 @@ import { checkRole } from "@/middleware/checkRole"
 const router = Router();
 
 router.put('/edit-password', [checkJwt, validatorEditPassword], editPassword);
-router.put('/edit-profile', [checkJwt, upload.single('upload')], editProfile);
+router.put('/edit-profile', [checkJwt, upload.single('upload') as any], editProfile);
 
 router.post('/forgot-password', [validatorForgotPassword], forgotPassword);
 router.post('/reset-password', [validatorResetPassword], resetPassword);
@@ -35,6 +37,8 @@ router.get('/getMyTeam', [checkJwt, checkRole(['PHARMACIST_HOLDER'])], getMyTeam
 router.get('/getMyTeam/:id', [checkJwt], getMyUserDetails);
 router.get('/getMyPlanDetails', [checkJwt, checkRole(['PHARMACIST_HOLDER'])], getMyPlanDetails);
 router.get('/addToTeam', [checkJwt, checkRole(['PHARMACIST_HOLDER'])], addToTeam);
+router.post('/addTeamMember', [checkJwt, checkRole(['PHARMACIST_HOLDER'])], addTeamMember);
+router.get('/getTeamLimits', [checkJwt, checkRole(['PHARMACIST_HOLDER'])], getTeamLimits);
 router.post('/getProgression', [checkJwt], getProgression);
 router.get('/getMyCertificate/:id', [checkJwt], getMyCertificate);
 

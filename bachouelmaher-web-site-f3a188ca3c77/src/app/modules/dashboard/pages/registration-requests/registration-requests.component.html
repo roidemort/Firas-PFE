@@ -1,0 +1,101 @@
+<div class="mx-auto px-4 py-4 sm:px-8">
+  <div class="mb-4 flex justify-between">
+    <div class="inline-block">
+      <h3 class="font-semibold text-foreground">Demandes d'inscription en attente</h3>
+      <div class="space-x-1 text-xs font-medium text-muted-foreground">
+        <a href="" class="hover:text-primary">Total:</a>
+        <span class="text-foreground">{{ allRequestsCount }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex min-w-full flex-col rounded-xl border border-muted/20 bg-background p-2">
+    <app-loader *ngIf="isLoading"></app-loader>
+
+    <div class="mb-4 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <label class="text-sm text-muted-foreground">Par page:</label>
+        <select
+          [(ngModel)]="itemsPerPage"
+          (change)="onChangeItemsPerPage(itemsPerPage)"
+          class="rounded-md border border-muted/20 px-2 py-1 text-sm"
+        >
+          <option [value]="10">10</option>
+          <option [value]="20">20</option>
+          <option [value]="50">50</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table
+        class="table w-full table-auto border-collapse border-0 text-left align-middle leading-5 text-muted-foreground"
+      >
+        <thead class="border border-muted/20 text-xs text-muted-foreground">
+          <tr class="h-20">
+            <th class="px-4 py-3 font-semibold">Nom Pharmacie</th>
+            <th class="px-4 py-3 font-semibold">Email</th>
+            <th class="px-4 py-3 font-semibold">Nom / Prénom</th>
+            <th class="px-4 py-3 font-semibold">NB Pharmacien</th>
+            <th class="px-4 py-3 font-semibold">NB Préparatoire</th>
+            <th class="px-4 py-3 font-semibold">Total</th>
+            <th class="px-4 py-3 font-semibold text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (request of requests(); track request.id) {
+          <tr class="hover:bg-card/50">
+            <td class="px-4 py-3 text-sm">{{ request.pharmacyName }}</td>
+            <td class="px-4 py-3 text-sm">{{ request.pharmacyEmail }}</td>
+            <td class="px-4 py-3 text-sm">
+              {{ request.ownerLastName }} {{ request.ownerFirstName }}
+            </td>
+            <td class="px-4 py-3 text-sm">{{ request.nbPharmacien }}</td>
+            <td class="px-4 py-3 text-sm">{{ request.nbPreparatoire }}</td>
+            <td class="px-4 py-3 text-sm font-semibold">
+              {{ getTotalStaff(request) }}
+            </td>
+            <td class="px-4 py-3 text-center">
+              <div class="flex items-center justify-center gap-2">
+                <button
+                  (click)="approveRequest(request.id)"
+                  class="rounded-md bg-green-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-green-700"
+                  type="button"
+                >
+                  Approuver
+                </button>
+                <button
+                  (click)="rejectRequest(request.id)"
+                  class="rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700"
+                  type="button"
+                >
+                  Rejeter
+                </button>
+              </div>
+            </td>
+          </tr>
+          } @empty {
+          <tr>
+            <td class="py-4 text-center text-sm" colspan="7">
+              Aucune demande en attente
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    @if (allRequestsCount > 0) {
+    <div class="mt-4 flex justify-center">
+      <app-pagination
+        [page]="currentPage"
+        [itemsPerPage]="itemsPerPage"
+        [totalItems]="allRequestsCount"
+        (pageChange)="onPageChange($event)"
+        [maxSize]="5"
+      ></app-pagination>
+    </div>
+    }
+  </div>
+</div>
+

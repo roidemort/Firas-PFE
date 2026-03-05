@@ -25,7 +25,7 @@ export class UserEntity {
   })
   email: string;
 
-  @Column()
+  @Column({ nullable: true })
   password: string;
 
   @Column({
@@ -96,6 +96,12 @@ export class UserEntity {
   })
   zipCode: string;
 
+  @Column({ nullable: true })
+  setupToken: string;
+
+  @Column({ type: 'datetime', nullable: true })
+  setupTokenExpires: Date;
+
   @Column()
   @CreateDateColumn()
   createdAt: Date;
@@ -124,7 +130,9 @@ export class UserEntity {
 
   @BeforeInsert()
   async hashPassword() {
-    this.password = await bcrypt.hash(this.password, 12);
+    if (this.password) {
+      this.password = await bcrypt.hash(this.password, 12);
+    }
   }
 
   checkIfPasswordMatch(unencryptedPassword: string) {

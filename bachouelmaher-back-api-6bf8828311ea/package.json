@@ -14,7 +14,8 @@
     "migration:revert": "yarn typeorm migration:revert",
     "swagger:generate": "ts-node scripts/generate-swagger.ts",
     "swagger:export": "curl -s http://localhost:3000/api-docs.json -o swagger.json",
-    "swagger:serve": "npx swagger-ui-dist-cli -p 8080 swagger.json"
+    "swagger:serve": "npx swagger-ui-dist-cli -p 8080 swagger.json",
+    "create-admin": "ts-node -r tsconfig-paths/register src/scripts/create-admin.ts"
   },
   "engines": {
     "node": "20.x",

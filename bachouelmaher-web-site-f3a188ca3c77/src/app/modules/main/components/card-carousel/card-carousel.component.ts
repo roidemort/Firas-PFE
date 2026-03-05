@@ -53,7 +53,7 @@ export class CardCarouselComponent {
     private coursService: CoursesService,
     private cdRef: ChangeDetectorRef
 
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.isLoading = true;
@@ -88,89 +88,91 @@ export class CardCarouselComponent {
   }
 
   getUserDetails(id: string) {
-  this.userService.getMyTeamDetails(id).subscribe({
-    next: (res) => {
-      if (res.status) {
-        this.user = res.data.users;
-        this.courses = res.data.users.enrolls || [];
+    this.userService.getMyTeamDetails(id).subscribe({
+      next: (res) => {
+        if (res.status) {
+          this.user = res.data.users;
+          this.courses = res.data.users.enrolls || [];
 
-        if (this.inProgress && this.courses.length > 0) {
-          // Extract course data for all enrolled courses
-          this.courses.forEach((course: { course: { id: string; }; }) => {
-            this.extractCourseDataById(course.course.id);
-          });
+          if (this.inProgress && this.courses.length > 0) {
+            // Extract course data for all enrolled courses
+            this.courses.forEach((course: { course: { id: string; }; }) => {
+              this.extractCourseDataById(course.course.id);
+            });
 
-          this.sortCoursesByStartedAt(this.courses);
-          this.getCoursProgrssion(this.courses);
+            this.sortCoursesByStartedAt(this.courses);
+            this.getCoursProgrssion(this.courses);
+          } else {
+            this.isLoading = false;
+          }
         } else {
           this.isLoading = false;
         }
+      },
+      error: (error) => {
+        console.error(error);
+        this.isLoading = false;
       }
-    },
-    error: (error) => {
-      console.error(error);
-      this.isLoading = false;
-    }
-  });
-}
+    });
+  }
 
   sortCoursesByStartedAt(courses: any) {
     courses.sort((a: any, b: any) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime());
   }
 
   getCoursProgrssion(courses: any) {
-  if (!courses || courses.length === 0) {
-    this.isLoading = false;
-    return;
+    if (!courses || courses.length === 0) {
+      this.isLoading = false;
+      return;
+    }
+
+    // Create an array to track API calls
+    const progressionRequests: any[] = [];
+
+    courses.forEach((course: any) => {
+      progressionRequests.push(
+        new Promise((resolve) => {
+          this.getProgression(course.id).then(resolve).catch(() => resolve(null));
+        })
+      );
+    });
+
+    // Wait for all progression requests to complete
+    Promise.all(progressionRequests).then(() => {
+      // Filter courses with progression < 100%
+      this.inProgressCourses = courses.filter((course: any) => {
+        const progression = this.courseProgressions[course.id];
+        return progression && progression.progression < 100;
+      });
+
+      // Only show section if there are in-progress courses
+      this.showInProgressSection = this.inProgressCourses.length > 0;
+
+      this.isLoading = false;
+      this.cdRef.detectChanges();
+    });
   }
 
-  // Create an array to track API calls
-  const progressionRequests: any[] = [];
-
-  courses.forEach((course: any) => {
-    progressionRequests.push(
-      new Promise((resolve) => {
-        this.getProgression(course.id).then(resolve).catch(() => resolve(null));
-      })
-    );
-  });
-
-  // Wait for all progression requests to complete
-  Promise.all(progressionRequests).then(() => {
-    // Filter courses with progression < 100%
-    this.inProgressCourses = courses.filter((course: any) => {
-      const progression = this.courseProgressions[course.id];
-      return progression && progression.progression < 100;
-    });
-
-    // Only show section if there are in-progress courses
-    this.showInProgressSection = this.inProgressCourses.length > 0;
-
-    this.isLoading = false;
-    this.cdRef.detectChanges();
-  });
-}
-
   getProgression(coursId: string): Promise<any> {
-  return new Promise((resolve, reject) => {
-    const data = {
-      courseId: coursId,
-      userId: this.user.id
-    };
-    this.userService.getProgression(data).subscribe({
-      next: (res) => {
-        if (res.status) {
-          this.courseProgressions[coursId] = res.data.course;
+    return new Promise((resolve, reject) => {
+      const data = {
+        courseId: coursId,
+        userId: this.user.id
+      };
+      this.userService.getProgression(data).subscribe({
+        next: (res) => {
+          if (res.status) {
+            this.courseProgressions[coursId] = res.data.course;
+          }
+          resolve(res);
+        },
+        error: (error) => {
+          console.error('Error getting progression:', error);
+          reject(error);
         }
-        resolve(res);
-      },
-      error: (error) => {
-        console.error('Error getting progression:', error);
-        reject(error);
-      }
+      });
     });
-  });
-}
+  }
 
   prevCard() {
     this.prevStatus = false;
@@ -297,11 +299,11 @@ export class CardCarouselComponent {
 
 
   filterInProgressCourses(courses: any[]): any[] {
-  if (!this.courseProgressions) return [];
+    if (!this.courseProgressions) return [];
 
-  return courses.filter(course => {
-    const progression = this.courseProgressions[course.id];
-    return progression && progression.progression < 100;
-  });
-}
+    return courses.filter(course => {
+      const progression = this.courseProgressions[course.id];
+      return progression && progression.progression < 100;
+    });
+  }
 }

@@ -28,6 +28,11 @@ export class Menu {
           route: '/admin985xilinp/dashboard/pharmacies',
         },
         {
+          icon: 'assets/icons/heroicons/outline/clipboard-document-list.svg',
+          label: "Demandes d'inscription",
+          route: '/admin985xilinp/dashboard/registration-requests',
+        },
+        {
           icon: 'assets/icons/heroicons/outline/banknotes.svg',
           label: 'Liste des partenaires',
           route: '/admin985xilinp/dashboard/partners',

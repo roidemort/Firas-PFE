@@ -56,6 +56,10 @@ export class AuthService {
     return this.http.post<any>(`${environment.apiEndpoint}/user/reset-password`, {password: password, token: token});
   }
 
+  submitRegistrationRequest(data: {}) {
+    return this.http.post<any>(`${environment.apiEndpoint}/auth/registration-request`, data);
+  }
+
   getUser(): any {
     return this.localStorageService.getItem('user')
   }

@@ -19,11 +19,15 @@ export const login = async (
       return res.customSuccess(200, 'Incorrect email or password', {}, false);
     }
 
+    if (!user.password) {
+      return res.customSuccess(200, 'Veuillez d\'abord définir votre mot de passe via le lien envoyé par email.', {}, false);
+    }
+
     if (!user.checkIfPasswordMatch(password)) {
       return res.customSuccess(200, 'Incorrect email or password', {}, false);
     }
 
-    if(user.status != 1) {
+    if (user.status != 1) {
       return res.customSuccess(203, 'Blocking', {}, false);
     }
 

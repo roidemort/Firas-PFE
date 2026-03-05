@@ -29,8 +29,10 @@ export const setupSwagger = (app: Express) => {
       },
       basedir: __dirname,
       files: [
-        '../routes/**',           // Your route files
-        '../controllers/**/*.ts', // If you have controllers
+        '../routes/**/*.ts',
+        '../routes/**/*.js',
+        '../controllers/**/*.ts',
+        '../controllers/**/*.js',
       ],
     };
 

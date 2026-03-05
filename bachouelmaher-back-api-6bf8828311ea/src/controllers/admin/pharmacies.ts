@@ -121,7 +121,7 @@ export const sendPharmacyNotifications = async (
     if (unusedKeys && unusedKeys.length > 0) {
       // Group keys by role
       const keysByRole: { [key: string]: any[] } = {};
-      
+
       unusedKeys.forEach((key: any) => {
         const role = key.role || 'Sans rôle';
         if (!keysByRole[role]) {
@@ -132,11 +132,11 @@ export const sendPharmacyNotifications = async (
 
       // Generate keys list HTML
       let keysListHTML = '<h3>Liste des clés non utilisées :</h3>';
-      
+
       Object.keys(keysByRole).forEach(role => {
         keysListHTML += `<h4>${role} :</h4>`;
         keysListHTML += '<ul>';
-        
+
         keysByRole[role].forEach(key => {
           keysListHTML += `<li><strong>${key.key || key.code || 'N/A'}</strong>`;
           if (key.expiresAt) {
@@ -144,10 +144,12 @@ export const sendPharmacyNotifications = async (
           }
           keysListHTML += '</li>';
         });
-        
+
         keysListHTML += '</ul>';
       });
-            
+
+      // Append keys list to email content
+      emailContent += keysListHTML;
     }
 
     // Send email to pharmacy
@@ -155,7 +157,7 @@ export const sendPharmacyNotifications = async (
       from: process.env.SMTP_USERNAME,
       to: pharmacy.email,
       subject: subject,
-      html: emailContent, // Send as html
+      html: emailContent,
     });
 
     return res.customSuccess(

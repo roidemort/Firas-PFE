@@ -76,10 +76,10 @@ export class CoursesComponent {
     });
   }
 
-   ngOnInit() {
-    this.isLoading = true;
-    this.fetchAllCourses();
-    this.fetchCapsules();
+  ngOnInit() {
+    // Courses and capsules are already fetched by the BehaviorSubject
+    // subscriptions in the constructor (they fire immediately with initial value).
+    // No need to call fetchAllCourses() and fetchCapsules() again here.
   }
 
   private isNewCourse(course: Course): boolean {
@@ -126,16 +126,13 @@ export class CoursesComponent {
       next: (result) => {
         this.organizeCourses(result.data.courses);
         this.isLoadingCourses = false;
-        this.isLoading = this.isLoadingCourses && this.isLoadingCapsules;
-
-
-
+        this.isLoading = this.isLoadingCourses || this.isLoadingCapsules;
         this.cdRef.detectChanges();
       },
       error: (error) => {
         console.error('Erreur lors de la récupération des cours:', error);
         this.isLoadingCourses = false;
-        this.isLoading = this.isLoadingCourses && this.isLoadingCapsules;
+        this.isLoading = this.isLoadingCourses || this.isLoadingCapsules;
         this.cdRef.detectChanges();
       }
     });
@@ -143,32 +140,32 @@ export class CoursesComponent {
 
   // Method to update section title based on filter
   private updateSectionTitle(filter: any): void {
-  if (!filter) {
-    this.sectionTitle = 'Toutes les Formations';
-    return;
+    if (!filter) {
+      this.sectionTitle = 'Toutes les Formations';
+      return;
+    }
+
+    // Build title based on filter
+    let title = '';
+
+    if (filter.categoryName && filter.providerName) {
+      title = `${filter.categoryName} - ${filter.providerName}`;
+    } else if (filter.categoryName) {
+      title = filter.categoryName;
+    } else if (filter.providerName) {
+      title = `Formations - ${filter.providerName}`;
+    } else {
+      title = 'Formations filtrées';
+    }
+
+    this.sectionTitle = title;
   }
-
-  // Build title based on filter
-  let title = '';
-
-  if (filter.categoryName && filter.providerName) {
-    title = `${filter.categoryName} - ${filter.providerName}`;
-  } else if (filter.categoryName) {
-    title = filter.categoryName;
-  } else if (filter.providerName) {
-    title = `Formations - ${filter.providerName}`;
-  } else {
-    title = 'Formations filtrées';
-  }
-
-  this.sectionTitle = title;
-}
 
   clearFilters(): void {
-  this.sectionTitle = 'Toutes les Formations'; // Change from 'Nouvelles Formations'
-  this.currentFilter = null;
-  this.coursesEventService.clearFilter();
-}
+    this.sectionTitle = 'Toutes les Formations'; // Change from 'Nouvelles Formations'
+    this.currentFilter = null;
+    this.coursesEventService.clearFilter();
+  }
 
 
   private fetchCourses(categorieId?: string, providerId?: string): void {
@@ -212,13 +209,13 @@ export class CoursesComponent {
       next: (result) => {
         this.capsules = result.data.capsules;
         this.isLoadingCapsules = false;
-        this.isLoading = this.isLoadingCapsules && this.isLoadingCourses;
+        this.isLoading = this.isLoadingCourses || this.isLoadingCapsules;
         this.cdRef.detectChanges();
       },
       error: (error) => {
         console.error('Erreur lors de la récupération des capsules:', error);
         this.isLoadingCapsules = false;
-        this.isLoading = this.isLoadingCapsules && this.isLoadingCourses;
+        this.isLoading = this.isLoadingCourses || this.isLoadingCapsules;
         this.cdRef.detectChanges();
       }
     });

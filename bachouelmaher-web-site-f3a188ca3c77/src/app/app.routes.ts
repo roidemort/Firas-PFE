@@ -1,6 +1,7 @@
 import { RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { checkUserRole } from "./core/guards/role-guard";
+import { SetPasswordComponent } from "./modules/auth/set-password/set-password.component";
 
 export const routes: Routes = [
   {
@@ -17,6 +18,10 @@ export const routes: Routes = [
     canActivate: [checkUserRole], data: { roles: ['SUPER_ADMIN'] }
   },
   {
+    path: 'set-password',
+    component: SetPasswordComponent,
+  },
+  {
     path: 'errors',
     loadChildren: () => import('./modules/error/error.module').then((m) => m.ErrorModule),
   },
@@ -28,4 +33,4 @@ export const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

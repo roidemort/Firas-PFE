@@ -47,6 +47,8 @@ import {TrendsComponent} from "./pages/trends/trends.component";
 import {ManageTrendComponent} from "./pages/manage/manage-trend/manage-trend.component";
 import {ManageAdvertisementComponent} from "./pages/manage/manage-advertisement/manage-advertisement.component";
 import {AdvertisementsComponent} from "./pages/advertisements/advertisements.component";
+import { RegistrationRequestsComponent } from "./pages/registration-requests/registration-requests.component";
+import { TitulaireDashboardComponent } from "./pages/titulaire-dashboard/titulaire-dashboard.component";
 
 const routes: Routes = [
   {
@@ -57,6 +59,7 @@ const routes: Routes = [
       { path: 'main', component: MainComponent },
       { path: 'users', component: UsersComponent },
       { path: 'pharmacies', component: PharmaciesComponent },
+      { path: 'registration-requests', component: RegistrationRequestsComponent },
       { path: 'trends', component: TrendsComponent },
       { path: 'settings', component: SettingsComponent },
       { path: 'profile', component: ProfileComponent },
@@ -100,6 +103,7 @@ const routes: Routes = [
       { path: 'subscriptions/packages', component: PackagesComponent },
       { path: 'subscriptions/manage-package', component: ManagePackageComponent },
       { path: 'subscriptions/manage-subscription', component: ManageSubscriptionComponent },
+      { path: 'titulaire-dashboard', component: TitulaireDashboardComponent },
       { path: '**', redirectTo: 'errors/404' },
     ],
   },
