@@ -1,0 +1,27 @@
+﻿src/queues/email.queue.ts(15,68): error TS2322: Type 'Redis' is not assignable to type 'ConnectionOptions'.
+src/queues/email.queue.ts(24,11): error TS2322: Type 'Redis' is not assignable to type 'ConnectionOptions'.
+  Type 'import("C:/Users/slama/Desktop/Galiocare-web/bachouelmaher-back-api-6bf8828311ea/node_modules/ioredis/built/Redis").default' is not assignable to type 'import("C:/Users/slama/Desktop/Galiocare-web/bachouelmaher-back-api-6bf8828311ea/node_modules/bullmq/node_modules/ioredis/built/Redis").default'.
+    Types of property 'options' are incompatible.
+      Type 'import("C:/Users/slama/Desktop/Galiocare-web/bachouelmaher-back-api-6bf8828311ea/node_modules/ioredis/built/redis/RedisOptions").RedisOptions' is not assignable to type 'import("C:/Users/slama/Desktop/Galiocare-web/bachouelmaher-back-api-6bf8828311ea/node_modules/bullmq/node_modules/ioredis/built/redis/RedisOptions").RedisOptions'.
+        Type 'RedisOptions' is not assignable to type 'CommonRedisOptions'.
+          The types returned by 'new Connector(...)' are incompatible between these types.
+            Type 'import("C:/Users/slama/Desktop/Galiocare-web/bachouelmaher-back-api-6bf8828311ea/node_modules/ioredis/built/connectors/AbstractConnector").default' is not assignable to type 'import("C:/Users/slama/Desktop/Galiocare-web/bachouelmaher-back-api-6bf8828311ea/node_modules/bullmq/node_modules/ioredis/built/connectors/AbstractConnector").default'.
+              Property 'connecting' is protected but type 'AbstractConnector' is not a class derived from 'AbstractConnector'.
+src/routes/v1/admin.ts(89,70): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type 'RequestHandler<ParamsDictionary, any, any, ParsedQs, Record<string, any>>' is not assignable to type 'ErrorRequestHandler<ParamsDictionary, any, any, ParsedQs, Record<string, any>> | RequestHandler<ParamsDictionary, any, any, ParsedQs, Record<...>>'.
+      Type 'RequestHandler<ParamsDictionary, any, any, ParsedQs, Record<string, any>>' is not assignable to type 'ErrorRequestHandler<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+        Types of parameters 'res' and 'req' are incompatible.
+          Type 'Request<ParamsDictionary, any, any, ParsedQs, Record<string, any>>' is missing the following properties from type 'Response<any, Record<string, any>, number>': status, sendStatus, links, send, and 59 more.
+src/routes/v1/admin.ts(129,67): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type 'RequestHandler<ParamsDictionary, any, any, ParsedQs, Record<string, any>>' is not assignable to type 'ErrorRequestHandler<ParamsDictionary, any, any, ParsedQs, Record<string, any>> | RequestHandler<ParamsDictionary, any, any, ParsedQs, Record<...>>'.
+src/routes/v1/admin.ts(138,74): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type 'RequestHandler<ParamsDictionary, any, any, ParsedQs, Record<string, any>>' is not assignable to type 'ErrorRequestHandler<ParamsDictionary, any, any, ParsedQs, Record<string, any>> | RequestHandler<ParamsDictionary, any, any, ParsedQs, Record<...>>'.
+src/routes/v1/admin.ts(139,78): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type 'RequestHandler<ParamsDictionary, any, any, ParsedQs, Record<string, any>>' is not assignable to type 'ErrorRequestHandler<ParamsDictionary, any, any, ParsedQs, Record<string, any>> | RequestHandler<ParamsDictionary, any, any, ParsedQs, Record<...>>'.
+src/routes/v1/users.ts(28,40): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type 'RequestHandler<ParamsDictionary, any, any, ParsedQs, Record<string, any>>' is not assignable to type 'ErrorRequestHandler<ParamsDictionary, any, any, ParsedQs, Record<string, any>> | RequestHandler<ParamsDictionary, any, any, ParsedQs, Record<...>>'.

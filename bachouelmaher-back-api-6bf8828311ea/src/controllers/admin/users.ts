@@ -230,7 +230,7 @@ export const sendNotifications = async (
 
     const senderUser = await findUserById(id, {}, { id: true });
 
-    usersIds.map(async (user: string) => {
+    await Promise.all(usersIds.map(async (user: string) => {
       const receiverUser = await findUserById(user, {}, { id: true, email: true });
       await createNotification({
         type: 'email',
@@ -247,7 +247,7 @@ export const sendNotifications = async (
         subject: subject,
         template: text,
       })
-    })
+    }))
 
     return res.customSuccess(
       200,

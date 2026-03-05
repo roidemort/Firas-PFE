@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" fill="none">
-            <g stroke="#f05252" stroke-width="3" fill="none" stroke-linejoin="round" stroke-linecap="round">
-              <!-- Triangle Border -->
-              <polygon points="32,4 60,56 4,56" />
-              <!-- Exclamation Mark -->
-              <line x1="32" y1="20" x2="32" y2="40" />
-              <circle cx="32" cy="48" r="2" />
-            </g>
-          </svg>

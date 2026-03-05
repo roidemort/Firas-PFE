@@ -3,7 +3,7 @@ import * as dotenv from "dotenv"
 dotenv.config();
 
 export const ENVIRONMENT = process.env.NODE_ENV || 'development';
-export const APP_PORT = process.env.PORT || 3000;
+export const APP_PORT = process.env.PORT || 5000;
 export const CLIENT_URL = process.env.CLIENT_URL || `http://localhost:${APP_PORT}/`;
 export const IS_PRODUCTION = ENVIRONMENT === 'production';
 export const IS_TEST = ENVIRONMENT === 'test';

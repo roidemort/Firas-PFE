@@ -50,7 +50,10 @@ import {
   courseEnrollProgression,
   getConversation,
   addConversation,
-  countConversation, countNotification, addTrend, updateTrend
+  countConversation, countNotification, addTrend, updateTrend,
+  getAllRegistrationRequests,
+  approveRegistrationRequest,
+  rejectRegistrationRequest
 } from "@/controllers/admin"
 import { checkJwt } from "@/middleware/checkJwt";
 import { checkRole } from "@/middleware/checkRole";
@@ -83,7 +86,7 @@ router.post('/login', [validatorLogin], login);
 
 router.get('/users', [checkJwt, checkRole(['SUPER_ADMIN'])], getAllUsers);
 router.post('/users/add', [checkJwt, checkRole(['SUPER_ADMIN'])], addUser);
-router.put('/users/edit/:id', [checkJwt, checkRole(['SUPER_ADMIN']), upload.single('upload')], editUser);
+router.put('/users/edit/:id', [checkJwt, checkRole(['SUPER_ADMIN']), upload.single('upload') as any], editUser);
 router.get('/users/details/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], detailsUser);
 router.post('/users/sendNotifications', [checkJwt, checkRole(['SUPER_ADMIN'])], sendNotifications);
 router.get('/users/courseEnroll/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], userCourseEnroll);
@@ -123,7 +126,7 @@ router.post('/capsules/add', [checkJwt, checkRole(['SUPER_ADMIN'])], addCapsule)
 router.put('/capsules/edit/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], updateCapsule);
 
 router.get('/images', [checkJwt, checkRole(['SUPER_ADMIN'])], getAllImages);
-router.post('/images/add', [checkJwt, checkRole(['SUPER_ADMIN']), upload.array('upload')], addImage);
+router.post('/images/add', [checkJwt, checkRole(['SUPER_ADMIN']), upload.array('upload') as any], addImage);
 router.post('/images/remove', [checkJwt, checkRole(['SUPER_ADMIN'])], removeImage);
 
 router.get('/seo', [checkJwt, checkRole(['SUPER_ADMIN'])], getAllSeo);
@@ -132,8 +135,8 @@ router.put('/seo/edit/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], editSEO);
 router.get('/seo/getDetails/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], getSeoDetails);
 
 router.get('/subscriptions', [checkJwt, checkRole(['SUPER_ADMIN'])], getAllSubscriptions);
-router.post('/subscriptions/add', [checkJwt, checkRole(['SUPER_ADMIN']), upload.single('upload')], addSubscription);
-router.put('/subscriptions/edit/:id', [checkJwt, checkRole(['SUPER_ADMIN']), upload.single('upload')], updateSubscription);
+router.post('/subscriptions/add', [checkJwt, checkRole(['SUPER_ADMIN']), upload.single('upload') as any], addSubscription);
+router.put('/subscriptions/edit/:id', [checkJwt, checkRole(['SUPER_ADMIN']), upload.single('upload') as any], updateSubscription);
 router.get('/subscriptions/getDetails/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], getDetailsSubscription);
 
 router.post('/packages/add', [checkJwt, checkRole(['SUPER_ADMIN'])], addPackage);
@@ -188,5 +191,9 @@ router.get('/ratings/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], getAllRatings
 router.put('/ratings/edit/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], updateRating);
 
 router.get('/dashboard', [checkJwt, checkRole(['SUPER_ADMIN'])], main);
+
+router.get('/registration-requests', [checkJwt, checkRole(['SUPER_ADMIN'])], getAllRegistrationRequests);
+router.post('/approve/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], approveRegistrationRequest);
+router.post('/reject/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], rejectRegistrationRequest);
 
 export default router;

@@ -40,6 +40,12 @@ export class PharmacyEntity {
   })
   zipCode: string;
 
+  @Column({ default: 0 })
+  maxPharmacists: number;
+
+  @Column({ default: 0 })
+  maxPreparers: number;
+
   @Column()
   @CreateDateColumn()
   createdAt: Date;

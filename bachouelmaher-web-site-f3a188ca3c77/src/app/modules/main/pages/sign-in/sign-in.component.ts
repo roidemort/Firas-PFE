@@ -21,6 +21,7 @@ export class SignInComponent {
   handleError = false;
   handleErrorResponse = false;
   handleResponse = false;
+  serverMessage = '';
   user: any
   constructor(
     private router: Router,
@@ -36,7 +37,7 @@ export class SignInComponent {
   }
 
   ngOnInit() {
-    if(this.authService.isAuthenticated()){
+    if (this.authService.isAuthenticated()) {
       this.router.navigate(['/notre-plateforme/cours'])
     }
     this.isLoading = false
@@ -54,13 +55,14 @@ export class SignInComponent {
     this.handleResponse = false;
     this.handleErrorResponse = false;
   }
-  
+
   getAlertMessage(): string {
     if (this.handleErrorResponse) return 'Vous n\'êtes pas autorisé à vous connecter.';
+    if (this.handleResponse && this.serverMessage) return this.serverMessage;
     if (this.handleResponse) return 'Email ou mot de passe incorrect';
     return 'Une erreur s\'est produite';
   }
-  
+
   closeAlert() {
     this.resetAlerts();
   }
@@ -68,12 +70,12 @@ export class SignInComponent {
   onSubmit() {
     this.resetAlerts();
     this.markAllAsTouched();
-  
+
     if (this.loginForm.invalid) return;
-  
+
     this.isLoading = true;
     const { email, password, remember } = this.loginForm.value;
-  
+
     this.authService.login(email, password).subscribe({
       next: (res) => {
         if (res.status) {
@@ -81,12 +83,13 @@ export class SignInComponent {
             this.handleErrorResponse = true;
           } else {
             const user = { token: res.data.token, ...res.data.user };
-            if(!remember) this.localStorageService.setOurStorage(sessionStorage);
+            if (!remember) this.localStorageService.setOurStorage(sessionStorage);
             this.localStorageService.setItem('user', user);
             this.router.navigate(['/notre-plateforme/cours'])
           }
         } else {
           this.handleResponse = true;
+          this.serverMessage = res.message || '';
         }
         this.isLoading = false;
       },

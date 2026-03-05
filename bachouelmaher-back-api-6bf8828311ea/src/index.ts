@@ -24,9 +24,9 @@ AppDataSource.initialize()
 
     const serverAdapter: any = new ExpressAdapter();
     serverAdapter.setBasePath('/ui');
-    const queueAdapter = new BullMQAdapter(emailBullMq, { readOnlyMode: true });
+    const queueAdapter = new BullMQAdapter(emailBullMq as any, { readOnlyMode: true });
     createBullBoard({
-      queues: [queueAdapter],
+      queues: [queueAdapter] as any,
       serverAdapter,
       options: {
         uiConfig: {
@@ -36,7 +36,7 @@ AppDataSource.initialize()
             width: '50px',
             height: "50px",
           },
-          miscLinks: [{text: 'Logout', url: '/logout'}],
+          miscLinks: [{ text: 'Logout', url: '/logout' }],
           favIcon: {
             default: 'static/images/logo.svg',
             alternative: 'static/favicon-32x32.png',

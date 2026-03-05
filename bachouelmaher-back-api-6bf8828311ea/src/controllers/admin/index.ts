@@ -14,3 +14,4 @@ export * from './capsules';
 export * from './subscriptions';
 export * from './ratings';
 export * from './trends';
+export * from './registration-requests';

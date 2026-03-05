@@ -1,27 +1,50 @@
 <section class="relative h-[82vh]">
-    <div
-        class="w-full flex flex-col items-start gap-y-4 pb-4 border-b border-[#88BFBF] sm:-mt-4">
-        <h1 class="font-semibold text-2xl text-secondaryfontColor">Mon Équipe</h1>
-        <!-- <button type="button"
-            class="border-2 flex items-center gap-4 hover:bg-[#23BAC4] hover:text-[#e8fbfb] border-[#23BAC4] rounded-[40px] text-sm text-center px-[30px] py-[10px] text-[#23BAC4] transition duration-300 ease-in-out cursor-pointer group">
-            <div class="relative">
-                <img class="relative z-[2]" src="assets/images/add.svg" alt="icon-add">
-                <img class="absolute top-0 transition duration-300 ease-in-out group-hover:z-[3]"
-                    src="assets/images/add-2.svg" alt="icon-add-2">
+    <div class="w-full flex flex-col items-start gap-y-4 pb-4 border-b border-[#88BFBF] sm:-mt-4">
+        <div class="w-full flex items-center justify-between">
+            <h1 class="font-semibold text-2xl text-secondaryfontColor">Mon Équipe</h1>
+            <button *ngIf="canAddAnyMember()" type="button" (click)="openAddModal()"
+                class="border-2 flex items-center gap-3 hover:bg-[#23BAC4] hover:text-[#e8fbfb] border-[#23BAC4] rounded-[40px] text-sm text-center px-[24px] py-[10px] text-[#23BAC4] transition duration-300 ease-in-out cursor-pointer">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Ajouter un membre
+            </button>
+        </div>
+        <!-- Team limits info -->
+        <div *ngIf="teamLimits" class="w-full flex flex-wrap gap-4">
+            <div class="text-sm text-[#88BFBF] bg-[#19272A] px-4 py-2 rounded-lg">
+                Pharmaciens : <span class="font-bold text-white">{{ teamLimits.pharmacists.current }}</span> / {{
+                teamLimits.pharmacists.max }}
+                <span *ngIf="teamLimits.pharmacists.remaining > 0" class="text-secondaryfontColor ml-1">({{
+                    teamLimits.pharmacists.remaining }} restant{{ teamLimits.pharmacists.remaining > 1 ? 's' : ''
+                    }})</span>
             </div>
-            Ajouter un nouvel employé
-        </button> -->
-        <!-- <p *ngIf="maxUsers == 1 && !isLoading" class="text-red-500">NB : Si vous ajoutez un membre à l'abonnement, vous ne pourrez pas le retirer de cet abonnement. Merci de bien vérifier avant d'ajouter un membre.</p> -->
-        <p *ngIf="maxUsers > 1" class="w-full text-red-500 pl-6 pr-6 py-4 bg-[#05989f47] border-l-4 border-[#05989f] rounded-lg text-sm md:text-base flex items-center gap-2">
+            <div class="text-sm text-[#88BFBF] bg-[#19272A] px-4 py-2 rounded-lg">
+                Préparateurs : <span class="font-bold text-white">{{ teamLimits.preparers.current }}</span> / {{
+                teamLimits.preparers.max }}
+                <span *ngIf="teamLimits.preparers.remaining > 0" class="text-secondaryfontColor ml-1">({{
+                    teamLimits.preparers.remaining }} restant{{ teamLimits.preparers.remaining > 1 ? 's' : '' }})</span>
+            </div>
+        </div>
+        <p *ngIf="maxUsers > 1"
+            class="w-full text-red-500 pl-6 pr-6 py-4 bg-[#05989f47] border-l-4 border-[#05989f] rounded-lg text-sm md:text-base flex items-center gap-2">
             <img src="assets/images/warning-icon.svg" alt="Warning" class="w-5 h-5 font-bold">
-            <span>Si vous ajoutez un membre à l'abonnement, vous ne pourrez pas le retirer. Merci de bien vérifier avant d'ajouter un membre.</span>
+            <span>Si vous ajoutez un membre à l'abonnement, vous ne pourrez pas le retirer. Merci de bien vérifier avant
+                d'ajouter un membre.</span>
         </p>
     </div>
-    <div *ngIf="maxUsers > 1 && !isMaxUsersSubscribed()" class="mt-4 text-sm md:text-base text-white p-4 bg-[#d1fa9469] rounded-lg border-l-4 border-secondaryfontColor">
-        <p>Il reste encore <span class="font-bold text-secondaryfontColor">{{maxUsers - checkedMembers.size}}</span> places disponibles.</p>
+    <div *ngIf="maxUsers > 1 && !isMaxUsersSubscribed()"
+        class="mt-4 text-sm md:text-base text-white p-4 bg-[#d1fa9469] rounded-lg border-l-4 border-secondaryfontColor">
+        <p>Il reste encore <span class="font-bold text-secondaryfontColor">{{maxUsers - checkedMembers.size}}</span>
+            places disponibles.</p>
     </div>
-    <div *ngIf="isMaxUsersSubscribed()" (click)="goToSubscription()" class="group cursor-pointer mt-4 text-sm md:text-base text-[#774747] bg-[#f9f1f1] p-4 rounded-lg border-l-4 border-[#e36161]">
-        <p>La limite de <strong> {{ maxUsers }}</strong> membres atteinte. <span *ngIf="myTeam.length > checkedMembers.size"> Vous avez <strong>  {{ myTeam?.length - maxUsers }} </strong>  membres sans accès. <span class="group-hover:underline"> Cliquez ici pour mettre à niveau votre abonnement et en ajouter d'autres. </span> </span> </p>
+    <div *ngIf="isMaxUsersSubscribed()" (click)="goToSubscription()"
+        class="group cursor-pointer mt-4 text-sm md:text-base text-[#774747] bg-[#f9f1f1] p-4 rounded-lg border-l-4 border-[#e36161]">
+        <p>La limite de <strong> {{ maxUsers }}</strong> membres atteinte. <span
+                *ngIf="myTeam.length > checkedMembers.size"> Vous avez <strong> {{ myTeam?.length - maxUsers }}
+                </strong> membres sans accès. <span class="group-hover:underline"> Cliquez ici pour mettre à niveau
+                    votre abonnement et en ajouter d'autres. </span> </span> </p>
     </div>
     <div class="mt-8">
         <form class="space-y-4" [formGroup]="filterForm" (ngSubmit)="onSubmit()">
@@ -59,7 +82,8 @@
                             <img src="assets/images/arrow-solid-Down.png" alt="select icon" />
                         </div>
                     </div> -->
-                    <div *ngIf="isFilter" (click)="resetFilter()" class="flex items-center gap-2 text-[#88BFBF] hover:text-[#366464] cursor-pointer">
+                    <div *ngIf="isFilter" (click)="resetFilter()"
+                        class="flex items-center gap-2 text-[#88BFBF] hover:text-[#366464] cursor-pointer">
                         <p class="underline">Reset Filter</p>
                     </div>
                 </div>
@@ -74,24 +98,33 @@
                     <tr>
                         <th scope="col" class="pl-10 pr-6 py-8 md:px-6 md:py-4 xl:w-2/5">
                             <div class="flex items-center gap-x-2">
-                                <input *ngIf="count > 0 && maxUsers > 1" class="!ring-transparent cursor-pointer has-subscription"
-                                    [ngClass]="{'!cursor-not-allowed': getAllMembresSubscribed() && (isMaxUsersReached() || areAllMembersSubscribed() || areAllMembers())}" type="checkbox"
-                                    [(ngModel)]="selectAll" [disabled]="getAllMembresSubscribed() && (isMaxUsersReached() || areAllMembersSubscribed() || areAllMembers())"
+                                <input *ngIf="count > 0 && maxUsers > 1"
+                                    class="!ring-transparent cursor-pointer has-subscription"
+                                    [ngClass]="{'!cursor-not-allowed': getAllMembresSubscribed() && (isMaxUsersReached() || areAllMembersSubscribed() || areAllMembers())}"
+                                    type="checkbox" [(ngModel)]="selectAll"
+                                    [disabled]="getAllMembresSubscribed() && (isMaxUsersReached() || areAllMembersSubscribed() || areAllMembers())"
                                     [checked]="areAllMembersSubscribed() || areAllMembers()" (change)="toggleAll()" />
                                 <p class="">Nom et profession</p>
                             </div>
                         </th>
-                        <th scope="col" class="cursor-pointer select-none py-1 px-6 sm:py-4" (click)="sortByCours()">Cours
-                            <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="{'rotate-180': !sortCours, 'rotate-0': sortCours}"
-                                width="16" height="16" fill="currentColor" class="inline-block" viewBox="0 0 16 16">
-                                <path d="M4.646 6.646a.5.5 0 0 1 .708 0L8 9.293l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z" />
+                        <th scope="col" class="cursor-pointer select-none py-1 px-6 sm:py-4" (click)="sortByCours()">
+                            Cours
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                [ngClass]="{'rotate-180': !sortCours, 'rotate-0': sortCours}" width="16" height="16"
+                                fill="currentColor" class="inline-block" viewBox="0 0 16 16">
+                                <path
+                                    d="M4.646 6.646a.5.5 0 0 1 .708 0L8 9.293l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z" />
                             </svg>
                         </th>
-                        
-                        <th scope="col" class="select-none cursor-pointer py-1 px-1 sm:py-4 md:flex items-center gap-x-2" (click)="sortByQuiz()">Score<img src="assets/images/help-circle.svg" alt="help">
-                            <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="{'rotate-180': !sortOuiz, 'rotate-0': sortOuiz}"
-                                width="16" height="16" fill="currentColor" class="inline-block" viewBox="0 0 16 16">
-                                <path d="M4.646 6.646a.5.5 0 0 1 .708 0L8 9.293l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z" />
+
+                        <th scope="col"
+                            class="select-none cursor-pointer py-1 px-1 sm:py-4 md:flex items-center gap-x-2"
+                            (click)="sortByQuiz()">Score<img src="assets/images/help-circle.svg" alt="help">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                [ngClass]="{'rotate-180': !sortOuiz, 'rotate-0': sortOuiz}" width="16" height="16"
+                                fill="currentColor" class="inline-block" viewBox="0 0 16 16">
+                                <path
+                                    d="M4.646 6.646a.5.5 0 0 1 .708 0L8 9.293l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z" />
                             </svg>
                         </th>
                         <!-- <th scope="col" class="py-1 px-1 sm:py-4">Indice de réussite du quiz</th> -->
@@ -100,12 +133,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <ng-container *ngIf="count > 0 && maxUsers > 1 else noUsers">
+                    <ng-container *ngIf="count > 0 else noUsers">
                         <tr *ngFor="let membre of myTeam;let i = index"
                             class="bg-transparent border-b border-[#366464]">
                             <th scope="row" class="pl-10 pr-20 py-8 md:px-6 md:py-4 font-medium whitespace-nowrap">
                                 <div class="flex items-center gap-x-4">
-                                    <input class="!ring-transparent cursor-pointer" [ngClass]="{'has-subscription': hasSubscription(membre),
+                                    <input class="!ring-transparent cursor-pointer"
+                                        [ngClass]="{'has-subscription': hasSubscription(membre),
                                         '!cursor-not-allowed': (isMaxUsersReached() && !isChecked(membre)) || hasSubscription(membre)}" type="checkbox"
                                         [checked]="isChecked(membre)" (change)="toggleMembre(membre)"
                                         [disabled]="(isMaxUsersReached() && !isChecked(membre)) || hasSubscription(membre)" />
@@ -151,7 +185,10 @@
                     </ng-template>
                 </tbody>
             </table>
-            <p (click)="goToSubscription()" *ngIf="maxUsers == 1 && !isLoading" class="cursor-pointer underline text-red-600 pl-10 pr-6 py-8 md:px-6 md:py-4">Votre abonnement est gratuit. Vous devez souscrire à un abonnement payant pour pouvoir ajouter des membres à cet abonnement.</p>
+            <p (click)="goToSubscription()" *ngIf="maxUsers == 1 && !isLoading"
+                class="cursor-pointer underline text-red-600 pl-10 pr-6 py-8 md:px-6 md:py-4">Votre abonnement est
+                gratuit. Vous devez souscrire à un abonnement payant pour pouvoir ajouter des membres à cet abonnement.
+            </p>
         </div>
     </div>
     <div class="w-full flex justify-end py-4">
@@ -167,10 +204,93 @@
     </div>
 
 
-  
+
 
     <app-alert [handleError]="handleError" [handleResponse]="handleResponse" [handleErrorResponse]="handleErrorResponse"
         [alertMessage]="alertMessage"></app-alert>
 </section>
 
 <app-loader-main *ngIf="isLoading"></app-loader-main>
+
+<!-- Add Member Modal -->
+<div *ngIf="showAddModal" class="fixed inset-0 z-50 flex items-center justify-center">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-black bg-opacity-60" (click)="closeAddModal()"></div>
+
+    <!-- Modal Content -->
+    <div class="relative bg-[#101E2D] border border-[#366464] rounded-2xl p-8 w-full max-w-md mx-4 shadow-2xl">
+        <!-- Close button -->
+        <button (click)="closeAddModal()" class="absolute top-4 right-4 text-[#88BFBF] hover:text-white transition">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+
+        <h2 class="text-xl font-semibold text-secondaryfontColor mb-6">Ajouter un membre</h2>
+
+        <!-- Success / Error message -->
+        <div *ngIf="addMemberMessage" class="mb-4 p-3 rounded-lg text-sm"
+            [ngClass]="addMemberSuccess ? 'bg-green-900/30 border border-green-600 text-green-400' : 'bg-red-900/30 border border-red-600 text-red-400'">
+            {{ addMemberMessage }}
+        </div>
+
+        <form [formGroup]="addMemberForm" (ngSubmit)="onAddMember()" class="space-y-4">
+            <!-- Email -->
+            <div>
+                <label class="block text-sm text-[#88BFBF] mb-1">Email *</label>
+                <input type="email" formControlName="email" placeholder="email@exemple.com"
+                    class="w-full bg-[#19272A] border border-[#366464] rounded-xl px-4 py-3 text-white placeholder-[#4a6b6b] focus:ring-[#23BAC4] focus:border-[#23BAC4] outline-none transition" />
+                <p *ngIf="addMemberForm.get('email')?.invalid && addMemberForm.get('email')?.touched"
+                    class="text-red-400 text-xs mt-1">
+                    Veuillez entrer un email valide.
+                </p>
+            </div>
+
+            <!-- First Name -->
+            <div>
+                <label class="block text-sm text-[#88BFBF] mb-1">Prénom *</label>
+                <input type="text" formControlName="firstName" placeholder="Prénom"
+                    class="w-full bg-[#19272A] border border-[#366464] rounded-xl px-4 py-3 text-white placeholder-[#4a6b6b] focus:ring-[#23BAC4] focus:border-[#23BAC4] outline-none transition" />
+            </div>
+
+            <!-- Last Name -->
+            <div>
+                <label class="block text-sm text-[#88BFBF] mb-1">Nom *</label>
+                <input type="text" formControlName="lastName" placeholder="Nom"
+                    class="w-full bg-[#19272A] border border-[#366464] rounded-xl px-4 py-3 text-white placeholder-[#4a6b6b] focus:ring-[#23BAC4] focus:border-[#23BAC4] outline-none transition" />
+            </div>
+
+            <!-- Role -->
+            <div>
+                <label class="block text-sm text-[#88BFBF] mb-1">Rôle *</label>
+                <select formControlName="role"
+                    class="w-full bg-[#19272A] border border-[#366464] rounded-xl px-4 py-3 text-white focus:ring-[#23BAC4] focus:border-[#23BAC4] outline-none transition">
+                    <option value="" disabled selected class="text-[#4a6b6b]">Sélectionner un rôle</option>
+                    <option value="PHARMACIST" [disabled]="!canAddRole('PHARMACIST')">
+                        Pharmacien {{ teamLimits ? '(' + getRemainingSlots('PHARMACIST') + ' restant' +
+                        (getRemainingSlots('PHARMACIST') > 1 ? 's' : '') + ')' : '' }}
+                    </option>
+                    <option value="PREPARER" [disabled]="!canAddRole('PREPARER')">
+                        Préparateur {{ teamLimits ? '(' + getRemainingSlots('PREPARER') + ' restant' +
+                        (getRemainingSlots('PREPARER') > 1 ? 's' : '') + ')' : '' }}
+                    </option>
+                </select>
+            </div>
+
+            <!-- Submit button -->
+            <div class="pt-2">
+                <button type="submit" [disabled]="addMemberForm.invalid || isSubmitting"
+                    class="w-full bg-[#23BAC4] hover:bg-[#1a9da6] disabled:bg-[#366464] disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-xl transition duration-300 flex items-center justify-center gap-2">
+                    <svg *ngIf="isSubmitting" class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                    </svg>
+                    {{ isSubmitting ? 'Envoi en cours...' : 'Ajouter et envoyer l\'invitation' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
