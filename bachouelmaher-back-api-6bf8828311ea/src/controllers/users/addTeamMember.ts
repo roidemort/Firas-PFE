@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { Equal } from 'typeorm';
+import { Equal, Not, IsNull } from 'typeorm';
 import { findUser, createUser } from '@/services/user.service';
 import { createPharmacyUser, countPharmaciesUsers, findPharmacyUser } from '@/services/pharmacy.service';
 import { emailBullMq } from '@/queues/email.queue';
@@ -42,6 +42,7 @@ export const addTeamMember = async (
         const currentCount = await countPharmaciesUsers({
             pharmacy: { id: Equal(pharmacy.id) },
             role: Equal(role),
+            userId: Not(IsNull()),
         });
 
         // Check limits
@@ -166,11 +167,13 @@ export const getTeamLimits = async (
         const currentPharmacists = await countPharmaciesUsers({
             pharmacy: { id: Equal(pharmacy.id) },
             role: Equal('PHARMACIST'),
+            userId: Not(IsNull()),
         });
 
         const currentPreparers = await countPharmaciesUsers({
             pharmacy: { id: Equal(pharmacy.id) },
             role: Equal('PREPARER'),
+            userId: Not(IsNull()),
         });
 
         return res.customSuccess(200, 'Team limits.', {
