@@ -6,8 +6,8 @@ import {
   saveRegistrationRequest,
   createRegistrationRequest
 } from "@/services/registration-request.service"
-import { createPharmacy, createPharmacyUser } from "@/services/pharmacy.service"
-import { createUser } from "@/services/user.service"
+import { createPharmacy, createPharmacyUser, findPharmacy } from "@/services/pharmacy.service"
+import { createUser, findUserByEmail } from "@/services/user.service"
 import { emailBullMq } from "@/queues/email.queue"
 import { Equal } from "typeorm"
 import pick from "@/utils/pick"
@@ -59,6 +59,18 @@ export const approveRegistrationRequest = async (
       return res.customSuccess(200, 'Request already processed', {}, false);
     }
 
+    // Check for duplicate user email
+    const existingUser = await findUserByEmail(request.pharmacyEmail.toLowerCase());
+    if (existingUser) {
+      return res.customSuccess(200, 'Un utilisateur avec cet email existe déjà.', {}, false);
+    }
+
+    // Check for duplicate pharmacy email
+    const existingPharmacy = await findPharmacy({ email: request.pharmacyEmail.toLowerCase() });
+    if (existingPharmacy) {
+      return res.customSuccess(200, 'Une pharmacie avec cet email existe déjà.', {}, false);
+    }
+
     // Generate secure 20-byte setup token
     const setupToken = crypto.randomBytes(20).toString('hex');
     const setupTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
@@ -84,6 +96,15 @@ export const approveRegistrationRequest = async (
       provider: 'local',
       setupToken: setupToken,
       setupTokenExpires: setupTokenExpires,
+    });
+
+    // Create pharmacy user key for the titulaire (owner) — links user to pharmacy
+    await createPharmacyUser({
+      pharmacy: pharmacy,
+      role: 'PHARMACIST_HOLDER',
+      status: 1,
+      userId: user.id,
+      user: user,
     });
 
     // Create pharmacy user keys for pharmacists
