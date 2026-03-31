@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { NgClass, NgIf } from '@angular/common';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import {AuthService} from "../../../../core/services/auth.service";
@@ -12,7 +12,7 @@ import {LocalStorageService} from "../../../../core/services/localstorage.servic
   templateUrl: './sign-in.component.html',
   styleUrls: ['./sign-in.component.scss'],
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, RouterLink, AngularSvgIconModule, NgClass, NgIf],
+  imports: [FormsModule, ReactiveFormsModule, AngularSvgIconModule, NgClass, NgIf],
 })
 export class SignInComponent implements OnInit {
   form!: FormGroup;

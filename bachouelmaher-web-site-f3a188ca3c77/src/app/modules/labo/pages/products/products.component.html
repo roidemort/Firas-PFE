@@ -1,0 +1,90 @@
+<div class="min-h-screen bg-background">
+  <!-- Navbar -->
+  <nav class="border-b border-muted/20 bg-card px-6 py-4 flex items-center justify-between">
+    <h1 class="text-lg font-bold text-foreground">Tableau de bord Laboratoire</h1>
+    <div class="flex gap-3">
+      <button (click)="goToOrders()" class="text-sm font-medium text-primary hover:underline">Commandes</button>
+      <a routerLink="/labo/dashboard/courses" class="text-sm font-medium text-primary hover:underline">Formations</a>
+      <a routerLink="/labo/dashboard/suggestions" class="text-sm font-medium text-primary hover:underline">Suggestions</a>
+      <a routerLink="/labo/dashboard/chat" class="text-sm font-medium text-primary hover:underline">
+        Chat
+        <span *ngIf="chatUnreadCount > 0" class="ml-1 rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] text-white">{{ chatUnreadCount }}</span>
+      </a>
+    </div>
+  </nav>
+
+  <div class="mx-auto max-w-6xl px-4 py-6">
+    <div class="mb-4 flex items-center justify-between">
+      <div>
+        <h2 class="text-xl font-semibold text-foreground">Mes produits</h2>
+        <p class="text-sm text-muted-foreground">{{ totalCount }} produit(s) au total</p>
+      </div>
+      <button (click)="addProduct()"
+              class="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90">
+        <svg-icon src="assets/icons/heroicons/outline/plus.svg" [svgClass]="'h-4 w-4'"></svg-icon>
+        Ajouter un produit
+      </button>
+    </div>
+
+    <div class="rounded-xl border border-muted/20 bg-card">
+      <app-loader *ngIf="isLoading"></app-loader>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <thead class="border-b border-muted/20 text-xs text-muted-foreground">
+            <tr>
+              <th class="px-4 py-3">Image</th>
+              <th class="px-4 py-3">Nom</th>
+              <th class="px-4 py-3">Prix (coins)</th>
+              <th class="px-4 py-3">Stock</th>
+              <th class="px-4 py-3">Statut</th>
+              <th class="px-4 py-3">Créé le</th>
+              <th class="px-4 py-3"></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (product of products(); track product.id) {
+              <tr class="border-b border-muted/10 hover:bg-muted/5">
+                <td class="px-4 py-3">
+                  <img *ngIf="product.img_link" [src]="product.img_link" class="h-10 w-10 rounded object-cover">
+                  <div *ngIf="!product.img_link" class="h-10 w-10 rounded bg-muted/20 flex items-center justify-center">
+                    <svg-icon src="assets/icons/heroicons/outline/photo.svg" [svgClass]="'h-5 w-5 text-muted-foreground'"></svg-icon>
+                  </div>
+                </td>
+                <td class="px-4 py-3 font-medium text-foreground">{{ product.name }}</td>
+                <td class="px-4 py-3">{{ product.price }} <span class="text-xs text-muted-foreground">coins</span></td>
+                <td class="px-4 py-3">{{ product.stock }}</td>
+                <td class="px-4 py-3">
+                  <span [class]="product.status === 1 ? 'text-green-600' : 'text-red-500'" class="text-xs font-medium">
+                    {{ product.status === 1 ? 'Actif' : 'Inactif' }}
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-muted-foreground">{{ product.createdAt | date:'dd-MM-yyyy' }}</td>
+                <td class="px-4 py-3">
+                  <button (click)="editProduct(product.id)"
+                          class="rounded p-1.5 text-primary hover:bg-primary/10">
+                    <svg-icon src="assets/icons/heroicons/outline/pencil-square.svg" [svgClass]="'h-4 w-4'"></svg-icon>
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7" class="py-8 text-center text-muted-foreground">Aucun produit trouvé</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="flex items-center justify-between px-4 py-3 text-sm text-muted-foreground">
+        <span>Page {{ currentPage }} de {{ totalPages }}</span>
+        <div class="flex gap-2">
+          <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 1"
+                  class="rounded px-2 py-1 hover:bg-muted/10 disabled:opacity-40">Précédent</button>
+          <button (click)="changePage(currentPage + 1)" [disabled]="currentPage === totalPages"
+                  class="rounded px-2 py-1 hover:bg-muted/10 disabled:opacity-40">Suivant</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

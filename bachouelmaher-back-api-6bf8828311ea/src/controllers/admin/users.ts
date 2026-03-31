@@ -13,7 +13,7 @@ import pick from "@/utils/pick"
 import { IOptions, IQuery } from "@/interfaces/IOptions"
 import { organize } from "@/utils/organize"
 import RedisService from "@/services/redis.service"
-import { And, Equal, In, Not } from "typeorm"
+import { And, Equal, In, Like, Not } from "typeorm"
 import { emailBullMq } from "@/queues/email.queue"
 import { findPharmacyUser, savePharmacyUser } from "@/services/pharmacy.service"
 import cloudinary from "@/adapters/cloudinary"
@@ -31,6 +31,7 @@ import { findCourseById } from "@/services/course.service"
 import {
   countConversations,
   createConversation,
+  findConversationById,
   findConversations,
   queryConversations, saveConversation
 } from "@/services/conversation.service"
@@ -348,6 +349,138 @@ export const getConversation = async (
     return  res.customSuccess(200, 'Error', {}, false);
   }
 };
+
+export const getChatRepliesModeration = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const rawStatus = String(req.query.status || 'ACTIVE').toUpperCase();
+  const laboId = req.query.laboId ? String(req.query.laboId) : '';
+  const courseId = req.query.courseId ? String(req.query.courseId) : '';
+  const text = req.query.text ? String(req.query.text).trim() : '';
+
+  try {
+    const options: IOptions = pick(req.query, ['take', 'page']);
+    const params = organize({}, options);
+
+    const query: any = {
+      sender: { role: Equal('LABO') },
+    };
+
+    if (rawStatus === 'ACTIVE') {
+      query.isHidden = false;
+      query.isDeleted = false;
+    } else if (rawStatus === 'HIDDEN') {
+      query.isHidden = true;
+      query.isDeleted = false;
+    } else if (rawStatus === 'DELETED') {
+      query.isDeleted = true;
+    }
+
+    if (laboId) {
+      query.labo = { id: Equal(laboId) };
+    }
+
+    if (courseId) {
+      query.course = { id: Equal(courseId) };
+    }
+
+    if (text) {
+      query.content = Like(`%${text}%`);
+    }
+
+    params.order = { createdAt: 'DESC' };
+    params.relations = ['sender', 'receiver', 'course', 'labo', 'parent', 'moderatedBy'];
+    params.query = query;
+
+    const replies = await queryConversations(params);
+    const count = await countConversations(query);
+
+    return res.customSuccess(200, 'List of chat replies for moderation.', { replies, count }, true);
+  } catch (err) {
+    return res.customSuccess(200, 'Error', {}, false);
+  }
+};
+
+const moderateChatReply = async (
+  req: Request,
+  res: Response,
+  action: 'HIDE' | 'DELETE' | 'RESTORE'
+) => {
+  const { id: adminId } = req.jwtPayload;
+  const replyId = req.params.id;
+
+  try {
+    const adminUser = await findUserById(adminId, {}, { id: true });
+    const reply = await findConversationById(replyId, ['parent', 'sender', 'labo', 'course']);
+
+    // We only moderate LABO replies, never the root pharmacist question.
+    if (!adminUser || !reply || !reply.parent || !reply.sender || reply.sender.role !== 'LABO') {
+      return res.customSuccess(200, 'Error', {}, false);
+    }
+
+    if (action === 'HIDE') {
+      reply.isHidden = true;
+      reply.isDeleted = false;
+    }
+
+    if (action === 'DELETE') {
+      reply.isHidden = true;
+      reply.isDeleted = true;
+    }
+
+    if (action === 'RESTORE') {
+      reply.isHidden = false;
+      reply.isDeleted = false;
+    }
+
+    reply.moderatedAt = new Date();
+    reply.moderatedBy = adminUser as any;
+
+    await saveConversation(reply);
+
+    await createNotification({
+      type: 'message',
+      receiver: reply.sender,
+      sender: adminUser as any,
+      title: 'Moderation de reponse',
+      content: `Votre reponse sur la formation "${reply.course?.title || ''}" a ete ${
+        action === 'HIDE' ? 'masquee' : action === 'DELETE' ? 'supprimee' : 'restauree'
+      } par l'administrateur.`,
+      status: 1,
+    });
+
+    return res.customSuccess(200, 'Reply moderation updated.', { reply }, true);
+  } catch (err) {
+    return res.customSuccess(200, 'Error', {}, false);
+  }
+};
+
+export const hideChatReply = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  return moderateChatReply(req, res, 'HIDE');
+};
+
+export const deleteChatReply = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  return moderateChatReply(req, res, 'DELETE');
+};
+
+export const restoreChatReply = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  return moderateChatReply(req, res, 'RESTORE');
+};
+
 export const addConversation = async (
   req: Request,
   res: Response,

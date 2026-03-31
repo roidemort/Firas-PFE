@@ -33,6 +33,11 @@ export class Menu {
           route: '/admin985xilinp/dashboard/registration-requests',
         },
         {
+          icon: 'assets/icons/heroicons/outline/shield-check.svg',
+          label: 'Moderation chat labo',
+          route: '/admin985xilinp/dashboard/chat-moderation',
+        },
+        {
           icon: 'assets/icons/heroicons/outline/banknotes.svg',
           label: 'Liste des partenaires',
           route: '/admin985xilinp/dashboard/partners',

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import packageJson from '../../../../../../package.json';
 import { MenuService } from '../../services/menu.service';
-import { RouterLink } from '@angular/router';
 import { SidebarMenuComponent } from './sidebar-menu/sidebar-menu.component';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { NgClass, NgIf } from '@angular/common';
@@ -11,7 +10,7 @@ import { NgClass, NgIf } from '@angular/common';
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
   standalone: true,
-  imports: [NgClass, NgIf, AngularSvgIconModule, SidebarMenuComponent, RouterLink],
+  imports: [NgClass, NgIf, AngularSvgIconModule, SidebarMenuComponent],
 })
 export class SidebarComponent implements OnInit {
   public appJson: any = packageJson;

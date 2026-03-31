@@ -11,7 +11,7 @@
       <div class="p-4 text-right">
         <p class="block antialiased font-sans text-sm leading-normal font-normal text-foreground">Nouveaux utilisateurs</p>
         <h4 class="block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-foreground">
-          +{{newUsersData?.length || 0}} ({{usersDateFilter === '7days' ? '7 derniers jours' : '30 derniers jours'}})
+          +{{newUsersData.length || 0}} ({{usersDateFilter === '7days' ? '7 derniers jours' : '30 derniers jours'}})
         </h4>
       </div>
       <div class="border-t border-gray-100 p-4">
@@ -31,7 +31,7 @@
       <div class="p-4 text-right">
         <p class="block antialiased font-sans text-sm leading-normal font-normal text-foreground">Nouvelles pharmacies</p>
         <h4 class="block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-foreground">
-          +{{newPharmaciesData?.length || 0}} ce mois
+          +{{newPharmaciesData.length || 0}} ce mois
         </h4>
       </div>
       <div class="border-t border-gray-100 p-4">
@@ -51,7 +51,7 @@
       <div class="p-4 text-right">
         <p class="block antialiased font-sans text-sm leading-normal font-normal text-foreground">Cycle de vie des clés</p>
         <h4 class="block antialiased tracking-normal font-sans text-2xl font-semibold leading-snug text-foreground">
-          {{usedKeysCount}}/{{keyLifecycleData?.length || 0}} utilisées
+          {{usedKeysCount}}/{{keyLifecycleData.length || 0}} utilisées
         </h4>
       </div>
       <div class="border-t border-gray-100 p-4">
@@ -324,7 +324,7 @@
           <div class="flex items-center justify-between">
             <div>
               <p class="text-sm font-medium text-purple-800">Cours</p>
-              <p class="text-2xl font-bold text-purple-900">{{coursesData?.length || 0}}</p>
+              <p class="text-2xl font-bold text-purple-900">{{coursesData.length || 0}}</p>
             </div>
             <svg class="w-8 h-8 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
               <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
@@ -616,7 +616,7 @@
         <div class="mt-4 pt-4 border-t border-gray-200">
           <div class="flex justify-between items-center">
             <div class="text-sm text-gray-600">
-              Total: {{keyLifecycleData?.length || 0}} clés
+              Total: {{keyLifecycleData.length || 0}} clés
             </div>
             <div class="text-sm flex items-center gap-2">
               <div class="flex items-center gap-1">
@@ -626,7 +626,7 @@
               <span class="mx-2">•</span>
               <div class="flex items-center gap-1">
                 <div class="w-2 h-2 rounded-full bg-gray-400"></div>
-                <span class="font-medium text-gray-600">{{(keyLifecycleData?.length || 0) - usedKeysCount}} non utilisées</span>
+                <span class="font-medium text-gray-600">{{(keyLifecycleData.length || 0) - usedKeysCount}} non utilisées</span>
               </div>
             </div>
           </div>

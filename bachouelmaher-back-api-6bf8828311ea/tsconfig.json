@@ -21,6 +21,7 @@
       "@http/*": ["src/http/*"],
       "@database/*": ["src/orm/*"]
     },
+    "skipLibCheck": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true
   },

@@ -3,7 +3,7 @@ import { UsersService } from "../../../../core/services/users.service";
 import { PharmaciesService } from "../../../../core/services/pharmacies.service";
 import { CoursesService } from "../../../../core/services/courses.service";
 import { toast } from "ngx-sonner";
-import { NgClass, NgIf, DatePipe, CommonModule } from "@angular/common";
+import { DatePipe, CommonModule } from "@angular/common";
 import { NgApexchartsModule } from 'ng-apexcharts';
 import {
   ChartOptions,
@@ -19,9 +19,7 @@ import { SubscriptionsService } from 'src/app/core/services/subscription.service
   templateUrl: './main.component.html',
   standalone: true,
   imports: [
-    NgIf,
     NgApexchartsModule,
-    NgClass,
     CommonModule,
     FormsModule,
     DatePipe
