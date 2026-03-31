@@ -47,8 +47,10 @@ import {TrendsComponent} from "./pages/trends/trends.component";
 import {ManageTrendComponent} from "./pages/manage/manage-trend/manage-trend.component";
 import {ManageAdvertisementComponent} from "./pages/manage/manage-advertisement/manage-advertisement.component";
 import {AdvertisementsComponent} from "./pages/advertisements/advertisements.component";
-import { RegistrationRequestsComponent } from "./pages/registration-requests/registration-requests.component";
-import { TitulaireDashboardComponent } from "./pages/titulaire-dashboard/titulaire-dashboard.component";
+import {LabosComponent} from "./pages/labos/labos.component";
+import {ManageLaboComponent} from "./pages/manage/manage-labo/manage-labo.component";
+import { LaboSuggestionsComponent } from './pages/labo-suggestions/labo-suggestions.component';
+import { ChatModerationComponent } from './pages/chat-moderation/chat-moderation.component';
 
 const routes: Routes = [
   {
@@ -59,13 +61,16 @@ const routes: Routes = [
       { path: 'main', component: MainComponent },
       { path: 'users', component: UsersComponent },
       { path: 'pharmacies', component: PharmaciesComponent },
-      { path: 'registration-requests', component: RegistrationRequestsComponent },
       { path: 'trends', component: TrendsComponent },
       { path: 'settings', component: SettingsComponent },
       { path: 'profile', component: ProfileComponent },
       { path: 'media', component: MediaComponent },
       { path: 'partners', component: PartnersComponent },
       { path: 'advertisements', component: AdvertisementsComponent },
+      { path: 'labos', component: LabosComponent },
+      { path: 'labo-suggestions', component: LaboSuggestionsComponent },
+      { path: 'chat-moderation', component: ChatModerationComponent },
+      { path: 'manage-labo', component: ManageLaboComponent },
       { path: 'categories', component: CategoriesComponent },
       { path: 'courses/list', component: CoursesComponent },
       { path: 'trainers', component: TrainersComponent },
@@ -103,7 +108,6 @@ const routes: Routes = [
       { path: 'subscriptions/packages', component: PackagesComponent },
       { path: 'subscriptions/manage-package', component: ManagePackageComponent },
       { path: 'subscriptions/manage-subscription', component: ManageSubscriptionComponent },
-      { path: 'titulaire-dashboard', component: TitulaireDashboardComponent },
       { path: '**', redirectTo: 'errors/404' },
     ],
   },

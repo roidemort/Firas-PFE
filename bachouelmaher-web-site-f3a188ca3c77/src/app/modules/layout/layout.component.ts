@@ -4,9 +4,7 @@ import { NavigationEnd, Router, RouterOutlet, Event } from '@angular/router';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import {AppComponent} from "../../app.component";
-import {MatButton} from "@angular/material/button";
 import {MatDrawer, MatDrawerContainer, MatDrawerContent} from "@angular/material/sidenav";
-import {SvgIconComponent} from "angular-svg-icon";
 import {ChatService} from "../../core/services/chat.service";
 import {LoaderComponent} from "../../shared/components/loader/loader.component";
 import {DatePipe, NgIf} from "@angular/common";
@@ -21,7 +19,7 @@ import {MatTooltip} from "@angular/material/tooltip";
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.scss'],
   standalone: true,
-  imports: [SidebarComponent, NavbarComponent, RouterOutlet, FooterComponent, MatButton, MatDrawer, MatDrawerContainer, MatDrawerContent, SvgIconComponent, LoaderComponent, NgIf, ReactiveFormsModule, MatTooltip, DatePipe],
+  imports: [SidebarComponent, NavbarComponent, RouterOutlet, FooterComponent, MatDrawer, MatDrawerContainer, MatDrawerContent, LoaderComponent, NgIf, ReactiveFormsModule, MatTooltip, DatePipe],
 })
 export class LayoutComponent implements OnInit {
   private mainContent: HTMLElement | null = null;

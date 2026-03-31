@@ -50,10 +50,14 @@ import {
   courseEnrollProgression,
   getConversation,
   addConversation,
-  countConversation, countNotification, addTrend, updateTrend,
-  getAllRegistrationRequests,
-  approveRegistrationRequest,
-  rejectRegistrationRequest
+  countConversation,
+  countNotification,
+  getChatRepliesModeration,
+  hideChatReply,
+  deleteChatReply,
+  restoreChatReply,
+  addTrend,
+  updateTrend
 } from "@/controllers/admin"
 import { checkJwt } from "@/middleware/checkJwt";
 import { checkRole } from "@/middleware/checkRole";
@@ -64,6 +68,15 @@ import { addSEO, editSEO, getAllSeo, getSeoDetails } from "@/controllers/admin/s
 import { addPackage, removePackage, updatePackage } from "@/controllers/admin/packages"
 import { addProvider, removeProvider, updateProvider } from "@/controllers/admin/providers"
 import { addTrainer, updateTrainer } from "@/controllers/admin/trainers"
+import {
+  getAllLabos,
+  addLabo,
+  editLabo,
+  detailsLabo,
+  assignCourseToLabo,
+  getLaboCourses,
+  unassignCourseFromLabo,
+} from "@/controllers/admin/labos"
 import {
   addCourse, deleteFaqById, deleteIncludeById, deleteLessonById, deleteObjectiveById,
   deleteRequirementById,
@@ -79,6 +92,12 @@ import {
   updateCertificate
 } from "@/controllers/admin/certificates"
 import { addAdvertisement, updateAdvertisement, updateAdvertisementStatus } from "@/controllers/admin/advertisement"
+import { adminGetAllProducts, adminGetAllOrders } from "@/controllers/admin/marketplace"
+import {
+  getAllLaboSuggestions,
+  getLaboSuggestionDetails,
+  updateLaboSuggestionStatus,
+} from '@/controllers/admin/labo-suggestions';
 
 const router = Router();
 
@@ -86,7 +105,7 @@ router.post('/login', [validatorLogin], login);
 
 router.get('/users', [checkJwt, checkRole(['SUPER_ADMIN'])], getAllUsers);
 router.post('/users/add', [checkJwt, checkRole(['SUPER_ADMIN'])], addUser);
-router.put('/users/edit/:id', [checkJwt, checkRole(['SUPER_ADMIN']), upload.single('upload') as any], editUser);
+router.put('/users/edit/:id', [checkJwt, checkRole(['SUPER_ADMIN']), upload.single('upload')], editUser);
 router.get('/users/details/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], detailsUser);
 router.post('/users/sendNotifications', [checkJwt, checkRole(['SUPER_ADMIN'])], sendNotifications);
 router.get('/users/courseEnroll/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], userCourseEnroll);
@@ -95,6 +114,11 @@ router.post('/users/conversation', [checkJwt, checkRole(['SUPER_ADMIN'])], getCo
 router.post('/users/add/conversation', [checkJwt, checkRole(['SUPER_ADMIN'])], addConversation);
 router.post('/users/count/conversation', [checkJwt, checkRole(['SUPER_ADMIN'])], countConversation);
 router.get('/users/count/notifications', [checkJwt, checkRole(['SUPER_ADMIN'])], countNotification);
+
+router.get('/chat/replies', [checkJwt, checkRole(['SUPER_ADMIN'])], getChatRepliesModeration);
+router.put('/chat/replies/:id/hide', [checkJwt, checkRole(['SUPER_ADMIN'])], hideChatReply);
+router.put('/chat/replies/:id/delete', [checkJwt, checkRole(['SUPER_ADMIN'])], deleteChatReply);
+router.put('/chat/replies/:id/restore', [checkJwt, checkRole(['SUPER_ADMIN'])], restoreChatReply);
 
 router.get('/pharmacies', [checkJwt, checkRole(['SUPER_ADMIN'])], getAllPharmacies);
 router.post('/pharmacies/add', [checkJwt, checkRole(['SUPER_ADMIN'])], addPharmacy);
@@ -126,7 +150,7 @@ router.post('/capsules/add', [checkJwt, checkRole(['SUPER_ADMIN'])], addCapsule)
 router.put('/capsules/edit/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], updateCapsule);
 
 router.get('/images', [checkJwt, checkRole(['SUPER_ADMIN'])], getAllImages);
-router.post('/images/add', [checkJwt, checkRole(['SUPER_ADMIN']), upload.array('upload') as any], addImage);
+router.post('/images/add', [checkJwt, checkRole(['SUPER_ADMIN']), upload.array('upload')], addImage);
 router.post('/images/remove', [checkJwt, checkRole(['SUPER_ADMIN'])], removeImage);
 
 router.get('/seo', [checkJwt, checkRole(['SUPER_ADMIN'])], getAllSeo);
@@ -135,13 +159,25 @@ router.put('/seo/edit/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], editSEO);
 router.get('/seo/getDetails/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], getSeoDetails);
 
 router.get('/subscriptions', [checkJwt, checkRole(['SUPER_ADMIN'])], getAllSubscriptions);
-router.post('/subscriptions/add', [checkJwt, checkRole(['SUPER_ADMIN']), upload.single('upload') as any], addSubscription);
-router.put('/subscriptions/edit/:id', [checkJwt, checkRole(['SUPER_ADMIN']), upload.single('upload') as any], updateSubscription);
+router.post('/subscriptions/add', [checkJwt, checkRole(['SUPER_ADMIN']), upload.single('upload')], addSubscription);
+router.put('/subscriptions/edit/:id', [checkJwt, checkRole(['SUPER_ADMIN']), upload.single('upload')], updateSubscription);
 router.get('/subscriptions/getDetails/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], getDetailsSubscription);
 
 router.post('/packages/add', [checkJwt, checkRole(['SUPER_ADMIN'])], addPackage);
 router.delete('/packages/remove/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], removePackage);
 router.put('/packages/edit/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], updatePackage);
+
+router.get('/labos', [checkJwt, checkRole(['SUPER_ADMIN'])], getAllLabos);
+router.post('/labos/add', [checkJwt, checkRole(['SUPER_ADMIN'])], addLabo);
+router.put('/labos/edit/:id', [checkJwt, checkRole(['SUPER_ADMIN']), upload.single('upload')], editLabo);
+router.get('/labos/details/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], detailsLabo);
+router.get('/labos/:id/courses', [checkJwt, checkRole(['SUPER_ADMIN'])], getLaboCourses);
+router.post('/labos/:id/courses/assign', [checkJwt, checkRole(['SUPER_ADMIN'])], assignCourseToLabo);
+router.delete('/labos/:id/courses/unassign/:courseId', [checkJwt, checkRole(['SUPER_ADMIN'])], unassignCourseFromLabo);
+
+router.get('/labos/suggestions', [checkJwt, checkRole(['SUPER_ADMIN'])], getAllLaboSuggestions);
+router.get('/labos/suggestions/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], getLaboSuggestionDetails);
+router.put('/labos/suggestions/:id/status', [checkJwt, checkRole(['SUPER_ADMIN'])], updateLaboSuggestionStatus);
 
 router.post('/providers/add', [checkJwt, checkRole(['SUPER_ADMIN'])], addProvider);
 router.delete('/providers/remove/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], removeProvider);
@@ -192,8 +228,7 @@ router.put('/ratings/edit/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], updateRa
 
 router.get('/dashboard', [checkJwt, checkRole(['SUPER_ADMIN'])], main);
 
-router.get('/registration-requests', [checkJwt, checkRole(['SUPER_ADMIN'])], getAllRegistrationRequests);
-router.post('/approve/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], approveRegistrationRequest);
-router.post('/reject/:id', [checkJwt, checkRole(['SUPER_ADMIN'])], rejectRegistrationRequest);
+router.get('/marketplace/products', [checkJwt, checkRole(['SUPER_ADMIN'])], adminGetAllProducts);
+router.get('/marketplace/orders', [checkJwt, checkRole(['SUPER_ADMIN'])], adminGetAllOrders);
 
 export default router;

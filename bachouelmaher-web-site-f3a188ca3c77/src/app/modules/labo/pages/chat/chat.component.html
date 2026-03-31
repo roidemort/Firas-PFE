@@ -1,0 +1,137 @@
+<div class="min-h-screen bg-background">
+  <nav class="border-b border-muted/20 bg-card px-6 py-4 flex items-center justify-between">
+    <h1 class="text-lg font-bold text-foreground">Tableau de bord Laboratoire</h1>
+    <div class="flex gap-3">
+      <button (click)="goToProducts()" class="text-sm font-medium text-primary hover:underline">Produits</button>
+      <button (click)="goToOrders()" class="text-sm font-medium text-primary hover:underline">Commandes</button>
+      <button (click)="goToCourses()" class="text-sm font-medium text-primary hover:underline">Formations</button>
+      <button (click)="goToSuggestions()" class="text-sm font-medium text-primary hover:underline">Suggestions</button>
+      <span *ngIf="chatUnreadCount > 0" class="rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] text-white">{{ chatUnreadCount }}</span>
+    </div>
+  </nav>
+
+  <div class="mx-auto max-w-7xl px-4 py-6">
+    <div class="mb-5 flex items-end justify-between gap-3">
+      <div>
+        <h2 class="text-xl font-semibold text-foreground">Chat pharmaciens</h2>
+        <p class="text-sm text-muted-foreground">Le laboratoire repond aux questions recues sur ses formations</p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <label class="text-xs text-muted-foreground">Formation</label>
+        <select
+          class="rounded border border-muted/30 bg-inputColor px-3 py-2 text-sm"
+          [ngModel]="selectedCourseId"
+          (ngModelChange)="onCourseFilterChange($event)">
+          <option value="">Toutes</option>
+          @for (course of courses(); track course.id) {
+            <option [value]="course.id">{{ course.title }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="mb-4 flex gap-2">
+      @for (tab of tabs; track tab.key) {
+        <button
+          (click)="selectTab(tab.key)"
+          class="rounded-full px-4 py-2 text-sm font-medium transition"
+          [ngClass]="selectedTab === tab.key ? 'bg-primary text-white' : 'bg-muted/20 text-foreground'">
+          {{ tab.label }}
+          <span class="ml-2 text-xs opacity-80">
+            {{ tab.key === 'unanswered' ? counts().unanswered : tab.key === 'answered' ? counts().answered : counts().all }}
+          </span>
+        </button>
+      }
+    </div>
+
+    <div class="grid gap-4 lg:grid-cols-[360px_1fr]">
+      <section class="rounded-xl border border-muted/20 bg-card p-3">
+        <app-loader *ngIf="isLoadingQuestions"></app-loader>
+
+        <div class="max-h-[680px] overflow-auto" *ngIf="!isLoadingQuestions">
+          @for (question of questions(); track question.id) {
+            <button
+              (click)="openQuestion(question.id)"
+              class="mb-2 block w-full rounded border border-muted/20 px-3 py-3 text-left hover:bg-muted/5"
+              [class.border-primary]="selectedQuestion?.id === question.id">
+              <div class="mb-1 flex items-center justify-between gap-2">
+                <span class="text-xs font-semibold text-muted-foreground">{{ question.pharmacistAlias }}</span>
+                <span class="text-[11px] text-muted-foreground">{{ question.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+              </div>
+              <div class="line-clamp-2 text-sm text-foreground">{{ question.content }}</div>
+              <div class="mt-2 text-[11px] text-muted-foreground">
+                {{ question.course?.title || '-' }}
+                <span class="mx-2">•</span>
+                {{ question.isAnswered ? 'Repondue' : 'Non repondue' }}
+              </div>
+            </button>
+          } @empty {
+            <div class="py-10 text-center text-sm text-muted-foreground">Aucune question sur ce filtre.</div>
+          }
+        </div>
+      </section>
+
+      <section class="rounded-xl border border-muted/20 bg-card p-4">
+        <app-loader *ngIf="isLoadingDetails"></app-loader>
+
+        <ng-container *ngIf="!isLoadingDetails">
+          <div *ngIf="!selectedQuestion" class="py-24 text-center text-sm text-muted-foreground">
+            Selectionnez une question pour afficher le detail.
+          </div>
+
+          <div *ngIf="selectedQuestion">
+            <div class="mb-4 rounded border border-muted/20 bg-muted/5 p-4">
+              <div class="mb-2 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+                <span>{{ selectedQuestion.pharmacistAlias }}</span>
+                <span>{{ selectedQuestion.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+              </div>
+
+              <h3 class="mb-1 text-sm font-medium text-foreground">{{ selectedQuestion.course?.title || 'Formation' }}</h3>
+              <p class="whitespace-pre-wrap text-sm text-foreground">{{ selectedQuestion.content }}</p>
+            </div>
+
+            <div class="mb-4 space-y-2">
+              @for (reply of replies(); track reply.id) {
+                <div class="rounded border border-muted/20 p-3" [ngClass]="reply.isFromLabo ? 'bg-primary/5' : ''">
+                  <div class="mb-1 flex items-center justify-between text-[11px] text-muted-foreground">
+                    <span>{{ reply.visibility === 'public' ? 'Reponse publique' : 'Reponse privee' }}</span>
+                    <span>{{ reply.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+                  </div>
+                  <p class="whitespace-pre-wrap text-sm text-foreground">{{ reply.content }}</p>
+                </div>
+              } @empty {
+                <div class="text-sm text-muted-foreground">Aucune reponse pour cette question.</div>
+              }
+            </div>
+
+            <div class="space-y-3 border-t border-muted/20 pt-4">
+              <div class="flex items-center justify-between">
+                <label class="text-sm font-medium">Votre reponse</label>
+                <select [(ngModel)]="replyVisibility" class="rounded border border-muted/30 bg-inputColor px-2 py-1 text-xs">
+                  <option value="private">Privee</option>
+                  <option value="public">Publique</option>
+                </select>
+              </div>
+
+              <textarea
+                [(ngModel)]="replyContent"
+                rows="5"
+                class="w-full rounded border border-muted/30 bg-inputColor px-3 py-2 text-sm"
+                placeholder="Saisissez votre reponse..."></textarea>
+
+              <div class="flex justify-end">
+                <button
+                  (click)="sendReply()"
+                  [disabled]="isSubmittingReply"
+                  class="rounded bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-primary/90 disabled:opacity-50">
+                  Envoyer
+                </button>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </section>
+    </div>
+  </div>
+</div>

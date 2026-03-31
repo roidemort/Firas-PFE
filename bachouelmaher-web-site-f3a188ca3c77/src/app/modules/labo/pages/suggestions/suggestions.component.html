@@ -1,0 +1,95 @@
+<div class="min-h-screen bg-background">
+  <div class="mx-auto max-w-6xl px-4 py-6">
+    <div class="mb-4 flex gap-2">
+      <button (click)="goBack()" class="rounded px-3 py-1 text-sm bg-muted/20 hover:bg-muted/30">Retour formations</button>
+      <button (click)="goToChat()" class="rounded px-3 py-1 text-sm bg-primary text-white hover:bg-primary/90">
+        Chat
+        <span *ngIf="chatUnreadCount > 0" class="ml-1 rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] text-white">{{ chatUnreadCount }}</span>
+      </button>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-5">
+      <div class="rounded-xl border border-muted/20 bg-card p-4">
+        <h3 class="font-semibold text-foreground mb-3">Nouvelle suggestion</h3>
+        <app-loader *ngIf="isLoading"></app-loader>
+
+        <div class="space-y-3" *ngIf="!isLoading">
+          <div>
+            <label class="text-sm font-medium">Formation</label>
+            <select class="w-full rounded border border-muted/30 bg-inputColor px-3 py-2 mt-1"
+                    [ngModel]="selectedCourseId"
+                    (ngModelChange)="onCourseChange($event)">
+              @for (course of courses(); track course.id) {
+                <option [value]="course.id">{{ course.title }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="relative">
+            <div class="flex items-center justify-between">
+              <label class="text-sm font-medium">Purpose</label>
+              <button type="button"
+                      (click)="togglePurposeMenu()"
+                      class="rounded border border-muted/30 bg-inputColor px-3 py-2 text-sm hover:bg-muted/10">
+                {{ getPurposeLabel() }}
+              </button>
+            </div>
+
+            <div *ngIf="isPurposeMenuOpen" class="absolute right-0 z-20 mt-2 w-40 rounded border border-muted/20 bg-card shadow-lg">
+              <button type="button" (click)="selectPurposeType('titre')" class="block w-full px-3 py-2 text-left text-sm hover:bg-muted/10">titre</button>
+              <button type="button" (click)="selectPurposeType('desc')" class="block w-full px-3 py-2 text-left text-sm hover:bg-muted/10">desc</button>
+              <button type="button" (click)="selectPurposeType('faq')" class="block w-full px-3 py-2 text-left text-sm hover:bg-muted/10">faq</button>
+            </div>
+          </div>
+
+          <div *ngIf="form.purposeType === 'titre'">
+            <label class="text-sm font-medium">Purpose - titre</label>
+            <input [(ngModel)]="form.purposeTitle" class="w-full rounded border border-muted/30 bg-inputColor px-3 py-2 mt-1" />
+          </div>
+
+          <div *ngIf="form.purposeType === 'desc'">
+            <label class="text-sm font-medium">Purpose - desc</label>
+            <textarea [(ngModel)]="form.purposeDesc" rows="4" class="w-full rounded border border-muted/30 bg-inputColor px-3 py-2 mt-1"></textarea>
+          </div>
+
+          <div *ngIf="form.purposeType === 'faq'">
+            <label class="text-sm font-medium">Purpose - faq (format: Question|Reponse, une ligne par FAQ)</label>
+            <textarea [(ngModel)]="form.purposeFaqText" rows="4" class="w-full rounded border border-muted/30 bg-inputColor px-3 py-2 mt-1"></textarea>
+          </div>
+
+          <div class="flex gap-2">
+            <button (click)="submit()" [disabled]="isSubmitting" class="rounded bg-primary text-white px-4 py-2 text-sm hover:bg-primary/90 disabled:opacity-50">
+              {{ editingSuggestionId ? 'Mettre a jour' : 'Envoyer' }}
+            </button>
+            <button (click)="resetForm()" type="button" class="rounded bg-muted/20 px-4 py-2 text-sm hover:bg-muted/30">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-xl border border-muted/20 bg-card p-4">
+        <h3 class="font-semibold text-foreground mb-3">Historique des suggestions</h3>
+        <div class="space-y-3 max-h-[720px] overflow-auto">
+          @for (s of suggestions(); track s.id) {
+            <div class="rounded border border-muted/20 p-3">
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-medium text-sm">{{ s.proposedTitle || 'Suggestion sans titre' }}</span>
+                <span class="text-xs"
+                      [class.text-yellow-600]="s.status === 'PENDING'"
+                      [class.text-blue-600]="s.status === 'IN_REVIEW'"
+                      [class.text-green-600]="s.status === 'ACCEPTED'"
+                      [class.text-red-600]="s.status === 'REJECTED'">
+                  {{ getStatusLabel(s.status) }}
+                </span>
+              </div>
+              <div class="text-xs text-muted-foreground mb-2">{{ s.comment || '-' }}</div>
+              <div *ngIf="s.reviewComment" class="text-xs text-muted-foreground">Review: {{ s.reviewComment }}</div>
+              <button *ngIf="s.status === 'PENDING'" (click)="editSuggestion(s)" class="mt-2 rounded bg-muted/20 px-3 py-1 text-xs hover:bg-muted/30">Editer</button>
+            </div>
+          } @empty {
+            <div class="text-sm text-muted-foreground">Aucune suggestion.</div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

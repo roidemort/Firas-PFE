@@ -1,0 +1,130 @@
+<div class="min-h-screen bg-background">
+  <div class="mx-auto max-w-5xl px-4 py-6">
+    <button (click)="backToCourses()" class="mb-4 rounded px-3 py-1 text-sm bg-muted/20 hover:bg-muted/30">Retour</button>
+
+    <div class="rounded-xl border border-muted/20 bg-card p-5">
+      <app-loader *ngIf="isLoading"></app-loader>
+      <div *ngIf="!isLoading && course() as c">
+        <h2 class="text-2xl font-semibold text-foreground mb-2">{{ c.title }}</h2>
+        <p class="text-sm text-muted-foreground mb-4">{{ c.details }}</p>
+
+        <div class="grid md:grid-cols-2 gap-4 mb-6 text-sm">
+          <div><span class="font-medium">Categorie:</span> {{ c.category?.name || '-' }}</div>
+          <div><span class="font-medium">Provider:</span> {{ c.provider?.name || '-' }}</div>
+          <div><span class="font-medium">Duree:</span> {{ c.duration || '-' }}</div>
+          <div><span class="font-medium">Niveau:</span> {{ c.level || '-' }}</div>
+        </div>
+
+        <div class="mb-6" *ngIf="kpis() as metrics">
+          <h3 class="font-semibold mb-3">KPI formation</h3>
+          <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-4 text-sm">
+            <div class="rounded-lg border border-muted/20 bg-muted/5 p-3">
+              <p class="text-xs text-muted-foreground">Inscrits</p>
+              <p class="text-xl font-semibold">{{ metrics.enrolledCount || 0 }}</p>
+            </div>
+            <div class="rounded-lg border border-muted/20 bg-muted/5 p-3">
+              <p class="text-xs text-muted-foreground">Taux completion</p>
+              <p class="text-xl font-semibold">{{ metrics.completionRate || 0 }}%</p>
+            </div>
+            <div class="rounded-lg border border-muted/20 bg-muted/5 p-3">
+              <p class="text-xs text-muted-foreground">En cours</p>
+              <p class="text-xl font-semibold">{{ metrics.inProgressCount || 0 }}</p>
+            </div>
+            <div class="rounded-lg border border-muted/20 bg-muted/5 p-3">
+              <p class="text-xs text-muted-foreground">Score quiz moyen</p>
+              <p class="text-xl font-semibold">{{ metrics.averageQuizScore || 0 }}%</p>
+            </div>
+          </div>
+
+          <div class="mt-3 grid gap-3 md:grid-cols-3 text-xs">
+            <div class="rounded border border-muted/20 p-3">
+              <p class="text-muted-foreground">Tendance inscrits (M/M-1)</p>
+              <p class="mt-1 font-semibold" [class.text-green-600]="metrics.tendency?.enrolled?.deltaPercent >= 0" [class.text-red-600]="metrics.tendency?.enrolled?.deltaPercent < 0">
+                {{ metrics.tendency?.enrolled?.deltaPercent || 0 }}%
+              </p>
+            </div>
+            <div class="rounded border border-muted/20 p-3">
+              <p class="text-muted-foreground">Tendance completion (M/M-1)</p>
+              <p class="mt-1 font-semibold" [class.text-green-600]="metrics.tendency?.completion?.deltaPercent >= 0" [class.text-red-600]="metrics.tendency?.completion?.deltaPercent < 0">
+                {{ metrics.tendency?.completion?.deltaPercent || 0 }}%
+              </p>
+            </div>
+            <div class="rounded border border-muted/20 p-3">
+              <p class="text-muted-foreground">Tendance score quiz (M/M-1)</p>
+              <p class="mt-1 font-semibold" [class.text-green-600]="metrics.tendency?.quizScore?.delta >= 0" [class.text-red-600]="metrics.tendency?.quizScore?.delta < 0">
+                {{ metrics.tendency?.quizScore?.delta || 0 }} pts
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-6" *ngIf="funnelChartOptions">
+          <apx-chart
+            [series]="funnelChartOptions.series!"
+            [chart]="funnelChartOptions.chart!"
+            [dataLabels]="funnelChartOptions.dataLabels!"
+            [stroke]="funnelChartOptions.stroke!"
+            [plotOptions]="funnelChartOptions.plotOptions!"
+            [xaxis]="funnelChartOptions.xaxis!"
+            [yaxis]="funnelChartOptions.yaxis!"
+            [tooltip]="funnelChartOptions.tooltip!"
+            [colors]="funnelChartOptions.colors!"
+            [title]="funnelChartOptions.title!"
+            [subtitle]="funnelChartOptions.subtitle!">
+          </apx-chart>
+        </div>
+
+        <div class="mb-6" *ngIf="chapterFunnel().length">
+          <h3 class="font-semibold mb-2">Abandon par chapitre</h3>
+          <div class="overflow-x-auto rounded border border-muted/20">
+            <table class="w-full text-left text-sm">
+              <thead class="bg-muted/5 text-xs text-muted-foreground">
+                <tr>
+                  <th class="px-3 py-2">Chapitre</th>
+                  <th class="px-3 py-2">Commence</th>
+                  <th class="px-3 py-2">Termine</th>
+                  <th class="px-3 py-2">Abandon</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (row of chapterFunnel(); track row.sectionId) {
+                  <tr class="border-t border-muted/10">
+                    <td class="px-3 py-2">{{ row.sectionTitle }}</td>
+                    <td class="px-3 py-2">{{ row.startedCount }}</td>
+                    <td class="px-3 py-2">{{ row.completedCount }}</td>
+                    <td class="px-3 py-2">{{ row.dropOffCount }} ({{ row.dropOffRate }}%)</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <h3 class="font-semibold mb-2">Objectifs</h3>
+          <ul class="list-disc pl-5 text-sm space-y-1">
+            @for (o of c.objectives; track o.id) {
+              <li>{{ o.value }}</li>
+            } @empty {
+              <li>Aucun objectif.</li>
+            }
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="font-semibold mb-2">FAQs</h3>
+          <div class="space-y-3 text-sm">
+            @for (faq of c.faqs; track faq.id) {
+              <div class="rounded border border-muted/20 p-3">
+                <div class="font-medium">{{ faq.title }}</div>
+                <div class="text-muted-foreground">{{ faq.content }}</div>
+              </div>
+            } @empty {
+              <p>Aucune FAQ.</p>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

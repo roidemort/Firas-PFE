@@ -209,3 +209,153 @@ export const calculateProgress = (course: EnrollCourseEntity): number => {
   return Math.min(100, (completedLessons / (2 * totalLessons)) * 100); // Prevent >100%
 };
 
+const parseRawNumber = (value: unknown) => Number(value || 0);
+
+const getMonthRange = (monthShift = 0) => {
+  const now = new Date();
+  const from = new Date(now.getFullYear(), now.getMonth() - monthShift, 1, 0, 0, 0, 0);
+  const to = new Date(now.getFullYear(), now.getMonth() - monthShift + 1, 0, 23, 59, 59, 999);
+
+  return { from, to };
+};
+
+const getMonthSnapshot = async (courseId: string, monthShift = 0) => {
+  const { from, to } = getMonthRange(monthShift);
+
+  const [enrolledCount, completedCount, avgQuizRow] = await Promise.all([
+    enrollCourseRepository
+      .createQueryBuilder('enroll')
+      .where('enroll.courseId = :courseId', { courseId })
+      .andWhere('enroll.startedAt BETWEEN :from AND :to', { from, to })
+      .getCount(),
+    enrollCourseRepository
+      .createQueryBuilder('enroll')
+      .where('enroll.courseId = :courseId', { courseId })
+      .andWhere('enroll.status = :completedStatus', { completedStatus: 2 })
+      .andWhere('enroll.endedAt BETWEEN :from AND :to', { from, to })
+      .getCount(),
+    enrollCourseRepository
+      .createQueryBuilder('enroll')
+      .select('COALESCE(ROUND(AVG(enroll.quizPoints), 2), 0)', 'averageQuizScore')
+      .where('enroll.courseId = :courseId', { courseId })
+      .andWhere('enroll.status = :completedStatus', { completedStatus: 2 })
+      .andWhere('enroll.quizNumber > 0')
+      .andWhere('enroll.endedAt BETWEEN :from AND :to', { from, to })
+      .getRawOne(),
+  ]);
+
+  return {
+    enrolledCount,
+    completedCount,
+    averageQuizScore: parseRawNumber(avgQuizRow?.averageQuizScore),
+  };
+};
+
+export const getCourseKpiStats = async (courseId: string) => {
+  const [
+    enrolledCount,
+    completedCount,
+    inProgressCount,
+    averageQuizScoreRow,
+    currentMonth,
+    previousMonth,
+  ] = await Promise.all([
+    countEnrollCourses({ course: { id: Equal(courseId) } }),
+    countEnrollCourses({ course: { id: Equal(courseId) }, status: Equal(2) }),
+    countEnrollCourses({ course: { id: Equal(courseId) }, status: Equal(1) }),
+    enrollCourseRepository
+      .createQueryBuilder('enroll')
+      .select('COALESCE(ROUND(AVG(enroll.quizPoints), 2), 0)', 'averageQuizScore')
+      .where('enroll.courseId = :courseId', { courseId })
+      .andWhere('enroll.status = :completedStatus', { completedStatus: 2 })
+      .andWhere('enroll.quizNumber > 0')
+      .getRawOne(),
+    getMonthSnapshot(courseId, 0),
+    getMonthSnapshot(courseId, 1),
+  ]);
+
+  const completionRate = enrolledCount ? Math.round((completedCount / enrolledCount) * 100) : 0;
+  const averageQuizScore = parseRawNumber(averageQuizScoreRow?.averageQuizScore);
+
+  const enrolledDeltaPercent = previousMonth.enrolledCount
+    ? Math.round(((currentMonth.enrolledCount - previousMonth.enrolledCount) / previousMonth.enrolledCount) * 100)
+    : currentMonth.enrolledCount > 0
+      ? 100
+      : 0;
+
+  const completedDeltaPercent = previousMonth.completedCount
+    ? Math.round(((currentMonth.completedCount - previousMonth.completedCount) / previousMonth.completedCount) * 100)
+    : currentMonth.completedCount > 0
+      ? 100
+      : 0;
+
+  const quizScoreDelta = Number((currentMonth.averageQuizScore - previousMonth.averageQuizScore).toFixed(2));
+
+  return {
+    enrolledCount,
+    completedCount,
+    inProgressCount,
+    completionRate,
+    averageQuizScore,
+    tendency: {
+      enrolled: {
+        currentMonth: currentMonth.enrolledCount,
+        previousMonth: previousMonth.enrolledCount,
+        deltaPercent: enrolledDeltaPercent,
+      },
+      completion: {
+        currentMonth: currentMonth.completedCount,
+        previousMonth: previousMonth.completedCount,
+        deltaPercent: completedDeltaPercent,
+      },
+      quizScore: {
+        currentMonth: currentMonth.averageQuizScore,
+        previousMonth: previousMonth.averageQuizScore,
+        delta: quizScoreDelta,
+      },
+    },
+  };
+};
+
+export const getCourseChapterFunnel = async (courseId: string) => {
+  const chapterRows = await enrollSectionRepository
+    .createQueryBuilder('enrollSection')
+    .innerJoin('enrollSection.section', 'section')
+    .innerJoin('enrollSection.course', 'enrollCourse')
+    .innerJoin('enrollCourse.course', 'course')
+    .select('section.id', 'sectionId')
+    .addSelect('section.title', 'sectionTitle')
+    .addSelect('section.position', 'sectionPosition')
+    .addSelect('COUNT(enrollSection.id)', 'enrolledCount')
+    .addSelect(
+      'SUM(CASE WHEN enrollSection.startedAt IS NOT NULL OR enrollSection.status > 0 THEN 1 ELSE 0 END)',
+      'startedCount'
+    )
+    .addSelect('SUM(CASE WHEN enrollSection.status = 2 THEN 1 ELSE 0 END)', 'completedCount')
+    .where('course.id = :courseId', { courseId })
+    .groupBy('section.id')
+    .addGroupBy('section.title')
+    .addGroupBy('section.position')
+    .orderBy('section.position', 'ASC')
+    .getRawMany();
+
+  return chapterRows.map((row) => {
+    const enrolledCount = parseRawNumber(row.enrolledCount);
+    const startedCount = parseRawNumber(row.startedCount);
+    const completedCount = parseRawNumber(row.completedCount);
+    const dropOffCount = Math.max(startedCount - completedCount, 0);
+    const dropOffRate = startedCount ? Math.round((dropOffCount / startedCount) * 100) : 0;
+
+    return {
+      sectionId: row.sectionId,
+      sectionTitle: row.sectionTitle,
+      sectionPosition: parseRawNumber(row.sectionPosition),
+      enrolledCount,
+      startedCount,
+      completedCount,
+      dropOffCount,
+      dropOffRate,
+    };
+  });
+};
+

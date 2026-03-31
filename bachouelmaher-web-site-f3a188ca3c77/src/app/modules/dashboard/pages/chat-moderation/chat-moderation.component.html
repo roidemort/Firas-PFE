@@ -1,0 +1,95 @@
+<div class="mx-auto px-4 py-4 sm:px-8">
+  <div class="mb-4">
+    <h3 class="font-semibold text-foreground">Moderation chat labo</h3>
+    <p class="text-xs text-muted-foreground">Masquer, supprimer ou restaurer les reponses des laboratoires.</p>
+  </div>
+
+  <div class="mb-4 grid gap-3 md:grid-cols-4">
+    <div>
+      <label class="text-xs text-muted-foreground">Statut</label>
+      <select class="mt-1 w-full rounded border border-muted/30 bg-inputColor px-3 py-2 text-sm" [(ngModel)]="selectedStatus" (ngModelChange)="loadReplies()">
+        @for (status of statuses; track status) {
+          <option [value]="status">{{ status }}</option>
+        }
+      </select>
+    </div>
+
+    <div>
+      <label class="text-xs text-muted-foreground">Labo</label>
+      <select class="mt-1 w-full rounded border border-muted/30 bg-inputColor px-3 py-2 text-sm" [(ngModel)]="selectedLaboId" (ngModelChange)="loadReplies()">
+        <option value="">Tous</option>
+        @for (labo of labos(); track labo.id) {
+          <option [value]="labo.id">{{ labo.firstName }} {{ labo.lastName }} - {{ labo.email }}</option>
+        }
+      </select>
+    </div>
+
+    <div>
+      <label class="text-xs text-muted-foreground">Formation</label>
+      <select class="mt-1 w-full rounded border border-muted/30 bg-inputColor px-3 py-2 text-sm" [(ngModel)]="selectedCourseId" (ngModelChange)="loadReplies()">
+        <option value="">Toutes</option>
+        @for (course of courses(); track course.id) {
+          <option [value]="course.id">{{ course.title }}</option>
+        }
+      </select>
+    </div>
+
+    <div>
+      <label class="text-xs text-muted-foreground">Recherche</label>
+      <input class="mt-1 w-full rounded border border-muted/30 bg-inputColor px-3 py-2 text-sm" [(ngModel)]="searchText" (keyup.enter)="loadReplies()" placeholder="Contenu reponse" />
+    </div>
+  </div>
+
+  <div class="mb-3 flex items-center justify-between">
+    <span class="text-xs text-muted-foreground">{{ count }} reponse(s)</span>
+    <button (click)="loadReplies()" class="rounded bg-primary px-3 py-1 text-xs text-white hover:bg-primary/90">Rafraichir</button>
+  </div>
+
+  <div class="rounded-xl border border-muted/20 bg-background p-3">
+    <app-loader *ngIf="isLoading"></app-loader>
+
+    <div class="overflow-x-auto" *ngIf="!isLoading">
+      <table class="w-full text-left text-sm">
+        <thead class="border-b border-muted/20 text-xs text-muted-foreground">
+          <tr>
+            <th class="px-3 py-2">Labo</th>
+            <th class="px-3 py-2">Formation</th>
+            <th class="px-3 py-2">Question</th>
+            <th class="px-3 py-2">Reponse</th>
+            <th class="px-3 py-2">Etat</th>
+            <th class="px-3 py-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (reply of replies(); track reply.id) {
+            <tr class="border-b border-muted/10 align-top">
+              <td class="px-3 py-2 text-xs">
+                {{ reply.labo?.firstName || reply.sender?.firstName || '-' }} {{ reply.labo?.lastName || reply.sender?.lastName || '' }}
+                <div class="text-[11px] text-muted-foreground">{{ reply.labo?.email || reply.sender?.email || '-' }}</div>
+              </td>
+              <td class="px-3 py-2 text-xs">{{ reply.course?.title || '-' }}</td>
+              <td class="max-w-[320px] px-3 py-2 text-xs text-muted-foreground">{{ reply.parent?.content || '-' }}</td>
+              <td class="max-w-[320px] px-3 py-2 text-xs">{{ reply.content }}</td>
+              <td class="px-3 py-2 text-xs">
+                <span *ngIf="reply.isDeleted" class="rounded bg-red-100 px-2 py-1 text-red-700">DELETED</span>
+                <span *ngIf="!reply.isDeleted && reply.isHidden" class="rounded bg-yellow-100 px-2 py-1 text-yellow-700">HIDDEN</span>
+                <span *ngIf="!reply.isDeleted && !reply.isHidden" class="rounded bg-green-100 px-2 py-1 text-green-700">ACTIVE</span>
+              </td>
+              <td class="px-3 py-2 text-xs">
+                <div class="flex flex-wrap gap-1">
+                  <button class="rounded bg-blue-600 px-2 py-1 text-white" (click)="applyAction(reply, 'hide')">Masquer</button>
+                  <button class="rounded bg-red-600 px-2 py-1 text-white" (click)="applyAction(reply, 'delete')">Supprimer</button>
+                  <button class="rounded bg-emerald-600 px-2 py-1 text-white" (click)="applyAction(reply, 'restore')">Restaurer</button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="py-8 text-center text-muted-foreground">Aucune reponse a moderer</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
