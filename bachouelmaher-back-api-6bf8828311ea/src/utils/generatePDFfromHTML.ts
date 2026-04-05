@@ -1,4 +1,5 @@
 import puppeteer from "puppeteer";
+import fs from 'fs';
 
 interface PDFOptions {
   format?: 'A3' | 'A4' | 'A5' | 'Letter' | 'Legal' | 'Tabloid';
@@ -20,9 +21,11 @@ export const generatePDFfromHTML = async (
 ): Promise<void> => {
   let browser;
   try {
-    // Production-ready browser configuration
-    browser = await puppeteer.launch({
-      executablePath: '/usr/bin/chromium-browser',
+    const configuredExecutable = process.env.PUPPETEER_EXECUTABLE_PATH;
+    const linuxChromiumPath = '/usr/bin/chromium-browser';
+    const hasLinuxChromium = fs.existsSync(linuxChromiumPath);
+
+    const launchOptions: any = {
       headless: true,
       args: [
         '--no-sandbox',
@@ -35,7 +38,16 @@ export const generatePDFfromHTML = async (
         '--disable-software-rasterizer'
       ],
       timeout: 30000 // 30 seconds
-    });
+    };
+
+    // Prefer explicit env path, fallback to Linux chromium only when present.
+    if (configuredExecutable) {
+      launchOptions.executablePath = configuredExecutable;
+    } else if (hasLinuxChromium) {
+      launchOptions.executablePath = linuxChromiumPath;
+    }
+
+    browser = await puppeteer.launch(launchOptions);
 
     const page = await browser.newPage();
 

@@ -18,6 +18,7 @@ import { ChartOptionsBar } from '../../../../shared/models/chart-options';
 })
 export class LaboCourseDetailsComponent implements OnInit {
   isLoading = false;
+  isExporting = false;
   course = signal<any>(null);
   kpis = signal<any>(null);
   chapterFunnel = signal<any[]>([]);
@@ -126,5 +127,50 @@ export class LaboCourseDetailsComponent implements OnInit {
 
   backToCourses() {
     this.router.navigate(['/labo/dashboard/courses']);
+  }
+
+  exportAnalytics(format: 'csv' | 'pdf') {
+    const currentCourse = this.course();
+
+    if (!currentCourse?.id) {
+      toast.warning('Formation introuvable pour export');
+      return;
+    }
+
+    this.isExporting = true;
+
+    this.laboService.exportMyCourseAnalytics(currentCourse.id, format).subscribe({
+      next: (blob) => {
+        if (typeof window === 'undefined') {
+          return;
+        }
+
+        const rawTitle = String(currentCourse.title || 'course');
+        const safeTitle = rawTitle
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '') || 'course';
+
+        const dateStamp = new Date().toISOString().slice(0, 10);
+        const fileName = `${safeTitle}-analytics-${dateStamp}.${format}`;
+        const objectUrl = window.URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = objectUrl;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(objectUrl);
+
+        toast.success(`Export ${format.toUpperCase()} telecharge`);
+      },
+      error: () => {
+        toast.error(`Erreur lors de l export ${format.toUpperCase()}`);
+      },
+      complete: () => {
+        this.isExporting = false;
+      },
+    });
   }
 }
