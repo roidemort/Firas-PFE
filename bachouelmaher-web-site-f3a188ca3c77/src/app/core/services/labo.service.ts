@@ -55,6 +55,15 @@ export class LaboService {
     return this.http.get<any>(`${environment.apiEndpoint}/labo/courses/${courseId}/analytics`).pipe(map(r => r));
   }
 
+  exportMyCourseAnalytics(courseId: string, format: 'csv' | 'pdf') {
+    const params = new HttpParams().append('format', format);
+
+    return this.http.get(`${environment.apiEndpoint}/labo/courses/${courseId}/analytics/export`, {
+      params,
+      responseType: 'blob',
+    });
+  }
+
   getMyCourseStats(courseIds?: string[]) {
     let params = new HttpParams();
     if (courseIds && courseIds.length) {

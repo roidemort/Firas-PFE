@@ -5,7 +5,13 @@ import upload from '@/middleware/ImageConfig';
 import { laboLogin } from '@/controllers/labo/auth';
 import { getMyProducts, addProduct, editProduct, getProductDetails } from '@/controllers/labo/products';
 import { getMyOrders, updateOrderStatus } from '@/controllers/labo/orders';
-import { getMyCourseAnalytics, getMyCourseDetails, getMyCourseEnrollStats, getMyCourses } from '@/controllers/labo/courses';
+import {
+	exportMyCourseAnalytics,
+	getMyCourseAnalytics,
+	getMyCourseDetails,
+	getMyCourseEnrollStats,
+	getMyCourses,
+} from '@/controllers/labo/courses';
 import {
 	createSuggestion,
 	getMySuggestions,
@@ -38,6 +44,7 @@ router.get('/courses', labGuard, getMyCourses);
 router.get('/courses/stats', labGuard, getMyCourseEnrollStats);
 router.get('/courses/details/:id', labGuard, getMyCourseDetails);
 router.get('/courses/:id/analytics', labGuard, getMyCourseAnalytics);
+router.get('/courses/:id/analytics/export', labGuard, exportMyCourseAnalytics);
 
 router.get('/suggestions', labGuard, getMySuggestions);
 router.get('/suggestions/:id', labGuard, getSuggestionDetails);
